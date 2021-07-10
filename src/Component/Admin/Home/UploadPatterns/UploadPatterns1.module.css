@@ -1,0 +1,32 @@
+.activeLink {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  color: #ffffff;
+  text-decoration: none;
+  background: #005b7f;
+}
+
+.activeLink::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -20px;
+  width: 0;
+  height: 0;
+  border-top: 22px solid transparent;
+  border-left: 20px solid #005b7f;
+  border-bottom: 22px solid transparent;
+}
+
+.activeLink::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -20px;
+  width: 0;
+  height: 0;
+  border-top: 22px solid #005b7f;
+  border-left: 20px solid transparent;
+  border-bottom: 22px solid #005b7f;
+}

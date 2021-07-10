@@ -1,0 +1,95 @@
+.header {
+  background-color: #005b7f;
+  padding: 10px 0;
+  height: 90px;
+  width: 100%;
+  font-family: cursive;
+}
+.header .prfl_img {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin-right: 50px;
+}
+.header .prfl_img .btn {
+  border: none;
+  outline: none;
+  box-shadow: none;
+  padding: 0;
+  margin-top: 2px;
+  position: relative;
+}
+.header .prfl_img .overlay {
+  position: absolute;
+  background: #fff;
+  top: 85px;
+  right: -32px;
+  z-index: 10;
+}
+.header .prfl_img .overlay::after {
+  position: absolute;
+  content: "";
+  top: -10px;
+  right: 49px;
+  width: 10px;
+  height: 10px;
+  padding: 10px;
+  transform: rotate(45deg);
+  background-color: #ffffff;
+  border: 1px solid #1b1212;
+  border-bottom-width: 0;
+  border-right-width: 0;
+}
+.header .prfl_img .overlay .header {
+  padding: 10px 15px;
+  height: fit-content;
+  border-radius: 5px;
+  border: 1px solid #1b1212;
+}
+.header .prfl_img .overlay .header p {
+  margin: 0;
+}
+.header .prfl_img .overlay .header p.signout {
+  margin: 10px 0 0;
+  padding: 10px;
+  background-color: #fff;
+  font-family: "Times New Roman", Times, serif;
+}
+.header .prfl_img .overlay .header p.signout a.link {
+  color: #005b7f;
+  text-decoration: none;
+}
+.header .prfl_img .overlay .header p.signout:hover {
+  background-color: #fff;
+}
+.header .prfl_img .overlay .header p.signout:hover a.link {
+  color: #1b1212;
+}
+.header .prfl_img .overlay .header p.signout a.link:hover {
+  text-decoration: none;
+  color: #1b1212;
+}
+.header .prfl_img .overlay .header p.signout i.fas {
+  float: right;
+  margin-top: 4px;
+}
+.header .prfl_img .btn .img_fluid {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
+.header .prfl_img .inner_div {
+  margin-top: 8px;
+  color: #fff;
+  margin-right: 20px;
+}
+.header .prfl_img .inner_div p {
+  margin: 0;
+  font-size: 18px;
+}
+.header .prfl_img .inner_div p.usern {
+  font-size: 14px;
+  font-family: "Times New Roman", Times, serif;
+  text-align: right;
+}

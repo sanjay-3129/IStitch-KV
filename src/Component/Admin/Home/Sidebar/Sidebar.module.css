@@ -1,0 +1,120 @@
+.sidebar {
+  background-color: #a6c8cc;
+  height: 100%;
+  font-family: cursive;
+}
+
+.sidebar .btn {
+  border: none;
+  outline: none;
+  padding: 10px;
+  margin: 0;
+  width: 100%;
+  margin: 10px 0 30px;
+  font-size: 20px;
+  color: #ffffff;
+  text-transform: uppercase;
+  font-family: cursive;
+  box-shadow: none;
+}
+.sidebar .btn .far,
+.sidebar .btn .fas {
+  margin-right: 10px;
+  font-size: 24px;
+  color: #1b1212;
+}
+.sidebar .content h4 {
+  font-size: 22px;
+  position: relative;
+  font-weight: 600;
+  text-align: center;
+  font-family: "Times New Roman", Times, serif;
+  letter-spacing: 2px;
+  padding: 10px 20px 10px 10px;
+  color: #0a0a0a;
+  background-color: #ffffff;
+  margin: 0 0 15px 30px;
+}
+.sidebar .content h4::before {
+  width: 0;
+  height: 0;
+  content: "";
+  position: absolute;
+  left: -23px;
+  margin-top: -10px;
+  border-top: 23px solid #fff;
+  border-bottom: 23px solid #fff;
+  border-left: 23px solid transparent !important;
+}
+.sidebar .content ul.list {
+  list-style-type: none;
+  padding: 0;
+  margin-bottom: 30px;
+}
+.sidebar .content ul.list li.list_item {
+  padding: 0;
+  margin: 0 0 15px;
+  width: 80%;
+  color: #ffffff;
+}
+.sidebar .content ul.list li.list_item .fas,
+.sidebar .content ul.list li.list_item .far {
+  margin-right: 15px;
+  font-size: 23px;
+  width: 25px;
+  float: left;
+}
+.sidebar .content ul.list li.list_item a.list_link {
+  color: #1b1212;
+  font-size: 14px;
+  width: 100%;
+  padding: 10px;
+  padding-left: 20px;
+  display: inline-block;
+  text-decoration: none;
+}
+.sidebar .content ul.list li.list_item a.list_link:hover {
+  text-decoration: none;
+}
+.sidebar .content ul.list li:hover,
+.sidebar .content ul.list li.active {
+  background-color: #ffffff;
+  position: relative;
+}
+
+.activeLink {
+  background-color: #ffffff;
+  position: relative;
+}
+
+.activeLink::after {
+  position: absolute;
+  content: "";
+  right: -17px;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-top: 22px solid transparent;
+  border-bottom: 22px solid transparent;
+  border-left: 17px solid #ffff;
+}
+
+.sidebar .content ul.list li:hover::after,
+.sidebar .content ul.list li.active::after {
+  position: absolute;
+  content: "";
+  right: -17px;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-top: 22px solid transparent;
+  border-bottom: 22px solid transparent;
+  border-left: 17px solid #ffff;
+}
+
+.sidebar .content ul.list li:hover a.list_link {
+  color: #0a0a0a;
+}
+.sidebar .content ul.list li.active a.list_link {
+  color: #0a0a0a;
+}

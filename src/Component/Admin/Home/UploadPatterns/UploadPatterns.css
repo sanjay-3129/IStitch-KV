@@ -1,0 +1,130 @@
+.heading {
+  font-size: 32px;
+  padding: 15px 20px 5px;
+  margin: 0 0 15px;
+  font-family: initial;
+  text-align: center;
+}
+.mini_nav {
+  padding: 10px 0;
+  position: relative;
+  background: #fff;
+  text-align: center;
+}
+.mini_nav ul.nav_list {
+  padding: 0;
+  position: relative;
+  margin: auto;
+  width: fit-content;
+  list-style-type: none;
+}
+.mini_nav ul.nav_list li.nav_item {
+  position: relative;
+  display: inline-block;
+  padding: 0;
+  margin: 5px 13px;
+  background: #1b1212;
+  width: 150px;
+  text-align: center;
+}
+
+.mini_nav ul.nav_list li.nav_item a {
+  padding: 10px;
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.mini_nav ul.nav_list li.nav_item a::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -20px;
+  width: 0;
+  height: 0;
+  border-top: 22px solid #1b1212;
+  border-left: 20px solid transparent;
+  border-bottom: 22px solid #1b1212;
+}
+.mini_nav ul.nav_list li.nav_item a::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -20px;
+  width: 0;
+  height: 0;
+  border-top: 22px solid transparent;
+  border-left: 20px solid #1b1212;
+  border-bottom: 22px solid transparent;
+}
+
+.mini_nav ul.nav_list li.nav_item a:hover::before {
+  border-top: 22px solid #005b7f;
+  border-bottom: 22px solid #005b7f;
+}
+.mini_nav ul.nav_list li.nav_item a:hover::after {
+  border-left: 20px solid #005b7f;
+}
+
+.mini_nav ul.nav_list li.nav_item a span::after {
+  position: absolute;
+  display: none;
+  content: "";
+  top: 44px;
+  left: 75px;
+  width: 2px;
+  padding: 2px;
+  height: 85px;
+  background-color: #005b7f;
+}
+
+.mini_nav ul.nav_list li.nav_item a:hover {
+  background: #005b7f;
+  color: #ffffff;
+}
+
+.activeLink {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  color: #ffffff;
+  text-decoration: none;
+  background: #005b7f;
+}
+
+.activeLink::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -20px;
+  width: 0;
+  height: 0;
+  border-top: 22px solid transparent;
+  border-left: 20px solid #005b7f;
+  border-bottom: 22px solid transparent;
+}
+
+.activeLink::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -20px;
+  width: 0;
+  height: 0;
+  border-top: 22px solid #005b7f;
+  border-left: 20px solid transparent;
+  border-bottom: 22px solid #005b7f;
+}
+
+.mini_nav ul.nav_list li.nav_item a:hover span:after,
+.activeLink span::after {
+  display: block;
+}
+
+.menu_item {
+  margin: 70px 20px 0;
+  padding: 20px 0;
+  border-top: 2px solid #005b7f;
+}

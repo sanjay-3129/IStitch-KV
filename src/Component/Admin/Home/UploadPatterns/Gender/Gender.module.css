@@ -1,0 +1,13 @@
+.flex_box_wrap {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.flex_box_wrap .swiper-container {
+  width: 100%;
+  height: 100%;
+  padding-top: 20px;
+}
