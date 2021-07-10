@@ -57,16 +57,32 @@ const Gender = (props) => {
 
   // update image in db
   const changeImageHandler = (genderId, newImage) => {
-    db.collection("gender")
-      .doc(genderId)
-      .update({
-        gender_image: "image url" // post this url first to storage
+    // girl image in storage replace this later, try to remove from storage and add the new image
+    // https://firebasestorage.googleapis.com/v0/b/istitch-admin.appspot.com/o/gender%2Fgirl.png?alt=media&token=4bfdb3ef-7894-4df1-9272-34b73c9768db
+    let bucketName = "images";
+    let img = newImage;
+    let storageRef = firebase.storage().ref();
+    let imgRef = storageRef.child(`${bucketName}/${img.name}`);
+    imgRef
+      .put(img)
+      .then((snapshot) => {
+        // console.log(snapshot);
+        imgRef.getDownloadURL().then((imgUrl) => {
+          // now adding the data to firestore
+          db.collection("gender")
+            .doc(genderId)
+            .update({
+              genderImage: imgUrl // post this url first to storage
+            })
+            .then(() => {
+              console.log("Image Updated");
+              // then set the state again to reload and render it again
+            });
+        });
       })
-      .then(() => {
-        console.log("Image Updated");
-        // then set the state again to reload and render it again
+      .catch((e) => {
+        console.log(e);
       });
-    console.log("gender image updated", genderId);
   };
 
   const deleteGenderHandler = (genderName) => {
