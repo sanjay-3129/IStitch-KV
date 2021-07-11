@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import ReactDOM from "react-dom";
 import Info from "./Info";
 import InfoBox from "./InfoBox";
 import firebase from "../../../../../Services/firebase/firebase";
 import Spinner from "../../../../UI/Spinner/Spinner";
 import qs from "qs";
 import ChangeModal from "../../../../UI/AddNewModal/ChangeModal.js";
+import LoadingBar from "react-top-loading-bar";
 
 let genderId = undefined;
 let genderName = undefined;
@@ -15,6 +17,7 @@ let subcategoryName = undefined;
 const db = firebase.firestore();
 
 const Styles = (props) => {
+  const ref = useRef(null);
   const [stylesList, setStylesList] = useState(null);
   const [isChange, setIsChange] = useState(null); // for modal
   const [newData, setNewData] = useState({
@@ -87,7 +90,10 @@ const Styles = (props) => {
   }, []);
 
   const viewHandler = (styleId, styleName) => {
-    console.log("viewing style");
+    console.log("viewing styles");
+    // props.history.push(
+    //   `${props.match.url}/createNewPattern/styles?genderId=${genderId}&genderName=${genderName}&categoryId=${categoryId}&categoryName=${categoryName}&subcategoryId=${subcategoryId}&subcategoryName=${subcategoryName}&styleId=${styleId}&styleName=${styleName}`
+    // );
   };
 
   // const addNewHandler = () => {
@@ -96,6 +102,137 @@ const Styles = (props) => {
 
   const selectedStylesHandler = (style) => {
     setStyles(style);
+  };
+
+  const onChangeHandler = (event) => {
+    // console.log(event.target.name);
+    let value = null;
+    if (event.target.name === "img") {
+      value = event.target.files[0];
+    } else {
+      value = event.target.value;
+    }
+    setNewData((prevState) => {
+      return {
+        ...prevState,
+        [event.target.name]: value
+      };
+    });
+  };
+
+  const changeNameHandler = (styleId, newName) => {
+    ref.current.continuousStart();
+    console.log("subcategory name updated", genderId);
+    db.collection("gender")
+      .doc(genderId)
+      .collection("mainProduct")
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId)
+      .collection("subcategory")
+      .doc(subcategoryId)
+      .collection("styles")
+      .doc(styleId)
+      .update({
+        styleName: newName
+      })
+      .then(() => {
+        console.log(newName + " successfully updated!!!");
+        db.collection("gender")
+          .doc(genderId)
+          .collection("mainProduct")
+          .doc("categories")
+          .collection("category")
+          .doc(categoryId)
+          .collection("subcategory")
+          .doc(subcategoryId)
+          .collection("styles")
+          .get()
+          .then((data) => {
+            let list = [];
+            data.forEach((doc) => {
+              list.push(doc.data());
+            });
+            ref.current.complete(); // linear loader to complete
+            setStylesList(list);
+            setStyles(list.find((l) => l.styleId === styleId));
+            // console.log(list.find((l) => l.categoryId === categoryId));
+          });
+      })
+      .catch((e) => console.log(e));
+  };
+  const changeImageHandler = (styleId, newImage) => {
+    ref.current.continuousStart();
+    // casual shirt
+    // https://firebasestorage.googleapis.com/v0/b/istitch-admin.appspot.com/o/1623937713452.jpg?alt=media&token=14291831-385d-4bdb-ab44-297aa0883fa9
+    let bucketName = "images";
+    let img = newImage;
+    let storageRef = firebase.storage().ref();
+    let imgRef = storageRef.child(`${bucketName}/${img.name}`);
+    imgRef
+      .put(img)
+      .then((snapshot) => {
+        // console.log(snapshot);
+        imgRef.getDownloadURL().then((imgUrl) => {
+          // now adding the data to firestore
+          db.collection("gender")
+            .doc(genderId)
+            .collection("mainProduct")
+            .doc("categories")
+            .collection("category")
+            .doc(categoryId)
+            .collection("subcategory")
+            .doc(subcategoryId)
+            .collection("styles")
+            .doc(styleId)
+            .update({
+              styleImage: imgUrl // post this url first to storage
+            })
+            .then(() => {
+              console.log("Image Updated");
+              // then set the state again to reload and render it again
+              db.collection("gender")
+                .doc(genderId)
+                .collection("mainProduct")
+                .doc("categories")
+                .collection("category")
+                .doc(categoryId)
+                .collection("subcategory")
+                .doc(subcategoryId)
+                .collection("styles")
+                .get()
+                .then((data) => {
+                  let list = [];
+                  data.forEach((doc) => {
+                    list.push(doc.data());
+                  });
+                  ref.current.complete(); // linear loader to complete
+                  setStylesList(list);
+                  setStyles(list.find((l) => l.styleId === styleId));
+                });
+            });
+        });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  // updating image or name
+  const changeSubmitHandler = () => {
+    // console.log(newName, newImage);
+    // update the changes in firebase
+    // db.collection("gender").doc(category.genderName).collection("category");
+    if (newData.img !== null && newData.name === "") {
+      changeImageHandler(styles.styleId, newData.img);
+    } else {
+      changeNameHandler(styles.styleId, newData.name);
+    }
+    setNewData({
+      name: "",
+      img: null
+    });
+    setIsChange(false);
   };
 
   let style = null;
@@ -125,41 +262,12 @@ const Styles = (props) => {
     );
   }
 
-  const onChangeHandler = (event) => {
-    // console.log(event.target.name);
-    let value = null;
-    if (event.target.name === "img") {
-      value = event.target.files[0];
-    } else {
-      value = event.target.value;
-    }
-    setNewData((prevState) => {
-      return {
-        ...prevState,
-        [event.target.name]: value
-      };
-    });
-  };
-
-  // updating image or name
-  const changeSubmitHandler = () => {
-    // console.log(newName, newImage);
-    // update the changes in firebase
-    // db.collection("gender").doc(category.genderName).collection("category");
-    if (newData.img !== null && newData.name === "") {
-      console.log(styles.genderId, styles.subcategoryId, newData.img);
-    } else {
-      console.log(styles.genderId, styles.subcategoryId, newData.name);
-    }
-    setNewData({
-      name: "",
-      img: null
-    });
-    setIsChange(false);
-  };
-
   return (
     <div style={{ display: "flex", flexWrap: "wrap", width: "100%" }}>
+      {ReactDOM.createPortal(
+        <LoadingBar color="#FF0000" ref={ref} />,
+        document.getElementById("linear-loader")
+      )}
       {/* {styles} */}
       {isChange && (
         <ChangeModal

@@ -1,16 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import ReactDOM from "react-dom";
 import qs from "qs";
 import firebase from "../../../../../Services/firebase/firebase";
 import Spinner from "../../../../UI/Spinner/Spinner";
 import Info from "./Info";
 import InfoBox from "./InfoBox";
 import ChangeModal from "../../../../UI/AddNewModal/ChangeModal.js";
+import LoadingBar from "react-top-loading-bar";
 
 let genderId = undefined;
 let genderName = undefined;
 const db = firebase.firestore();
 
 const Category = (props) => {
+  const ref = useRef(null); // top-loader
   // if category is clicked directly show all categories from all genders
   // if category is clicked from gender, show only categories based on that gender
   const [categoryList, setCategoryList] = useState(null); // category list from db
@@ -99,8 +102,10 @@ const Category = (props) => {
       };
     });
   };
+
   //to change category name
   const changeNameHandler = (categoryId, newName) => {
+    ref.current.continuousStart();
     console.log("category name updated", genderId);
     db.collection("gender")
       .doc(genderId)
@@ -111,8 +116,74 @@ const Category = (props) => {
       .update({
         categoryName: newName
       })
-      .then(() => console.log(newName + " successfully updated!!!"))
+      .then(() => {
+        console.log(newName + " successfully updated!!!");
+        db.collection("gender")
+          .doc(genderId)
+          .collection("mainProduct")
+          .doc("categories")
+          .collection("category")
+          .get()
+          .then((data) => {
+            let list = [];
+            data.forEach((doc) => {
+              list.push(doc.data());
+            });
+            ref.current.complete(); // linear loader to complete
+            setCategoryList(list);
+            setCategory(list.find((l) => l.categoryId === categoryId));
+            // console.log(list.find((l) => l.categoryId === categoryId));
+          });
+      })
       .catch((e) => console.log(e));
+  };
+  const changeImageHandler = (categoryId, newImage) => {
+    ref.current.continuousStart();
+    // casual shirt
+    // https://firebasestorage.googleapis.com/v0/b/istitch-admin.appspot.com/o/1623937713452.jpg?alt=media&token=14291831-385d-4bdb-ab44-297aa0883fa9
+    let bucketName = "images";
+    let img = newImage;
+    let storageRef = firebase.storage().ref();
+    let imgRef = storageRef.child(`${bucketName}/${img.name}`);
+    imgRef
+      .put(img)
+      .then((snapshot) => {
+        // console.log(snapshot);
+        imgRef.getDownloadURL().then((imgUrl) => {
+          // now adding the data to firestore
+          db.collection("gender")
+            .doc(genderId)
+            .collection("mainProduct")
+            .doc("categories")
+            .collection("category")
+            .doc(categoryId)
+            .update({
+              categoryImage: imgUrl // post this url first to storage
+            })
+            .then(() => {
+              console.log("Image Updated");
+              // then set the state again to reload and render it again
+              db.collection("gender")
+                .doc(genderId)
+                .collection("mainProduct")
+                .doc("categories")
+                .collection("category")
+                .get()
+                .then((data) => {
+                  let list = [];
+                  data.forEach((doc) => {
+                    list.push(doc.data());
+                  });
+                  ref.current.complete(); // linear loader to complete
+                  setCategoryList(list);
+                  setCategory(list.find((l) => l.categoryId === categoryId));
+                });
+            });
+        });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   // updating image or name
@@ -121,9 +192,11 @@ const Category = (props) => {
     // update the changes in firebase
     // db.collection("gender").doc(category.genderName).collection("category");
     if (newData.img !== null && newData.name === "") {
-      console.log(category.genderId, category.categoryName, newData.img);
+      // console.log(category.genderId, category.categoryId, newData.name, "name");
+      changeImageHandler(category.categoryId, newData.img);
     } else {
-      console.log(category.genderId, category.categoryName, newData.name);
+      // console.log(category.genderId, category.categoryId, newData.img, "img");
+      changeNameHandler(category.categoryId, newData.name);
     }
     setNewData({
       name: "",
@@ -162,7 +235,10 @@ const Category = (props) => {
 
   return (
     <div style={{ display: "flex", flexWrap: "wrap", width: "100%" }}>
-      {/* {categories} */}
+      {ReactDOM.createPortal(
+        <LoadingBar color="#FF0000" ref={ref} />,
+        document.getElementById("linear-loader")
+      )}
       {isChange && (
         <ChangeModal
           title={isChange}

@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import ReactDOM from "react-dom";
 import Swippers from "../../../../UI/Swipers/Swipers";
 // import SwippersJS from "../../../../UI/Swipers/SwipersJS";
 import SwipperSub from "../../../../UI/Swipers/SwiperSub";
@@ -6,6 +7,7 @@ import style from "./Gender.module.css";
 import firebase from "../../../../../Services/firebase/firebase";
 import Spinner from "../../../../UI/Spinner/Spinner";
 import ChangeModal from "../../../../UI/AddNewModal/ChangeModal.js";
+import LoadingBar from "react-top-loading-bar";
 
 // this will enable the book like styling - added in swiper.js
 // import Swiper from "swiper/bundle";
@@ -16,16 +18,24 @@ const db = firebase.firestore();
 let list = null;
 
 const Gender = (props) => {
+  const ref = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
-
   const [isChange, setIsChange] = useState(null); // for modal
   const [newData, setNewData] = useState({
     name: "",
     img: null
   });
-
   const [genderList, setGenderList] = useState(null);
-  const [gender, setGender] = useState(null);
+  const [gender, setGender] = useState({
+    genderId: "",
+    genderName: "",
+    genderImage: "",
+    noOfCategories: 0,
+    noOfSubcategories: 0,
+    noOfStyles: 0,
+    hide: false,
+    delete: false
+  });
 
   useEffect(() => {
     console.log("useeffect");
@@ -38,11 +48,13 @@ const Gender = (props) => {
           list.push(doc.data());
         });
         setGenderList(list);
+        setGender(list[0]);
       });
   }, []);
 
   // update name in db
   const changeNameHandler = (genderId, newName) => {
+    ref.current.continuousStart();
     console.log("gender name updated", genderId);
     db.collection("gender")
       .doc(genderId)
@@ -51,12 +63,24 @@ const Gender = (props) => {
       })
       .then(() => {
         console.log(newName + " successfully updated!!!");
+        list = [];
+        db.collection("gender")
+          .orderBy("genderName", "asc")
+          .get()
+          .then((data) => {
+            data.forEach((doc) => {
+              list.push(doc.data());
+            });
+            ref.current.complete(); // linear loader to complete
+            setGenderList(list);
+          });
       })
       .catch((e) => console.log(e));
   };
 
   // update image in db
   const changeImageHandler = (genderId, newImage) => {
+    ref.current.continuousStart();
     // girl image in storage replace this later, try to remove from storage and add the new image
     // https://firebasestorage.googleapis.com/v0/b/istitch-admin.appspot.com/o/gender%2Fgirl.png?alt=media&token=4bfdb3ef-7894-4df1-9272-34b73c9768db
     let bucketName = "images";
@@ -77,6 +101,17 @@ const Gender = (props) => {
             .then(() => {
               console.log("Image Updated");
               // then set the state again to reload and render it again
+              list = [];
+              db.collection("gender")
+                .orderBy("genderName", "asc")
+                .get()
+                .then((data) => {
+                  data.forEach((doc) => {
+                    list.push(doc.data());
+                  });
+                  ref.current.complete(); // linear loader to complete
+                  setGenderList(list);
+                });
             });
         });
       })
@@ -138,21 +173,25 @@ const Gender = (props) => {
     // update the changes in firebase
     // db.collection("gender").doc(category.genderName).collection("category");
     if (newData.img !== null && newData.name === "") {
-      console.log(gender.genderId, newData.img);
+      // console.log(gender.genderId, newData.img);
       changeImageHandler(gender.genderId, newData.img);
     } else {
-      console.log(gender.genderId, newData.name);
+      // console.log(gender.genderId, newData.name);
       changeNameHandler(gender.genderId, newData.name);
     }
-    // setNewData({
-    //   name: "",
-    //   img: null
-    // });
+    setNewData({
+      name: "",
+      img: null
+    });
     setIsChange(false);
   };
 
   return (
     <div className={style.flex_box_wrap}>
+      {ReactDOM.createPortal(
+        <LoadingBar color="#FF0000" ref={ref} />,
+        document.getElementById("linear-loader")
+      )}
       {genderList === null ? (
         <Spinner />
       ) : (
