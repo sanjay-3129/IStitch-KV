@@ -32,7 +32,11 @@ const InfoBox = (props) => {
             >
               Change Image
             </button>
-            <button type="button" className="delete-gender">
+            <button
+              type="button"
+              className="delete-gender"
+              onClick={() => props.addNew("category")}
+            >
               New
             </button>
             <button
@@ -68,13 +72,17 @@ const InfoBox = (props) => {
             onClick={() =>
               props.view(
                 props.categoryDetails.categoryId,
-                props.categoryDetails.categoryName
+                props.categoryDetails.categoryName,
+                props.categoryDetails.categoryImage
               )
             }
           >
             View All Sub-Category
           </button>
-          <button className="category-new" onClick={props.addNew}>
+          <button
+            className="category-new"
+            onClick={() => props.addNew("subcategory")}
+          >
             Add New Sub-Category
           </button>
         </div>

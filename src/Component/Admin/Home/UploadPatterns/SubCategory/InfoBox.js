@@ -26,7 +26,11 @@ const InfoBox = (props) => {
             >
               Change Image
             </button>
-            <button type="button" className="delete-gender">
+            <button
+              type="button"
+              className="delete-gender"
+              onClick={() => props.addNew("subcategory")}
+            >
               New
             </button>
             <button
@@ -66,7 +70,10 @@ const InfoBox = (props) => {
           >
             View All Styles
           </button>
-          <button className="category-new" onClick={props.addNew}>
+          <button
+            className="category-new"
+            onClick={() => props.addNew("styles")}
+          >
             Add New Styles
           </button>
         </div>

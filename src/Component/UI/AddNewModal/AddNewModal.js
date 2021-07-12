@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 // import { Button } from "react-bootstrap";
 import Card from "../Card/Card";
 
@@ -14,18 +14,57 @@ const Backdrop = (props) => {
 };
 
 const ModalOverlay = (props) => {
+  const [newData, setNewData] = useState({
+    genderId: "", // prevGender
+    genderName: "",
+    genderImg: null,
+    categoryId: "", // prevCategory
+    categoryName: "",
+    categoryImg: null,
+    subcategoryId: "",
+    subcategoryName: "",
+    subcategoryImg: null
+  });
+
+  useEffect(() => {
+    if (props.title === "category") {
+      // console.log(props.genderId, "addnewmodal");
+      setNewData((prevState) => {
+        return {
+          ...prevState,
+          genderId: props.genderId,
+          genderName: props.genderName,
+          genderImg: props.genderImg
+        };
+      });
+    } else if (props.title === "subcategory") {
+      console.log(props.categoryName, props.categoryImg, "addnewModal");
+      setNewData((prevState) => {
+        return {
+          ...prevState,
+          genderId: props.genderId,
+          genderName: props.genderName,
+          genderImg: props.genderImg,
+          categoryId: props.categoryId,
+          categoryName: props.categoryName,
+          categoryImg: props.categoryImg
+        };
+      });
+    }
+  }, []);
+
   // $("#img").hide();
-  const getFile = () => {
-    $("#uploadButton").on("click", function () {
-      $("#verborgen_file").click();
+  const getFile1 = () => {
+    $("#uploadButton1").on("click", function () {
+      $("#genderImg").click();
     });
 
-    $("#img").change(function () {
+    $("#genderImg").change(function () {
       var file = this.files[0];
       console.log(file);
       var reader = new FileReader();
       reader.onloadend = function () {
-        $("#uploadButton").css(
+        $("#uploadButton1").css(
           "background-image",
           'url("' + reader.result + '")'
         );
@@ -37,74 +76,215 @@ const ModalOverlay = (props) => {
     });
   };
 
-  $(function () {
-    $(".btn").click(function () {
-      $(".form1").toggleClass("form1-left");
-      $(".form2").toggleClass("form2-left");
-      $(".form2-inactive").toggleClass("form2-active");
-      $(".form1-active").toggleClass("form1-inactive");
-      $(this).removeClass("idle").addClass("active");
+  const getFile2 = () => {
+    $("#uploadButton2").on("click", function () {
+      $("#categoryImg").click();
     });
-  });
+
+    $("#categoryImg").change(function () {
+      var file = this.files[0];
+      console.log(file);
+      var reader = new FileReader();
+      reader.onloadend = function () {
+        $("#uploadButton2").css(
+          "background-image",
+          'url("' + reader.result + '")'
+        );
+      };
+      if (file) {
+        reader.readAsDataURL(file);
+      } else {
+      }
+    });
+  };
+
+  const getFile3 = () => {
+    $("#uploadButton3").on("click", function () {
+      $("#subcategoryImg").click();
+    });
+
+    $("#subcategoryImg").change(function () {
+      var file = this.files[0];
+      console.log(file);
+      var reader = new FileReader();
+      reader.onloadend = function () {
+        $("#uploadButton3").css(
+          "background-image",
+          'url("' + reader.result + '")'
+        );
+      };
+      if (file) {
+        reader.readAsDataURL(file);
+      } else {
+      }
+    });
+  };
+
+  const onChangeHandler = (event) => {
+    let value = null;
+    if (
+      event.target.name === "genderImg" ||
+      event.target.name === "categoryImg" ||
+      event.target.name === "subcategoryImg"
+    ) {
+      value = event.target.files[0];
+    } else {
+      value = event.target.value;
+    }
+    setNewData((prevState) => {
+      return {
+        ...prevState,
+        [event.target.name]: value
+      };
+    });
+  };
 
   return (
     <Card className={classes.modal}>
       <div className="addnew">
-        <h2 className>Add New</h2>
-        <form action="" method="post" name="form">
-          <div className={classes.nav}>
-            <ul className="links">
-              <li className="form1-active sty">
-                <Link className="btn">{props.title}</Link>
-              </li>
-              <li className="form2-inactive sty">
-                <Link className="btn">Category</Link>
-              </li>
-            </ul>
-          </div>
-          <div ng-app ng-init="checked = false" className="ht">
-            <div className="form1">
-              <label htmlFor="name">Enter {props.title} Name</label>
-              <input type="text" id="name" />
+        <h2>Add New</h2>
+        <form method="post" name="form" className={classes.form}>
+          <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a class="nav-link active" data-toggle="tab" href="#gender">
+                Gender
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#category">
+                Category
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#subcategory">
+                Sub-Category
+              </a>
+            </li>
+          </ul>
+
+          <div class="tab-content">
+            <div class="tab-pane container active" id="gender">
+              <label htmlFor="genderName">Enter Gender Name</label>
+              <input
+                type="text"
+                id="genderName"
+                name="genderName"
+                value={newData.genderName}
+                onChange={onChangeHandler}
+                disabled={
+                  props.title === "category" || props.title === "subcategory"
+                    ? true
+                    : false
+                }
+              />
               <label>Upload Image</label>
               <div className="upload-img">
                 <input
                   type="file"
-                  name="prfl_img"
-                  id="img"
+                  name="genderImg"
+                  id="genderImg"
                   accept=".gif, .jpg, .png"
+                  // value={newData.genderImage} // added newly check if img is not working
+                  onChange={onChangeHandler}
+                  disabled={
+                    props.title === "category" || props.title === "subcategory"
+                      ? true
+                      : false
+                  }
                 />
-                <label onClick={getFile} for="img" id="uploadButton">
+                <label
+                  aria-disabled={
+                    props.title === "category" || props.title === "subcategory"
+                      ? true
+                      : false
+                  }
+                  onClick={getFile1}
+                  htmlFor="genderImg"
+                  id="uploadButton1"
+                  style={{
+                    backgroundImage: `url('${props.genderImg}')`
+                  }}
+                >
                   <span>+</span>
                 </label>
               </div>
-              <input type="checkbox" id="checkbox" />
-              <label htmlFor="checkbox">
-                <span className="ui"></span>Add Category into New Gender?
-              </label>
             </div>
-
-            <div class="form2">
-              <label htmlFor="namen">Enter {props.title} Name</label>
-              <input type="text" id="namen" />
+            <div class="tab-pane container" id="category">
+              <label htmlFor="categoryName">Enter Category Name</label>
+              <input
+                type="text"
+                id="categoryName"
+                name="categoryName"
+                value={newData.categoryName}
+                onChange={onChangeHandler}
+                disabled={props.title === "subcategory" ? true : false}
+              />
               <label>Upload Image</label>
               <div class="upload-img">
                 <input
                   type="file"
-                  name="prfl_img"
-                  id="img"
+                  name="categoryImg"
+                  id="categoryImg"
                   accept=".gif, .jpg, .png"
+                  // value={newData.categoryImg}
+                  onChange={onChangeHandler}
+                  disabled={props.title === "subcategory" ? true : false}
                 />
-                <label for="img" id="uploadButton">
+                <label
+                  onClick={getFile2}
+                  htmlFor="categoryImg"
+                  id="uploadButton2"
+                  aria-disabled={props.title === "subcategory" ? true : false}
+                  style={{
+                    backgroundImage: `url('${props.categoryImg}')`
+                  }}
+                >
+                  <span>+</span>
+                </label>
+              </div>
+            </div>
+            <div class="tab-pane container" id="subcategory">
+              <label htmlFor="subcategoryName">Enter Sub Category Name</label>
+              <input
+                type="text"
+                id="subcategoryName"
+                name="subcategoryName"
+                value={newData.subcategoryName}
+                onChange={onChangeHandler}
+              />
+              <label>Upload Image</label>
+              <div class="upload-img">
+                <input
+                  type="file"
+                  name="subcategoryImg"
+                  id="subcategoryImg"
+                  accept=".gif, .jpg, .png"
+                  // value={newData.categoryImg}
+                  onChange={onChangeHandler}
+                />
+                <label
+                  onClick={getFile3}
+                  htmlFor="subcategoryImg"
+                  id="uploadButton3"
+                >
                   <span>+</span>
                 </label>
               </div>
             </div>
           </div>
-          <button type="submit" class="publish">
+
+          {/* <button
+            type="submit"
+            class="publish"
+            onClick={() => props.publish(newData)}
+          >
             Publish
-          </button>
-          <button type="submit" class="draft">
+          </button> */}
+          <button
+            type="button"
+            class="draft"
+            onClick={() => props.saveAsDraft(newData)}
+          >
             Save as draft
           </button>
         </form>
@@ -114,6 +294,10 @@ const ModalOverlay = (props) => {
 };
 
 const AddNewModal = (props) => {
+  const draftHandler = (values) => {
+    // console.log(values);
+    props.draft(values);
+  };
   return (
     <React.Fragment>
       {ReactDOM.createPortal(
@@ -123,8 +307,14 @@ const AddNewModal = (props) => {
       {ReactDOM.createPortal(
         <ModalOverlay
           title={props.title}
-          publish={props.publish}
-          saveAsDraft={props.draft}
+          // publish={props.publish}
+          saveAsDraft={draftHandler}
+          genderId={props.genderId}
+          genderName={props.genderName}
+          genderImg={props.genderImg}
+          categoryId={props.categoryId}
+          categoryName={props.categoryName}
+          categoryImg={props.categoryImg}
         />,
         document.getElementById("overlay-root")
       )}

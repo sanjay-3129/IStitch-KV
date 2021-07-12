@@ -8,7 +8,8 @@ import firebase from "../../../../../Services/firebase/firebase";
 import Spinner from "../../../../UI/Spinner/Spinner";
 import ChangeModal from "../../../../UI/AddNewModal/ChangeModal.js";
 import LoadingBar from "react-top-loading-bar";
-
+import AddNewModal from "../../../../UI/AddNewModal/AddNewModal";
+import generateId from "../../../../../Helpers/generateId";
 // this will enable the book like styling - added in swiper.js
 // import Swiper from "swiper/bundle";
 // import Swiper styles
@@ -36,6 +37,11 @@ const Gender = (props) => {
     hide: false,
     delete: false
   });
+  const [addNewItem, setAddNewItem] = useState("");
+
+  const closeModalHandler = () => {
+    setAddNewItem(null);
+  };
 
   useEffect(() => {
     console.log("useeffect");
@@ -129,12 +135,13 @@ const Gender = (props) => {
     // false, and it should be viewed to
     // the admin again.
   };
-  const viewAllCategoryHandler = (genderId, genderName) => {
+  const viewAllCategoryHandler = (genderId, genderName, genderImg) => {
     // push to category with searchParam with gender.
     // https://32iio.csb.app/home/createNewPattern/category?gender='Men'
     props.history.push(
-      `${props.match.url}/createNewPattern/category?genderId=${genderId}&genderName=${genderName}`
+      `${props.match.url}/createNewPattern/category?genderId=${genderId}&genderName=${genderName}&genderImg=${genderImg}`
     );
+    // console.log(params.getAll());
   };
   const addNewCategoryHandler = (genderName) => {
     props.addNewCategoryInGender();
@@ -144,7 +151,7 @@ const Gender = (props) => {
   };
 
   const addGender = () => {
-    props.addNewGender();
+    setAddNewItem("gender");
   };
 
   const activeIndexHandler = (index) => {
@@ -186,6 +193,264 @@ const Gender = (props) => {
     setIsChange(false);
   };
 
+  const draftHandler = (newData) => {
+    // hide = true;
+    let genderId = generateId("gender");
+    let categoryId = generateId("category");
+    let subcategoryId = generateId("subcategory");
+    let genderRef = db.collection("gender").doc(genderId);
+    let categoryRef = db
+      .collection("gender")
+      .doc(genderId)
+      .collection("mainProduct")
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId);
+    let subcategoryRef = db
+      .collection("gender")
+      .doc(genderId)
+      .collection("mainProduct")
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId)
+      .collection("subcategory")
+      .doc(subcategoryId);
+    let bucketName = "images";
+    let storageRef = firebase.storage().ref();
+    console.log("draft handler in gender", newData);
+    // gender - category - subcategory;
+    if (
+      newData.genderName !== "" &&
+      newData.genderImg !== null &&
+      newData.categoryName !== "" &&
+      newData.categoryImg !== null &&
+      newData.subcategoryName !== "" &&
+      newData.subcategoryImg !== null
+    ) {
+      ref.current.continuousStart();
+      let genderImgRef = storageRef.child(
+        `${bucketName}/${newData.genderImg.name}`
+      );
+      let categoryImgRef = storageRef.child(
+        `${bucketName}/${newData.categoryImg.name}`
+      );
+      let subcategoryImgRef = storageRef.child(
+        `${bucketName}/${newData.subcategoryImg.name}`
+      );
+
+      genderImgRef.put(newData.genderImg).then((snapshot) => {
+        genderImgRef.getDownloadURL().then((genderImg) => {
+          genderRef
+            .set({
+              genderId: genderId, // generate new id
+              genderName: newData.genderName,
+              genderImage: genderImg, // store in storage
+              noOfCategories: 0,
+              noOfSubcategories: 0,
+              noOfStyles: 0,
+              delete: false,
+              hide: true
+            })
+            .then(() => {
+              // creating category
+              categoryImgRef.put(newData.categoryImg).then((snapshot) => {
+                categoryImgRef.getDownloadURL().then((categoryImg) => {
+                  categoryRef
+                    .set({
+                      genderId: genderId,
+                      categoryId: categoryId, // genderate new category id
+                      categoryName: newData.categoryName,
+                      categoryImage: categoryImg,
+                      noOfSubcategories: 0,
+                      noOfStyles: 0,
+                      delete: false,
+                      hide: true
+                    })
+                    .then(() => {
+                      // gender - no_of_categories increment
+                      genderRef.update({
+                        noOfCategories: firebase.firestore.FieldValue.increment(
+                          1
+                        )
+                      });
+
+                      // creating subcategory
+                      subcategoryImgRef
+                        .put(newData.subcategoryImg)
+                        .then((snapshot) => {
+                          subcategoryImgRef
+                            .getDownloadURL()
+                            .then((subcategoryImg) => {
+                              subcategoryRef
+                                .set({
+                                  genderId: genderId,
+                                  categoryId: categoryId,
+                                  subcategoryId: subcategoryId, // genderate new category id
+                                  subcategoryName: newData.subcategoryName,
+                                  subcategoryImage: subcategoryImg,
+                                  noOfStyles: 0,
+                                  delete: false,
+                                  hide: true
+                                })
+                                .then(() => {
+                                  // gender - no_of_subcategories - increment
+                                  genderRef.update({
+                                    noOfSubategories: firebase.firestore.FieldValue.increment(
+                                      1
+                                    )
+                                  });
+                                  // category - no_of_subcategories - increment
+                                  categoryRef.update({
+                                    noOfSubcategories: firebase.firestore.FieldValue.increment(
+                                      1
+                                    )
+                                  });
+
+                                  list = [];
+                                  db.collection("gender")
+                                    .orderBy("genderName", "asc")
+                                    .get()
+                                    .then((data) => {
+                                      data.forEach((doc) => {
+                                        list.push(doc.data());
+                                      });
+                                      ref.current.complete(); // linear loader to complete
+                                      setGenderList(list);
+                                    });
+                                })
+                                .catch((e) => console.log(e));
+                            });
+                        });
+                    })
+                    .catch((e) => console.log(e));
+                });
+              });
+            })
+            .catch((e) => console.log(e));
+        });
+      });
+    }
+    // gender - category - !subcategory
+    else if (
+      newData.genderName !== "" &&
+      newData.genderImg !== null &&
+      newData.categoryName !== "" &&
+      newData.categoryImg !== null &&
+      newData.subcategoryName === "" &&
+      newData.subcategoryImg === null
+    ) {
+      ref.current.continuousStart();
+      let genderImgRef = storageRef.child(
+        `${bucketName}/${newData.genderImg.name}`
+      );
+      let categoryImgRef = storageRef.child(
+        `${bucketName}/${newData.categoryImg.name}`
+      );
+
+      genderImgRef.put(newData.genderImg).then((snapshot) => {
+        genderImgRef.getDownloadURL().then((genderImg) => {
+          // genderId = generateId("gender");
+          genderRef
+            .set({
+              genderId: genderId, // generate new id
+              genderName: newData.genderName,
+              genderImage: genderImg, // store in storage
+              noOfCategories: 0,
+              noOfSubcategories: 0,
+              noOfStyles: 0,
+              delete: false,
+              hide: true
+            })
+            .then(() => {
+              // id - update
+              // category
+              // categoryId = generateId("category");
+              categoryImgRef.put(newData.categoryImg).then((snapshot) => {
+                categoryImgRef.getDownloadURL().then((categoryImg) => {
+                  categoryRef
+                    .set({
+                      genderId: genderId,
+                      categoryId: categoryId, // genderate new category id
+                      categoryName: newData.categoryName,
+                      categoryImage: categoryImg,
+                      noOfSubcategories: 0,
+                      noOfStyles: 0,
+                      delete: false,
+                      hide: true
+                    })
+                    .then((categoryRef) => {
+                      // gender - no_of_categories increment &&
+                      genderRef.update({
+                        noOfCategories: firebase.firestore.FieldValue.increment(
+                          1
+                        )
+                      });
+                      // re-render
+                      list = [];
+                      db.collection("gender")
+                        .orderBy("genderName", "asc")
+                        .get()
+                        .then((data) => {
+                          data.forEach((doc) => {
+                            list.push(doc.data());
+                          });
+                          ref.current.complete(); // linear loader to complete
+                          setGenderList(list);
+                        });
+                    });
+                });
+              });
+            });
+        });
+      });
+    }
+    // gender - !category - !subcategory
+    else if (
+      newData.genderName !== "" &&
+      newData.genderImg !== null &&
+      newData.categoryName === "" &&
+      newData.categoryImg === null &&
+      newData.subcategoryName === "" &&
+      newData.subcategoryImg === null
+    ) {
+      ref.current.continuousStart();
+      let genderImgRef = storageRef.child(
+        `${bucketName}/${newData.genderImg.name}`
+      );
+
+      genderImgRef.put(newData.genderImg).then((snapshot) => {
+        genderImgRef.getDownloadURL().then((url) => {
+          genderRef
+            .set({
+              genderId: genderId, // generate new id
+              genderName: newData.genderName,
+              genderImage: url, // store in storage
+              noOfCategories: 0,
+              noOfSubcategories: 0,
+              noOfStyles: 0,
+              delete: false,
+              hide: true
+            })
+            .then(() => {
+              list = [];
+              db.collection("gender")
+                .orderBy("genderName", "asc")
+                .get()
+                .then((data) => {
+                  data.forEach((doc) => {
+                    list.push(doc.data());
+                  });
+                  ref.current.complete(); // linear loader to complete
+                  setGenderList(list);
+                });
+            });
+        });
+      });
+    }
+
+    setAddNewItem(null);
+  };
+
   return (
     <div className={style.flex_box_wrap}>
       {ReactDOM.createPortal(
@@ -209,6 +474,14 @@ const Gender = (props) => {
                   img: null
                 });
               }}
+            />
+          )}
+          {addNewItem && (
+            <AddNewModal
+              title={addNewItem}
+              closeModal={closeModalHandler}
+              // publish={publishHandler}
+              draft={draftHandler}
             />
           )}
           <Swippers genderList={genderList} setIndex={activeIndexHandler} />

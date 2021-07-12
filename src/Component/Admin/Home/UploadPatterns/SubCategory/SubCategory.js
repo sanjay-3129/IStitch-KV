@@ -7,13 +7,18 @@ import Spinner from "../../../../UI/Spinner/Spinner";
 import qs from "qs";
 import ChangeModal from "../../../../UI/AddNewModal/ChangeModal.js";
 import LoadingBar from "react-top-loading-bar";
+import AddNewModal from "../../../../UI/AddNewModal/AddNewModal";
+import generateId from "../../../../../Helpers/generateId";
 
 let genderId = undefined;
 let genderName = undefined;
+let genderImg = undefined;
 let categoryId = undefined;
 let categoryName = undefined;
+let categoryImg = undefined;
 
 const db = firebase.firestore();
+let list = null;
 
 const SubCategory = (props) => {
   const ref = useRef(null);
@@ -30,8 +35,14 @@ const SubCategory = (props) => {
     hide: false,
     delete: false,
     genderId: "",
-    categoryId: ""
+    categoryId: "",
+    noOfStyles: 0
   });
+  const [addNewItem, setAddNewItem] = useState("");
+
+  const closeModalHandler = () => {
+    setAddNewItem(null);
+  };
 
   useEffect(() => {
     genderId = qs.parse(props.location.search, {
@@ -40,12 +51,20 @@ const SubCategory = (props) => {
     genderName = qs.parse(props.location.search, {
       ignoreQueryPrefix: true
     }).genderName;
+    genderImg = props.location.search;
+    let index = genderImg.indexOf("https");
+    genderImg = genderImg.substring(index);
+
     categoryId = qs.parse(props.location.search, {
       ignoreQueryPrefix: true
     }).categoryId;
     categoryName = qs.parse(props.location.search, {
       ignoreQueryPrefix: true
     }).categoryName;
+    categoryImg = props.location.search;
+    index = categoryImg.lastIndexOf("https");
+    categoryImg = categoryImg.substring(index);
+    console.log(categoryImg);
 
     if (genderId !== undefined) {
       // get only categories specific to gender
@@ -86,13 +105,20 @@ const SubCategory = (props) => {
     );
   };
 
-  const addNewHandler = () => {
-    props.addNewStyles();
+  const addNewHandler = (value) => {
+    // props.addNewStyles();
+    if (value === "subcategory") {
+      setAddNewItem("subcategory");
+    } else {
+      // styles
+      setAddNewItem("styles");
+    }
   };
 
   const selectedSubCategory = (subcategory) => {
     setSubcategory(subcategory);
   };
+
   const onChangeHandler = (event) => {
     // console.log(event.target.name);
     let value = null;
@@ -223,6 +249,92 @@ const SubCategory = (props) => {
     setIsChange(false);
   };
 
+  const draftHandler = (newData) => {
+    // hide = true;
+    // let genderId = generateId("gender");
+    // let categoryId = generateId("category");
+    let subcategoryId = generateId("subcategory");
+    let genderRef = db.collection("gender").doc(genderId);
+    let categoryRef = db
+      .collection("gender")
+      .doc(genderId)
+      .collection("mainProduct")
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId);
+    let subcategoryRef = db
+      .collection("gender")
+      .doc(genderId)
+      .collection("mainProduct")
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId)
+      .collection("subcategory")
+      .doc(subcategoryId);
+    let bucketName = "images";
+    let storageRef = firebase.storage().ref();
+    console.log("draft handler in gender", newData);
+    //prevgender-prevcategory-subcategory
+    if (
+      newData.genderName !== "" &&
+      newData.genderImg !== null &&
+      newData.categoryName !== "" &&
+      newData.categoryImg !== null &&
+      newData.subcategoryName !== "" &&
+      newData.subcategoryImg !== null
+    ) {
+      ref.current.continuousStart();
+      // let genderImgRef = storageRef.child(
+      //   `${bucketName}/${newData.genderImg.name}`
+      // );
+      // let categoryImgRef = storageRef.child(
+      //   `${bucketName}/${newData.categoryImg.name}`
+      // );
+      let subcategoryImgRef = storageRef.child(
+        `${bucketName}/${newData.subcategoryImg.name}`
+      );
+      subcategoryImgRef.put(newData.subcategoryImg).then((snapshot) => {
+        subcategoryImgRef.getDownloadURL().then((subcategoryImg) => {
+          subcategoryRef
+            .set({
+              genderId: genderId,
+              categoryId: categoryId,
+              subcategoryId: subcategoryId, // genderate new category id
+              subcategoryName: newData.subcategoryName,
+              subcategoryImage: subcategoryImg,
+              noOfStyles: 0,
+              delete: false,
+              hide: true
+            })
+            .then(() => {
+              // gender - no_of_subcategories increment
+              genderRef.update({
+                noOfSubcategories: firebase.firestore.FieldValue.increment(1)
+              });
+              // category - no_of_subcategories - increment
+              categoryRef.update({
+                noOfSubcategories: firebase.firestore.FieldValue.increment(1)
+              });
+
+              list = [];
+              categoryRef
+                .collection("subcategory")
+                .get()
+                .then((data) => {
+                  data.forEach((doc) => {
+                    list.push(doc.data());
+                  });
+                  ref.current.complete(); // linear loader to complete
+                  closeModalHandler();
+                  setSubCategoryList(list);
+                  setSubcategory(list[0]);
+                });
+            });
+        });
+      });
+    }
+  };
+
   let subCategories = null;
 
   if (subCategoryList === null) {
@@ -245,6 +357,7 @@ const SubCategory = (props) => {
           subCategoryDetails={subcategory}
           view={viewHandler}
           addNew={addNewHandler}
+          addNewStyles={addNewHandler}
           changeName={() => setIsChange("name")}
           changeImage={() => setIsChange("image")}
         />
@@ -257,6 +370,20 @@ const SubCategory = (props) => {
       {ReactDOM.createPortal(
         <LoadingBar color="#FF0000" ref={ref} />,
         document.getElementById("linear-loader")
+      )}
+      {addNewItem && (
+        <AddNewModal
+          title={addNewItem}
+          closeModal={closeModalHandler}
+          // publish={publishHandler}
+          genderId={genderId}
+          genderName={genderName}
+          genderImg={genderImg}
+          categoryId={categoryId}
+          categoryName={categoryName}
+          categoryImg={categoryImg}
+          draft={draftHandler}
+        />
       )}
       {isChange && (
         <ChangeModal
@@ -279,46 +406,3 @@ const SubCategory = (props) => {
 };
 
 export default SubCategory;
-
-// let list = [
-//   {
-//     subcategoryId: 1,
-//     subcategoryName: "Coler neck",
-//     subcategoryImage:
-//       "https://firebasestorage.googleapis.com/v0/b/istitch-admin.appspot.com/o/1624125218423.jpg?alt=media&token=a32bb233-9659-4e63-b652-d7ef87bc6702",
-//     hide: false,
-//     delete: false,
-//     genderName: "Boy",
-//     categoryName: "Casuals"
-//   },
-//   {
-//     subcategoryId: 2,
-//     subcategoryName: "Front neck",
-//     subcategoryImage:
-//       "https://firebasestorage.googleapis.com/v0/b/istitch-admin.appspot.com/o/1624125218423.jpg?alt=media&token=a32bb233-9659-4e63-b652-d7ef87bc6702",
-//     hide: false,
-//     delete: false,
-//     genderName: "Boy",
-//     categoryName: "Casuals"
-//   },
-//   {
-//     subcategoryId: 3,
-//     subcategoryName: "Front neck",
-//     subcategoryImage:
-//       "https://firebasestorage.googleapis.com/v0/b/istitch-admin.appspot.com/o/1624176232536.jpg?alt=media&token=edcbbdf5-980a-4683-831f-e6172319f8c7",
-//     hide: false,
-//     delete: false,
-//     genderName: "Girls",
-//     categoryName: "Tops"
-//   },
-//   {
-//     subcategoryId: 1,
-//     subcategoryName: "bottom",
-//     subcategoryImage:
-//       "https://firebasestorage.googleapis.com/v0/b/istitch-admin.appspot.com/o/1624093452349.jpg?alt=media&token=cb9a34e9-a82c-4311-9b38-0e150fdb5768",
-//     hide: false,
-//     delete: false,
-//     genderName: "Girls",
-//     categoryName: "Tops"
-//   }
-// ];

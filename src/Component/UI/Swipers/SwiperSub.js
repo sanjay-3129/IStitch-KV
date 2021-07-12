@@ -74,7 +74,8 @@ const SwiperSub = (props) => {
                     onClick={() =>
                       props.viewAllCategory(
                         genderDetail.genderId,
-                        genderDetail.genderName
+                        genderDetail.genderName,
+                        genderDetail.genderImage
                       )
                     }
                   >
