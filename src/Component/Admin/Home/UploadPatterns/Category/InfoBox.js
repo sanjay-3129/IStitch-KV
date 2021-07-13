@@ -42,7 +42,9 @@ const InfoBox = (props) => {
             <button
               type="button"
               className="delete-gender"
-              onClick={props.deleteHandler}
+              onClick={() =>
+                props.deleteHandler(props.categoryDetails.categoryId)
+              }
             >
               Delete
             </button>
@@ -85,6 +87,7 @@ const InfoBox = (props) => {
           >
             Add New Sub-Category
           </button>
+          <button onClick={props.goBack}>GO BACK</button>
         </div>
       </article>
     </div>

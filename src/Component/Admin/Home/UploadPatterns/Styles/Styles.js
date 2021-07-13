@@ -7,6 +7,7 @@ import Spinner from "../../../../UI/Spinner/Spinner";
 import qs from "qs";
 import ChangeModal from "../../../../UI/AddNewModal/ChangeModal.js";
 import LoadingBar from "react-top-loading-bar";
+import NewStyleModal from "../../../../UI/AddNewModal/NewStyleModal";
 
 let genderId = undefined;
 let genderName = undefined;
@@ -33,7 +34,16 @@ const Styles = (props) => {
     genderName: "",
     categoryName: "",
     subCategoryName: ""
-  });
+  }); // change to id
+  const [addNewItem, setAddNewItem] = useState("");
+
+  const closeModalHandler = () => {
+    setAddNewItem(null);
+  };
+
+  const goBackHandler = () => {
+    props.history.goBack();
+  };
 
   useEffect(() => {
     genderId = qs.parse(props.location.search, {
@@ -66,6 +76,7 @@ const Styles = (props) => {
         .collection("subcategory")
         .doc(subcategoryId)
         .collection("styles")
+        .where("delete", "==", false)
         .get()
         .then((sub) => {
           if (sub.docs.length > 0) {
@@ -85,20 +96,17 @@ const Styles = (props) => {
     } else {
       console.log("cliked directly");
       // get gender, category from UI
+      props.history.push(`${props.match.url}/createNewPattern/subcategory`);
       setStylesList("empty");
     }
   }, []);
 
   const viewHandler = (styleId, styleName) => {
-    console.log("viewing styles");
+    console.log("viewing patterns");
     // props.history.push(
     //   `${props.match.url}/createNewPattern/styles?genderId=${genderId}&genderName=${genderName}&categoryId=${categoryId}&categoryName=${categoryName}&subcategoryId=${subcategoryId}&subcategoryName=${subcategoryName}&styleId=${styleId}&styleName=${styleName}`
     // );
   };
-
-  // const addNewHandler = () => {
-  //   console.log("adding new style");
-  // };
 
   const selectedStylesHandler = (style) => {
     setStyles(style);
@@ -147,6 +155,7 @@ const Styles = (props) => {
           .collection("subcategory")
           .doc(subcategoryId)
           .collection("styles")
+          .where("delete", "==", false)
           .get()
           .then((data) => {
             let list = [];
@@ -200,6 +209,7 @@ const Styles = (props) => {
                 .collection("subcategory")
                 .doc(subcategoryId)
                 .collection("styles")
+                .where("delete", "==", false)
                 .get()
                 .then((data) => {
                   let list = [];
@@ -235,6 +245,49 @@ const Styles = (props) => {
     setIsChange(false);
   };
 
+  const deleteStyleHandler = (styleId) => {
+    ref.current.continuousStart();
+    console.log("subcategory name updated", genderId);
+    db.collection("gender")
+      .doc(genderId)
+      .collection("mainProduct")
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId)
+      .collection("subcategory")
+      .doc(subcategoryId)
+      .collection("styles")
+      .doc(styleId)
+      .update({
+        styleName: true
+      })
+      .then(() => {
+        console.log(" successfully deleted!!!");
+        db.collection("gender")
+          .doc(genderId)
+          .collection("mainProduct")
+          .doc("categories")
+          .collection("category")
+          .doc(categoryId)
+          .collection("subcategory")
+          .doc(subcategoryId)
+          .collection("styles")
+          .where("delete", "==", false)
+          .get()
+          .then((data) => {
+            let list = [];
+            data.forEach((doc) => {
+              list.push(doc.data());
+            });
+            ref.current.complete(); // linear loader to complete
+            setStylesList(list);
+            setStyles(list.find((l) => l.styleId === styleId));
+            // console.log(list.find((l) => l.categoryId === categoryId));
+          });
+      })
+      .catch((e) => console.log(e));
+  };
+
   let style = null;
   if (stylesList === null) {
     style = <Spinner />;
@@ -254,9 +307,11 @@ const Styles = (props) => {
           subcategoryName={subcategoryName}
           stylesDetails={styles}
           view={viewHandler}
-          // addNew={addNewHandler}
+          addNew={() => setAddNewItem("styles")}
           changeName={() => setIsChange("name")}
           changeImage={() => setIsChange("image")}
+          goBack={goBackHandler}
+          deleteHandler={deleteStyleHandler}
         />
       </>
     );
@@ -268,7 +323,9 @@ const Styles = (props) => {
         <LoadingBar color="#FF0000" ref={ref} />,
         document.getElementById("linear-loader")
       )}
-      {/* {styles} */}
+      {addNewItem && (
+        <NewStyleModal closeModal={closeModalHandler} title={addNewItem} />
+      )}
       {isChange && (
         <ChangeModal
           title={isChange}
@@ -290,50 +347,3 @@ const Styles = (props) => {
 };
 
 export default Styles;
-
-// let list = [
-//   {
-//     stylesId: 1,
-//     stylesName: "Collar style",
-//     stylesImage:
-//       "https://firebasestorage.googleapis.com/v0/b/istitch-admin.appspot.com/o/1624125218423.jpg?alt=media&token=a32bb233-9659-4e63-b652-d7ef87bc6702",
-//     hide: false,
-//     delete: false,
-//     genderName: "Boy",
-//     categoryName: "Casuals",
-//     subCategoryName: "Collar"
-//   },
-//   {
-//     stylesId: 2,
-//     stylesName: "apple cut",
-//     stylesImage:
-//       "https://firebasestorage.googleapis.com/v0/b/istitch-admin.appspot.com/o/1624125218423.jpg?alt=media&token=a32bb233-9659-4e63-b652-d7ef87bc6702",
-//     hide: false,
-//     delete: false,
-//     genderName: "Boy",
-//     categoryName: "Casuals",
-//     subCategoryName: "bottom tshirt"
-//   },
-//   {
-//     stylesId: 3,
-//     stylesName: "no collor style",
-//     stylesImage:
-//       "https://firebasestorage.googleapis.com/v0/b/istitch-admin.appspot.com/o/1624176232536.jpg?alt=media&token=edcbbdf5-980a-4683-831f-e6172319f8c7",
-//     hide: false,
-//     delete: false,
-//     genderName: "Girls",
-//     categoryName: "Tops",
-//     subCategoryName: "neck"
-//   },
-//   {
-//     stylesId: 4,
-//     stylesName: "bottom style",
-//     stylesImage:
-//       "https://firebasestorage.googleapis.com/v0/b/istitch-admin.appspot.com/o/1624093452349.jpg?alt=media&token=cb9a34e9-a82c-4311-9b38-0e150fdb5768",
-//     hide: false,
-//     delete: false,
-//     genderName: "Girls",
-//     categoryName: "Tops",
-//     subCategoryName: "bottom top"
-//   }
-// ];

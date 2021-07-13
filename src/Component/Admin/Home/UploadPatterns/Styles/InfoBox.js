@@ -26,7 +26,11 @@ const InfoBox = (props) => {
             >
               Change Image
             </button>
-            <button type="button" className="delete-gender">
+            <button
+              type="button"
+              className="delete-gender"
+              onClick={props.addNew}
+            >
               New
             </button>
             <button
@@ -63,6 +67,7 @@ const InfoBox = (props) => {
             View All Patterns
           </button>
           <button className="category-new">Publish</button>
+          <button onClick={props.goBack}>GO BACK</button>
         </div>
       </article>
     </div>

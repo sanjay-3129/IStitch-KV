@@ -50,6 +50,15 @@ const SideBar = (props) => {
                 Pattern
               </NavLink>
             </li>
+            <li className={`${style.list_item}`}>
+              <NavLink
+                activeClassName={style.activeLink}
+                className={style.list_link}
+                to={`${props.match.url}/bin`}
+              >
+                <i className={`${style.fas} fas fa-trash`}></i> Bin
+              </NavLink>
+            </li>
           </ul>
           <h4>Account</h4>
           <ul className={style.list}>

@@ -84,6 +84,7 @@ const SwiperSub = (props) => {
                   <button className="addNew" onClick={props.addNewCategory}>
                     Add New Category
                   </button>
+                  <button onClick={props.goBack}>GO BACK</button>
                 </div>
               </article>
             </li>

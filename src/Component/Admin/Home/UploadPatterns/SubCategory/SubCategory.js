@@ -39,9 +39,15 @@ const SubCategory = (props) => {
     noOfStyles: 0
   });
   const [addNewItem, setAddNewItem] = useState("");
+  const [genderList, setGenderList] = useState([]);
+  const [categoryList, setCategoryList] = useState([]);
 
   const closeModalHandler = () => {
     setAddNewItem(null);
+  };
+
+  const goBackHandler = () => {
+    props.history.goBack();
   };
 
   useEffect(() => {
@@ -93,6 +99,25 @@ const SubCategory = (props) => {
         .catch((e) => console.log(e));
     } else {
       console.log("cliked directly");
+      db.collection("gender")
+        .where("delete", "==", false)
+        .get()
+        .then((sub) => {
+          if (sub.docs.length > 0) {
+            // subcollection exists
+
+            let list = [];
+            sub.forEach((subDoc) => {
+              let gender = subDoc.data();
+              // if (gender.noOfCategories > 0) {
+              list.push(gender);
+              // } else {
+              // every gender has no category
+              // }
+            });
+            setGenderList(list);
+          }
+        });
       // get gender, category from UI
       setSubCategoryList("empty");
     }
@@ -159,6 +184,7 @@ const SubCategory = (props) => {
           .collection("category")
           .doc(categoryId)
           .collection("subcategory")
+          .where("delete", "==", false)
           .get()
           .then((data) => {
             let list = [];
@@ -173,6 +199,7 @@ const SubCategory = (props) => {
       })
       .catch((e) => console.log(e));
   };
+
   const changeImageHandler = (subcategoryId, newImage) => {
     ref.current.continuousStart();
     // casual shirt
@@ -208,6 +235,7 @@ const SubCategory = (props) => {
                 .collection("category")
                 .doc(categoryId)
                 .collection("subcategory")
+                .where("delete", "==", false)
                 .get()
                 .then((data) => {
                   let list = [];
@@ -319,6 +347,7 @@ const SubCategory = (props) => {
               list = [];
               categoryRef
                 .collection("subcategory")
+                .where("delete", "==", false)
                 .get()
                 .then((data) => {
                   data.forEach((doc) => {
@@ -335,12 +364,171 @@ const SubCategory = (props) => {
     }
   };
 
+  const getSubcategoryList = (genderName, categoryName) => {
+    let gender = genderList.find((gen) => {
+      return genderName === gen.genderName;
+    });
+    let category = categoryList.find((cat) => {
+      return categoryName === cat.categoryName;
+    });
+    db.collection("gender")
+      .doc(gender.genderId)
+      .collection("mainProduct")
+      .doc("categories")
+      .collection("category")
+      .doc(category.categoryId)
+      .collection("subcategory")
+      .where("delete", "==", false)
+      .get()
+      .then((sub) => {
+        if (sub.docs.length > 0) {
+          // subcollection exists
+          let list = [];
+          sub.forEach((subDoc) => {
+            list.push(subDoc.data());
+          });
+          setSubCategoryList(list);
+          setSubcategory(list[0]);
+        } else {
+          // subcollection not exists
+          setCategoryList("subcollection_empty");
+        }
+      })
+      .catch((e) => console.log(e));
+  };
+
+  const getCategoryList = () => {
+    let genName = document.getElementById("exampleDataList").value;
+    // console.log("asdasdasd", genName);
+    let gender = genderList.find((gen) => {
+      return gen.genderName === genName;
+    });
+    if (gender !== undefined) {
+      db.collection("gender")
+        .doc(gender.genderId)
+        .collection("mainProduct")
+        .doc("categories")
+        .collection("category")
+        .where("delete", "==", false)
+        .get()
+        .then((sub) => {
+          if (sub.docs.length > 0) {
+            // subcollection exists
+            let list = [];
+            sub.forEach((subDoc) => {
+              list.push(subDoc.data());
+            });
+            // genderName = genderNam;
+            setCategoryList(list);
+          } else {
+            // subcollection not exists
+            setCategoryList([
+              {
+                categoryId: 1,
+                categoryName: "Empty, pls select another gender"
+              }
+            ]);
+          }
+        })
+        .catch((e) => console.log(e));
+    }
+  };
+
+  const deleteSubcategoryHandler = (subcategoryId) => {
+    // include decrement in all other
+    db.collection("gender")
+      .doc(genderId)
+      .collection("mainProduct")
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId)
+      .collection("subcategory")
+      .doc(subcategoryId)
+      .update({
+        delete: true
+      })
+      .then(() => {
+        console.log(" successfully deleted!!!");
+        db.collection("gender")
+          .doc(genderId)
+          .collection("mainProduct")
+          .doc("categories")
+          .collection("category")
+          .doc(categoryId)
+          .collection("subcategory")
+          .where("delete", "==", false)
+          .get()
+          .then((data) => {
+            let list = [];
+            data.forEach((doc) => {
+              list.push(doc.data());
+            });
+            ref.current.complete(); // linear loader to complete
+            if (list.length > 0) {
+              setSubCategoryList(list);
+              setSubcategory(list.find((l) => l.categoryId === categoryId));
+            } else {
+              setSubCategoryList("subcollection_empty");
+            }
+
+            // console.log(list.find((l) => l.categoryId === categoryId));
+          });
+      })
+      .catch((e) => console.log(e));
+  };
+
   let subCategories = null;
 
   if (subCategoryList === null) {
     subCategories = <Spinner />;
   } else if (subCategoryList === "empty") {
-    subCategories = <h1>No subcategories available</h1>;
+    subCategories = (
+      <form>
+        <label for="exampleDataList" class="form-label">
+          Select Gender
+        </label>
+        <input
+          class="form-control"
+          list="datalistOptions"
+          id="exampleDataList"
+          placeholder="Type to search..."
+          onChange={getCategoryList}
+        />
+        <datalist id="datalistOptions">
+          {genderList.map((gen) => (
+            <option key={gen.genderId} value={gen.genderName} />
+          ))}
+        </datalist>
+        <br />
+        <label for="exampleDataList1" class="form-label">
+          Select category
+        </label>
+        <input
+          class="form-control"
+          list="datalistOptions1"
+          id="exampleDataList1"
+          placeholder="Type to search..."
+        />
+        <datalist id="datalistOptions1">
+          {categoryList.map((cat) => (
+            <option key={cat.categoryId} value={cat.categoryName} />
+          ))}
+        </datalist>
+        <br />
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={() => {
+            getSubcategoryList(
+              document.getElementById("exampleDataList").value,
+              document.getElementById("exampleDataList1").value
+            );
+          }}
+        >
+          Submit
+        </button>
+      </form>
+    );
   } else if (subCategoryList === "subcollection_empty") {
     subCategories = <h1>No subcollection available</h1>;
   } else {
@@ -360,6 +548,8 @@ const SubCategory = (props) => {
           addNewStyles={addNewHandler}
           changeName={() => setIsChange("name")}
           changeImage={() => setIsChange("image")}
+          goBack={goBackHandler}
+          deleteHandler={deleteSubcategoryHandler}
         />
       </>
     );

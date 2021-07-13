@@ -178,29 +178,21 @@ const ModalOverlay = (props) => {
                 }
               />
               <label>Upload Image</label>
-              <div className="upload-img">
+              <div class="upload-img">
                 <input
                   type="file"
                   name="genderImg"
                   id="genderImg"
                   accept=".gif, .jpg, .png"
-                  // value={newData.genderImage} // added newly check if img is not working
+                  // value={newData.categoryImg}
                   onChange={onChangeHandler}
-                  disabled={
-                    props.title === "category" || props.title === "subcategory"
-                      ? true
-                      : false
-                  }
+                  disabled={props.title === "category" ? true : false}
                 />
                 <label
-                  aria-disabled={
-                    props.title === "category" || props.title === "subcategory"
-                      ? true
-                      : false
-                  }
                   onClick={getFile1}
                   htmlFor="genderImg"
                   id="uploadButton1"
+                  aria-disabled={props.title === "category" ? true : false}
                   style={{
                     backgroundImage: `url('${props.genderImg}')`
                   }}
@@ -219,28 +211,41 @@ const ModalOverlay = (props) => {
                 onChange={onChangeHandler}
                 disabled={props.title === "subcategory" ? true : false}
               />
-              <label>Upload Image</label>
-              <div class="upload-img">
-                <input
-                  type="file"
-                  name="categoryImg"
-                  id="categoryImg"
-                  accept=".gif, .jpg, .png"
-                  // value={newData.categoryImg}
-                  onChange={onChangeHandler}
-                  disabled={props.title === "subcategory" ? true : false}
-                />
-                <label
-                  onClick={getFile2}
-                  htmlFor="categoryImg"
-                  id="uploadButton2"
-                  aria-disabled={props.title === "subcategory" ? true : false}
-                  style={{
-                    backgroundImage: `url('${props.categoryImg}')`
-                  }}
-                >
-                  <span>+</span>
-                </label>
+              <div class="row m-0">
+                <div class="col-6 p-0">
+                  <label>Upload Image</label>
+                  <div class="upload-img">
+                    <input
+                      type="file"
+                      name="categoryImg"
+                      id="categoryImg"
+                      accept=".gif, .jpg, .png"
+                      // value={newData.categoryImg}
+                      onChange={onChangeHandler}
+                      disabled={props.title === "subcategory" ? true : false}
+                    />
+                    <label
+                      onClick={getFile2}
+                      htmlFor="categoryImg"
+                      id="uploadButton2"
+                      aria-disabled={
+                        props.title === "subcategory" ? true : false
+                      }
+                      style={{
+                        backgroundImage: `url('${props.categoryImg}')`
+                      }}
+                    >
+                      <span>+</span>
+                    </label>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <label htmlfor="categorytype">Select Category Type</label>
+                  <select name="" id="categorytype">
+                    <option value="main">Main</option>
+                    <option value="addon">Add-On</option>
+                  </select>
+                </div>
               </div>
             </div>
             <div class="tab-pane container" id="subcategory">
@@ -252,23 +257,36 @@ const ModalOverlay = (props) => {
                 value={newData.subcategoryName}
                 onChange={onChangeHandler}
               />
-              <label>Upload Image</label>
-              <div class="upload-img">
-                <input
-                  type="file"
-                  name="subcategoryImg"
-                  id="subcategoryImg"
-                  accept=".gif, .jpg, .png"
-                  // value={newData.categoryImg}
-                  onChange={onChangeHandler}
-                />
-                <label
-                  onClick={getFile3}
-                  htmlFor="subcategoryImg"
-                  id="uploadButton3"
-                >
-                  <span>+</span>
-                </label>
+              <div class="row m-0">
+                <div class="col-6 p-0">
+                  <label>Upload Image</label>
+                  <div class="upload-img">
+                    <input
+                      type="file"
+                      name="subcategoryImg"
+                      id="subcategoryImg"
+                      accept=".gif, .jpg, .png"
+                      // value={newData.categoryImg}
+                      onChange={onChangeHandler}
+                    />
+                    <label
+                      onClick={getFile3}
+                      htmlFor="subcategoryImg"
+                      id="uploadButton3"
+                    >
+                      <span>+</span>
+                    </label>
+                  </div>
+                </div>
+                <div class="col-5">
+                  <label htmlfor="subcategorytype">
+                    Select Sub-Category Type
+                  </label>
+                  <select name="" id="subcategorytype">
+                    <option value="main">Main</option>
+                    <option value="addon">Add-On</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>

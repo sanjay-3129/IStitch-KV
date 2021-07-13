@@ -49,6 +49,24 @@
   box-shadow: 0 6px 16px 6px rgba(0, 0, 0, 0.16);
 }
 
+.addnew select {
+  width: 100%;
+  border: none;
+  padding: 7px 12px;
+  font-size: 16px;
+  margin: 0 0 15px;
+  border-radius: 5px;
+  box-shadow: 0 6px 16px 6px rgba(0, 0, 0, 0.16);
+}
+
+.addnew select:hover {
+  cursor: pointer;
+}
+
+.addnew select:focus {
+  outline: none;
+}
+
 .upload-img {
   position: relative;
   margin: 0 0 15px;

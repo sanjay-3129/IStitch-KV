@@ -36,56 +36,39 @@ const ModalOverlay = (props) => {
     });
   };
 
-  let change = null;
-  if (props.title === "name") {
-    change = (
-      <>
-        <label htmlFor="name">Enter New {props.title}</label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          onChange={props.onChange}
-          value={props.newName}
-        />
-      </>
-    );
-  } else {
-    change = (
-      <>
-        <label>Upload Image</label>
-        <div className="upload-img">
-          <input
-            type="file"
-            name="img"
-            id="img"
-            accept=".gif, .jpg, .png"
-            onChange={props.onChange}
-          />
-          <label onClick={getFile} htmlFor="img" id="uploadButton">
-            <span>+</span>
-          </label>
-        </div>
-      </>
-    );
-  }
-
   return (
     <Card className={classes.modal}>
       <div className="addnew">
         <h2 className>Change {props.title}</h2>
         <form name="form">
           <div>
-            {change}
-            <button type="button" className="draft" onClick={() => props.submit()}>
-              Change
-            </button>
+            <label htmlFor="name">Enter New {props.title}</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              onChange={props.onChange}
+              value={props.newName}
+            />
+            <label>Upload Image</label>
+            <div className="upload-img">
+              <input
+                type="file"
+                name="img"
+                id="img"
+                accept=".gif, .jpg, .png"
+                onChange={props.onChange}
+              />
+              <label onClick={getFile} htmlFor="img" id="uploadButton">
+                <span>+</span>
+              </label>
+            </div>
             <button
               type="button"
-              className="publish"
-              onClick={props.closeModal}
+              class="draft"
+              onClick={() => props.saveAsDraft(newData)}
             >
-              Cancel
+              Save as draft
             </button>
           </div>
         </form>
@@ -94,7 +77,11 @@ const ModalOverlay = (props) => {
   );
 };
 
-const ChangeModal = (props) => {
+const NewStyleModal = (props) => {
+  const draftHandler = (values) => {
+    // console.log(values);
+    props.draft(values);
+  };
   return (
     <React.Fragment>
       {ReactDOM.createPortal(
@@ -109,6 +96,7 @@ const ChangeModal = (props) => {
           change={() => props.change(props.title)}
           newName={props.newName}
           submit={props.submit}
+          saveAsDraft={draftHandler}
           // category={props.category}
         />,
         document.getElementById("overlay-root")
@@ -117,4 +105,4 @@ const ChangeModal = (props) => {
   );
 };
 
-export default ChangeModal;
+export default NewStyleModal;

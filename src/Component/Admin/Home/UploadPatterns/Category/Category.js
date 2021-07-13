@@ -26,6 +26,7 @@ const Category = (props) => {
     img: null
   });
   // let list = [];
+  const [genderList, setgenderList] = useState([]);
   const [category, setCategory] = useState({
     categoryId: "",
     categoryName: "",
@@ -41,6 +42,12 @@ const Category = (props) => {
   const closeModalHandler = () => {
     setAddNewItem(null);
   };
+
+  const goBackHandler = () => {
+    props.history.goBack();
+  };
+
+  // const selectGenderList = () => {};
 
   useEffect(() => {
     // getting query parameters through Links
@@ -61,6 +68,7 @@ const Category = (props) => {
         .collection("mainProduct")
         .doc("categories")
         .collection("category")
+        .where("delete", "==", false)
         .get()
         .then((sub) => {
           if (sub.docs.length > 0) {
@@ -80,6 +88,19 @@ const Category = (props) => {
     } else {
       console.log("cliked directly");
       // get gender from UI - direct click
+      db.collection("gender")
+        .where("delete", "==", false)
+        .get()
+        .then((sub) => {
+          if (sub.docs.length > 0) {
+            // subcollection exists
+            let list = [];
+            sub.forEach((subDoc) => {
+              list.push(subDoc.data());
+            });
+            setgenderList(list);
+          }
+        });
       setCategoryList("empty");
     }
   }, []);
@@ -102,6 +123,45 @@ const Category = (props) => {
 
   const selectedCategoryHandler = (category) => {
     setCategory(category);
+  };
+
+  const deleteCategoryHandler = (categoryId) => {
+    // include decrement in all other
+    ref.current.continuousStart();
+    db.collection("gender")
+      .doc(genderId)
+      .collection("mainProduct")
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId)
+      .update({
+        delete: true
+      })
+      .then(() => {
+        console.log(" successfully updated!!!");
+        db.collection("gender")
+          .doc(genderId)
+          .collection("mainProduct")
+          .doc("categories")
+          .collection("category")
+          .where("delete", "==", false)
+          .get()
+          .then((data) => {
+            let list = [];
+            data.forEach((doc) => {
+              list.push(doc.data());
+            });
+            ref.current.complete(); // linear loader to complete
+            if (list.length > 0) {
+              setCategoryList(list);
+              setCategory(list.find((l) => l.categoryId === categoryId));
+            } else {
+              setCategoryList("subcollection_empty");
+            }
+            // console.log(list.find((l) => l.categoryId === categoryId));
+          });
+      })
+      .catch((e) => console.log(e));
   };
 
   // for newName updating, two-way binding
@@ -141,6 +201,7 @@ const Category = (props) => {
           .collection("mainProduct")
           .doc("categories")
           .collection("category")
+          .where("delete", "==", false)
           .get()
           .then((data) => {
             let list = [];
@@ -186,6 +247,7 @@ const Category = (props) => {
                 .collection("mainProduct")
                 .doc("categories")
                 .collection("category")
+                .where("delete", "==", false)
                 .get()
                 .then((data) => {
                   let list = [];
@@ -317,6 +379,7 @@ const Category = (props) => {
                         .doc("categories")
                         .collection("category")
                         // .orderBy("genderName", "asc") // timestamp
+                        .where("delete", "==", false)
                         .get()
                         .then((data) => {
                           data.forEach((doc) => {
@@ -373,6 +436,7 @@ const Category = (props) => {
                 .doc("categories")
                 .collection("category")
                 // .orderBy("genderName", "asc") // timestamp
+                .where("delete", "==", false)
                 .get()
                 .then((data) => {
                   data.forEach((doc) => {
@@ -388,13 +452,70 @@ const Category = (props) => {
       });
     }
   };
+  const getCategoryList = (genderNam) => {
+    let gender = genderList.find((gen) => {
+      return genderNam === gen.genderName;
+    });
+    db.collection("gender")
+      .doc(gender.genderId)
+      .collection("mainProduct")
+      .doc("categories")
+      .collection("category")
+      .where("delete", "==", false)
+      .get()
+      .then((sub) => {
+        if (sub.docs.length > 0) {
+          // subcollection exists
+          let list = [];
+          sub.forEach((subDoc) => {
+            list.push(subDoc.data());
+          });
+          genderName = genderNam;
+          setCategoryList(list);
+          setCategory(list[0]);
+        } else {
+          // subcollection not exists
+          setCategoryList("subcollection_empty");
+        }
+      })
+      .catch((e) => console.log(e));
+  };
 
   let categories = null;
   if (categoryList === null) {
     categories = <Spinner />;
   } else if (categoryList === "empty") {
     // no categor availble
-    categories = <h1>No categories available</h1>;
+    // categories = <h1>No categories available</h1>;
+    categories = (
+      <form>
+        <label for="exampleDataList" class="form-label">
+          Select Gender
+        </label>
+        <input
+          class="form-control"
+          list="datalistOptions"
+          id="exampleDataList"
+          placeholder="Type to search..."
+        />
+        <datalist id="datalistOptions">
+          {genderList.map((gen) => (
+            <option key={gen.genderId} value={gen.genderName} />
+          ))}
+        </datalist>
+        <br />
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={() => {
+            getCategoryList(document.getElementById("exampleDataList").value);
+          }}
+        >
+          Submit
+        </button>
+      </form>
+    );
+    // all gender
   } else if (categoryList === "subcollection_empty") {
     categories = <h1>No subcollection available</h1>;
   } else {
@@ -412,6 +533,8 @@ const Category = (props) => {
           addNew={addNewHandler}
           changeName={() => setIsChange("name")}
           changeImage={() => setIsChange("image")}
+          goBack={goBackHandler}
+          deleteHandler={deleteCategoryHandler}
         />
       </>
     );

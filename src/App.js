@@ -19,3 +19,12 @@ const App = (props) => {
 };
 
 export default App;
+
+// Note:
+//
+// "@babel/runtime": "7.13.8",
+
+// "devDependencies": {
+// "@babel/runtime": "7.13.8", - if it is inside the devDep, then it shows warning
+//   "typescript": "4.1.3"
+// },

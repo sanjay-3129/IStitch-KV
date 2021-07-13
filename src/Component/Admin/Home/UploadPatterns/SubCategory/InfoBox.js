@@ -36,7 +36,9 @@ const InfoBox = (props) => {
             <button
               type="button"
               className="delete-gender"
-              onClick={props.deleteHandler}
+              onClick={() =>
+                props.deleteHandler(props.subCategoryDetails.subcategoryId)
+              }
             >
               Delete
             </button>
@@ -76,6 +78,7 @@ const InfoBox = (props) => {
           >
             Add New Styles
           </button>
+          <button onClick={props.goBack}>GO BACK</button>
         </div>
       </article>
     </div>

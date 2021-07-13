@@ -1,19 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink, Switch, Route } from "react-router-dom";
 import Gender from "./Gender/Gender";
 import Category from "./Category/Category";
 import SubCategory from "./SubCategory/SubCategory";
 import Styles from "./Styles/Styles";
 import Patterns from "./Patterns/Patterns";
-import AddNewModal from "../../../UI/AddNewModal/AddNewModal";
-import firebase from "../../../../Services/firebase/firebase";
-import generateId from "../../../../Helpers/generateId";
+// import AddNewModal from "../../../UI/AddNewModal/AddNewModal";
+// import firebase from "../../../../Services/firebase/firebase";
+// import generateId from "../../../../Helpers/generateId";
 
 import "./UploadPatterns.css";
 // import style from "./UploadPatterns1.module.css";
 import styled from "styled-components";
 
-const db = firebase.firestore();
+// const db = firebase.firestore();
 const UploadPatterns = (props) => {
   // to open add new modal to add new gender, category etc.
   const [addNewItem, setAddNewItem] = useState("");
@@ -22,6 +22,10 @@ const UploadPatterns = (props) => {
   const closeModalHandler = () => {
     setAddNewItem(null);
   };
+
+  useEffect(() => {
+    props.history.push(`${props.match.url}/createNewPattern/gender`);
+  }, []);
 
   // const publishHandler = (newData) => {
   //   console.log("publish handler");
@@ -155,10 +159,6 @@ const UploadPatterns = (props) => {
   //         });
   //     }
 
-
-
-  
-  
   //     // prevGender - category - subcategory
   //     else if (addNewItem === "category") {
   //       id = generateId("category");
@@ -231,7 +231,6 @@ const UploadPatterns = (props) => {
   //         .catch((e) => console.log(e));
   //     }
   //   }
-  
 
   //     // prevGender - category - !subcategory
   //     else if (addNewItem === "category") {

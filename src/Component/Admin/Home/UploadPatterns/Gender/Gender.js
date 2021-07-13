@@ -43,10 +43,15 @@ const Gender = (props) => {
     setAddNewItem(null);
   };
 
+  const goBackHandler = () => {
+    props.history.goBack();
+  };
+
   useEffect(() => {
     console.log("useeffect");
     list = [];
     db.collection("gender")
+      .where("delete", "==", false)
       .orderBy("genderName", "asc")
       .get()
       .then((data) => {
@@ -71,6 +76,7 @@ const Gender = (props) => {
         console.log(newName + " successfully updated!!!");
         list = [];
         db.collection("gender")
+          .where("delete", "==", false)
           .orderBy("genderName", "asc")
           .get()
           .then((data) => {
@@ -109,6 +115,7 @@ const Gender = (props) => {
               // then set the state again to reload and render it again
               list = [];
               db.collection("gender")
+                .where("delete", "==", false)
                 .orderBy("genderName", "asc")
                 .get()
                 .then((data) => {
@@ -126,7 +133,7 @@ const Gender = (props) => {
       });
   };
 
-  const deleteGenderHandler = (genderName) => {
+  const deleteGenderHandler = (genderId) => {
     // - can hide and store it in bin
     // - if he clear the bin, then it will
     // be deleted from the db
@@ -134,6 +141,26 @@ const Gender = (props) => {
     // hide status should be changed to
     // false, and it should be viewed to
     // the admin again.
+    ref.current.continuousStart();
+    db.collection("gender")
+      .doc(genderId)
+      .update({
+        delete: true
+      })
+      .then(() => {
+        list = [];
+        db.collection("gender")
+          .where("delete", "==", false)
+          .orderBy("genderName", "asc")
+          .get()
+          .then((data) => {
+            data.forEach((doc) => {
+              list.push(doc.data());
+            });
+            ref.current.complete(); // linear loader to complete
+            setGenderList(list);
+          });
+      });
   };
   const viewAllCategoryHandler = (genderId, genderName, genderImg) => {
     // push to category with searchParam with gender.
@@ -143,11 +170,11 @@ const Gender = (props) => {
     );
     // console.log(params.getAll());
   };
-  const addNewCategoryHandler = (genderName) => {
-    props.addNewCategoryInGender();
+  const addNewCategoryHandler = () => {
     // when adding new category from gender, then add that to
     // db and return back to gender itself.
     // viewAllCategory -> it show based on gender
+    setAddNewItem("category");
   };
 
   const addGender = () => {
@@ -308,6 +335,7 @@ const Gender = (props) => {
 
                                   list = [];
                                   db.collection("gender")
+                                    .where("delete", "==", false)
                                     .orderBy("genderName", "asc")
                                     .get()
                                     .then((data) => {
@@ -388,6 +416,7 @@ const Gender = (props) => {
                       // re-render
                       list = [];
                       db.collection("gender")
+                        .where("delete", "==", false)
                         .orderBy("genderName", "asc")
                         .get()
                         .then((data) => {
@@ -434,6 +463,7 @@ const Gender = (props) => {
             .then(() => {
               list = [];
               db.collection("gender")
+                .where("delete", "==", false)
                 .orderBy("genderName", "asc")
                 .get()
                 .then((data) => {
@@ -494,6 +524,7 @@ const Gender = (props) => {
             addNewCategory={addNewCategoryHandler}
             changeNameModal={() => setIsChange("name")}
             changeImageModal={() => setIsChange("image")}
+            goBack={goBackHandler}
           />
         </>
       )}
