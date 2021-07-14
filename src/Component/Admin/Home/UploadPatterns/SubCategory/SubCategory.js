@@ -7,8 +7,9 @@ import Spinner from "../../../../UI/Spinner/Spinner";
 import qs from "qs";
 import ChangeModal from "../../../../UI/AddNewModal/ChangeModal.js";
 import LoadingBar from "react-top-loading-bar";
-import AddNewModal from "../../../../UI/AddNewModal/AddNewModal";
+import AddNewStyle from "../../../../UI/AddNewModal/AddNewStyle";
 import generateId from "../../../../../Helpers/generateId";
+import DeleteConfirmModal from "../../../../UI/DeleteConfirmModal/DeleteConfirmModal";
 
 let genderId = undefined;
 let genderName = undefined;
@@ -24,6 +25,7 @@ const SubCategory = (props) => {
   const ref = useRef(null);
   const [subCategoryList, setSubCategoryList] = useState(null);
   const [isChange, setIsChange] = useState(null); // for modal
+  const [isDelete, setIsDelete] = useState(null);
   const [newData, setNewData] = useState({
     name: "",
     img: null
@@ -391,7 +393,7 @@ const SubCategory = (props) => {
           setSubcategory(list[0]);
         } else {
           // subcollection not exists
-          setCategoryList("subcollection_empty");
+          setSubCategoryList("subcollection_empty");
         }
       })
       .catch((e) => console.log(e));
@@ -549,7 +551,7 @@ const SubCategory = (props) => {
           changeName={() => setIsChange("name")}
           changeImage={() => setIsChange("image")}
           goBack={goBackHandler}
-          deleteHandler={deleteSubcategoryHandler}
+          deleteHandler={(id) => setIsDelete(id)}
         />
       </>
     );
@@ -561,20 +563,7 @@ const SubCategory = (props) => {
         <LoadingBar color="#FF0000" ref={ref} />,
         document.getElementById("linear-loader")
       )}
-      {addNewItem && (
-        <AddNewModal
-          title={addNewItem}
-          closeModal={closeModalHandler}
-          // publish={publishHandler}
-          genderId={genderId}
-          genderName={genderName}
-          genderImg={genderImg}
-          categoryId={categoryId}
-          categoryName={categoryName}
-          categoryImg={categoryImg}
-          draft={draftHandler}
-        />
-      )}
+      {addNewItem && <AddNewStyle />}
       {isChange && (
         <ChangeModal
           title={isChange}
@@ -588,6 +577,14 @@ const SubCategory = (props) => {
               img: null
             });
           }}
+        />
+      )}
+      {isDelete && (
+        <DeleteConfirmModal
+          showModal={() => setIsDelete(true)}
+          handleClose={() => setIsDelete(false)}
+          deleteId={isDelete}
+          confirmDelete={deleteSubcategoryHandler}
         />
       )}
       {subCategories}

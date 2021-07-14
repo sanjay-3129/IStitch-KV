@@ -7,6 +7,7 @@ import SideBar from "./Sidebar/Sidebar.js";
 import NavBar from "./Navbar/Navbar";
 import MyProfile from "./MyProfile/MyProfile";
 import MyUploads from "./MyUploads/MyUploads";
+import MyBin from "./MyBin/MyBin";
 import Saved from "./Saved/Saved";
 import UploadPatterns from "./UploadPatterns/UploadPatterns";
 import Settings from "./Settings/Settings";
@@ -133,6 +134,9 @@ const Home = (props) => {
                 </Route>
                 <Route path={`${props.match.url}/createNewPattern`}>
                   <UploadPatterns {...props} />
+                </Route>
+                <Route path={`${props.match.url}/myBin`}>
+                  <MyBin {...props} />
                 </Route>
                 <Route path={`${props.match.url}/settings`}>
                   <Settings {...props} />

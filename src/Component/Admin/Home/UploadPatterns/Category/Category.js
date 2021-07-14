@@ -9,6 +9,7 @@ import ChangeModal from "../../../../UI/AddNewModal/ChangeModal.js";
 import LoadingBar from "react-top-loading-bar";
 import AddNewModal from "../../../../UI/AddNewModal/AddNewModal";
 import generateId from "../../../../../Helpers/generateId";
+import DeleteConfirmModal from "../../../../UI/DeleteConfirmModal/DeleteConfirmModal";
 
 let genderId = undefined;
 let genderName = undefined;
@@ -21,6 +22,7 @@ const Category = (props) => {
   // if category is clicked from gender, show only categories based on that gender
   const [categoryList, setCategoryList] = useState(null); // category list from db
   const [isChange, setIsChange] = useState(null); // for modal
+  const [isDelete, setIsDelete] = useState(null);
   const [newData, setNewData] = useState({
     name: "",
     img: null
@@ -534,7 +536,7 @@ const Category = (props) => {
           changeName={() => setIsChange("name")}
           changeImage={() => setIsChange("image")}
           goBack={goBackHandler}
-          deleteHandler={deleteCategoryHandler}
+          deleteHandler={(id) => setIsDelete(id)}
         />
       </>
     );
@@ -570,6 +572,14 @@ const Category = (props) => {
               img: null
             });
           }}
+        />
+      )}
+      {isDelete && (
+        <DeleteConfirmModal
+          showModal={() => setIsDelete(true)}
+          handleClose={() => setIsDelete(false)}
+          deleteId={isDelete}
+          confirmDelete={deleteCategoryHandler}
         />
       )}
       {categories}

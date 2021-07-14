@@ -10,6 +10,7 @@ import ChangeModal from "../../../../UI/AddNewModal/ChangeModal.js";
 import LoadingBar from "react-top-loading-bar";
 import AddNewModal from "../../../../UI/AddNewModal/AddNewModal";
 import generateId from "../../../../../Helpers/generateId";
+import DeleteConfirmModal from "../../../../UI/DeleteConfirmModal/DeleteConfirmModal";
 // this will enable the book like styling - added in swiper.js
 // import Swiper from "swiper/bundle";
 // import Swiper styles
@@ -22,6 +23,7 @@ const Gender = (props) => {
   const ref = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isChange, setIsChange] = useState(null); // for modal
+  const [isDelete, setIsDelete] = useState(null); // this will contain the
   const [newData, setNewData] = useState({
     name: "",
     img: null
@@ -159,6 +161,7 @@ const Gender = (props) => {
             });
             ref.current.complete(); // linear loader to complete
             setGenderList(list);
+            setIsDelete(false);
           });
       });
   };
@@ -514,12 +517,20 @@ const Gender = (props) => {
               draft={draftHandler}
             />
           )}
+          {isDelete && (
+            <DeleteConfirmModal
+              showModal={() => setIsDelete(true)}
+              handleClose={() => setIsDelete(false)}
+              deleteId={isDelete}
+              confirmDelete={deleteGenderHandler}
+            />
+          )}
           <Swippers genderList={genderList} setIndex={activeIndexHandler} />
           <SwipperSub
             index={activeIndex}
             genderList={genderList}
             addGender={addGender}
-            deleteGender={deleteGenderHandler}
+            deleteGender={(id) => setIsDelete(id)}
             viewAllCategory={viewAllCategoryHandler}
             addNewCategory={addNewCategoryHandler}
             changeNameModal={() => setIsChange("name")}

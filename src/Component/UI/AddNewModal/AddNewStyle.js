@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 import Card from "../Card/Card";
 
 import classes from "./AddNewModal.module.css";
-import "./AddNewStyle.css";
+import "./AddNew.css";
 
 import $ from "jquery";
 
@@ -25,7 +25,7 @@ const ModalOverlay = (props) => {
       console.log(file);
       var reader = new FileReader();
       reader.onloadend = function () {
-        $("#uploadButton1").css(
+        $("#uploadButton").css(
           "background-image",
           'url("' + reader.result + '")'
         );
@@ -43,12 +43,7 @@ const ModalOverlay = (props) => {
         <h2>Add New</h2>
         <form method="post" name="form" className={classes.form}>
           <label htmlFor="genderName">Enter Style Name</label>
-          <input
-            type="text"
-            id="styleName"
-            name="styleName"
-            value={newData.styleName}
-          />
+          <input type="text" id="styleName" name="styleName" />
           <label>Upload Image</label>
           <div class="upload-img">
             <input
@@ -72,7 +67,7 @@ const AddNewStyle = () => {
   return (
     <React.Fragment>
       {ReactDOM.createPortal(
-        <Backdrop />,
+        <Backdrop onClose={props.closeModal} />,
         document.getElementById("backdrop-root")
       )}
       {ReactDOM.createPortal(

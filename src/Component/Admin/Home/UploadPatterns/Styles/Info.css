@@ -20,6 +20,7 @@
   color: #005b7f;
 }
 .left a.active {
+  color: #005b7f;
   border: 1px solid #005b7f;
   border-bottom: 5px solid transparent;
 }

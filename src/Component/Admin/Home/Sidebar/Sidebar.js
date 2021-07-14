@@ -54,9 +54,9 @@ const SideBar = (props) => {
               <NavLink
                 activeClassName={style.activeLink}
                 className={style.list_link}
-                to={`${props.match.url}/bin`}
+                to={`${props.match.url}/myBin`}
               >
-                <i className={`${style.fas} fas fa-trash`}></i> Bin
+                <i className={`${style.fas} fas fa-trash`}></i>Bin
               </NavLink>
             </li>
           </ul>

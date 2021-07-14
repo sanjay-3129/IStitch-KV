@@ -8,6 +8,7 @@ import qs from "qs";
 import ChangeModal from "../../../../UI/AddNewModal/ChangeModal.js";
 import LoadingBar from "react-top-loading-bar";
 import NewStyleModal from "../../../../UI/AddNewModal/NewStyleModal";
+import DeleteConfirmModal from "../../../../UI/DeleteConfirmModal/DeleteConfirmModal";
 
 let genderId = undefined;
 let genderName = undefined;
@@ -21,6 +22,7 @@ const Styles = (props) => {
   const ref = useRef(null);
   const [stylesList, setStylesList] = useState(null);
   const [isChange, setIsChange] = useState(null); // for modal
+  const [isDelete, setIsDelete] = useState(null);
   const [newData, setNewData] = useState({
     name: "",
     img: null
@@ -259,7 +261,7 @@ const Styles = (props) => {
       .collection("styles")
       .doc(styleId)
       .update({
-        styleName: true
+        delete: true
       })
       .then(() => {
         console.log(" successfully deleted!!!");
@@ -280,8 +282,12 @@ const Styles = (props) => {
               list.push(doc.data());
             });
             ref.current.complete(); // linear loader to complete
-            setStylesList(list);
-            setStyles(list.find((l) => l.styleId === styleId));
+            if (list.length > 0) {
+              setStylesList(list);
+              setStyles(list.find((l) => l.styleId === styleId));
+            } else {
+              setStyles("subcollection_empty");
+            }
             // console.log(list.find((l) => l.categoryId === categoryId));
           });
       })
@@ -293,6 +299,8 @@ const Styles = (props) => {
     style = <Spinner />;
   } else if (stylesList === "empty") {
     style = <h1>No categories available</h1>;
+  } else if (stylesList === "subcollection_empty") {
+    style = <h1>No subcollection available</h1>;
   } else {
     style = (
       <>
@@ -311,7 +319,7 @@ const Styles = (props) => {
           changeName={() => setIsChange("name")}
           changeImage={() => setIsChange("image")}
           goBack={goBackHandler}
-          deleteHandler={deleteStyleHandler}
+          deleteHandler={(id) => setIsDelete(id)}
         />
       </>
     );
@@ -339,6 +347,14 @@ const Styles = (props) => {
               img: null
             });
           }}
+        />
+      )}
+      {isDelete && (
+        <DeleteConfirmModal
+          showModal={() => setIsDelete(true)}
+          handleClose={() => setIsDelete(false)}
+          deleteId={isDelete}
+          confirmDelete={deleteStyleHandler}
         />
       )}
       {style}
