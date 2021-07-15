@@ -40,9 +40,9 @@ const ModalOverlay = (props) => {
   return (
     <Card className={classes.modal}>
       <div className="addnew">
-        <h2>Add New</h2>
+        <h2>Add New {props.title}</h2>
         <form method="post" name="form" className={classes.form}>
-          <label htmlFor="styleName">Enter Style Name</label>
+          <label htmlFor="styleName">Enter {props.title} Name</label>
           <input
             type="text"
             id="name"

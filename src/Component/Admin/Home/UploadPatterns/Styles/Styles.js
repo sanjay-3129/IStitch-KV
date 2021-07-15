@@ -490,32 +490,3 @@ const Styles = (props) => {
 };
 
 export default Styles;
-
-// let genderRef = db.collection("gender").doc(genderId);
-//     let categoryRef = db
-//       .collection("gender")
-//       .doc(genderId)
-//       .collection("mainProduct")
-//       .doc("categories")
-//       .collection("category")
-//       .doc(categoryId);
-//     let subcategoryRef = db
-//       .collection("gender")
-//       .doc(genderId)
-//       .collection("mainProduct")
-//       .doc("categories")
-//       .collection("category")
-//       .doc(categoryId)
-//       .collection("subcategory")
-//       .doc(subcategoryId);
-//     let styleRef = db
-//       .collection("gender")
-//       .doc(genderId)
-//       .collection("mainProduct")
-//       .doc("categories")
-//       .collection("category")
-//       .doc(categoryId)
-//       .collection("subcategory")
-//       .doc(subcategoryId)
-//       .collection("styles")
-//       .doc(styleId);

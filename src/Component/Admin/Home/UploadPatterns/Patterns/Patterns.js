@@ -463,7 +463,7 @@ const Patterns = (props) => {
                     noOfSubcategories: firebase.firestore.FieldValue.increment(
                       1
                     )
-                  });k
+                  });
                   subcategoryRef.update({
                     noOfStyle: firebase.firestore.FieldValue.increment(1)
                   });

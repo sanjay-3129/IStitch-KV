@@ -86,10 +86,7 @@ const InfoBox = (props) => {
           >
             Add New Category
           </button>
-          <button
-            className="category-new"
-            onClick={() => props.addNew("subcategory")}
-          >
+          <button className="category-new" onClick={props.addNewSub}>
             Add New Sub-Category
           </button>
           <button

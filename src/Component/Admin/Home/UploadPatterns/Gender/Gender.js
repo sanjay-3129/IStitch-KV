@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import ReactDOM from "react-dom";
 import Swippers from "../../../../UI/Swipers/Swipers";
-// import SwippersJS from "../../../../UI/Swipers/SwipersJS";
 import SwipperSub from "../../../../UI/Swipers/SwiperSub";
 import style from "./Gender.module.css";
 import firebase from "../../../../../Services/firebase/firebase";
@@ -9,6 +8,7 @@ import Spinner from "../../../../UI/Spinner/Spinner";
 import ChangeModal from "../../../../UI/AddNewModal/ChangeModal.js";
 import LoadingBar from "react-top-loading-bar";
 import AddNewModal from "../../../../UI/AddNewModal/AddNewModal";
+import AddNewStyle from "../../../../UI/AddNewModal/AddNewStyle";
 import generateId from "../../../../../Helpers/generateId";
 import DeleteConfirmModal from "../../../../UI/DeleteConfirmModal/DeleteConfirmModal";
 // this will enable the book like styling - added in swiper.js
@@ -40,6 +40,7 @@ const Gender = (props) => {
     delete: false
   });
   const [addNewItem, setAddNewItem] = useState("");
+  const [newModal, setNewModal] = useState("");
 
   const closeModalHandler = () => {
     setAddNewItem(null);
@@ -207,7 +208,7 @@ const Gender = (props) => {
     // when adding new category from gender, then add that to
     // db and return back to gender itself.
     // viewAllCategory -> it show based on gender
-    setAddNewItem("category");
+    // setAddNewItem("category");
   };
 
   const addGender = () => {
@@ -251,6 +252,48 @@ const Gender = (props) => {
       img: null
     });
     setIsChange(false);
+  };
+
+  const draftCategoryHandler = (newData) => {
+    // console.log(newData);
+    ref.current.continuousStart();
+    let categoryId = generateId("category");
+    let bucketName = "images";
+    let storageRef = firebase.storage().ref();
+    let genderRef = db.collection("gender").doc(gender.genderId);
+    let categoryRef = db
+      .collection("gender")
+      .doc(gender.genderId)
+      .collection("mainProduct")
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId);
+    let categoryImgRef = storageRef.child(`${bucketName}/${newData.img.name}`);
+    categoryImgRef.put(newData.img).then(() => {
+      categoryImgRef.getDownloadURL().then((categoryImg) => {
+        categoryRef
+          .set({
+            genderId: gender.genderId,
+            categoryId: categoryId, // genderate new category id
+            categoryName: newData.name,
+            categoryImage: categoryImg,
+            noOfSubcategories: 0,
+            noOfStyles: 0,
+            delete: false,
+            hide: true
+          })
+          .then(() => {
+            // gender - no_of_categories increment
+            ref.current.complete();
+            genderRef.update({
+              noOfCategories: firebase.firestore.FieldValue.increment(1)
+            });
+            props.history.push(
+              `${props.match.url}/createNewPattern/category?genderId=${gender.genderId}&genderName=${gender.genderName}&genderImg=${gender.genderImg}`
+            );
+          });
+      });
+    });
   };
 
   const draftHandler = (newData) => {
@@ -547,6 +590,15 @@ const Gender = (props) => {
               draft={draftHandler}
             />
           )}
+          {newModal && (
+            <AddNewStyle
+              title={newModal}
+              newData={newData}
+              closeModal={() => setNewModal(false)}
+              onChange={onChangeHandler}
+              saveAsDraft={draftCategoryHandler}
+            />
+          )}
           {isDelete && (
             <DeleteConfirmModal
               showModal={() => setIsDelete(true)}
@@ -562,7 +614,7 @@ const Gender = (props) => {
             addGender={addGender}
             deleteGender={(id) => setIsDelete(id)}
             viewAllCategory={viewAllCategoryHandler}
-            addNewCategory={addNewCategoryHandler}
+            addNewCategory={() => setNewModal("Category")}
             changeNameModal={() => setIsChange("name")}
             changeImageModal={() => setIsChange("image")}
             goBack={goBackHandler}

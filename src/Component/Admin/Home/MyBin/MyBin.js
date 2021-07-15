@@ -7,7 +7,7 @@ import DeleteCard from "../../../UI/Card/DeleteCard";
 
 const MyBin = (props) => {
   const db = firebase.firestore();
-  const [deletedItemsList, setDeletedItemsList] = useState(null);
+  const [deletedItemsList, setDeletedItemsList] = useState([]);
   const [mainItem, setMainItem] = useState({
     item: "",
     itemImg: ""
@@ -27,36 +27,38 @@ const MyBin = (props) => {
           let list = [];
           docs.forEach((doc) => {
             let item = doc.data();
+            console.log("--------", item);
             list.push(item);
-            if (item.genderImage !== "") {
+            if (item.genderImg !== "") {
               // gender
               setMainItem({
                 item: "gender",
-                itemImg: item.genderImage
+                itemImg: item.genderImg
               });
-            } else if (item.categoryImage !== "") {
+            } else if (item.categoryImg !== "") {
               // category
+              console.log("elseif", item);
               setMainItem({
                 item: "category",
-                itemImg: item.categoryImage
+                itemImg: item.categoryImg
               });
-            } else if (item.subcategoryImage !== "") {
+            } else if (item.subcategoryImg !== "") {
               // subcategory
               setMainItem({
                 item: "subcategory",
-                itemImg: item.subcategoryImage
+                itemImg: item.subcategoryImg
               });
-            } else if (item.styleImage !== "") {
+            } else if (item.styleImg !== "") {
               // style
               setMainItem({
                 item: "style",
-                itemImg: item.styleImage
+                itemImg: item.styleImg
               });
             } else {
               // pattern
               setMainItem({
                 item: "pattern",
-                itemImg: item.patternImage
+                itemImg: item.patternImg
               });
             }
           });
@@ -183,7 +185,7 @@ const MyBin = (props) => {
 
   const permanentlyDeleteItem = (deleteItemDetail) => {
     // gender
-    
+
     if (mainItem.item === "gender") {
       db.collection("gender")
         .doc(deleteItemDetail.genderId)
@@ -296,12 +298,19 @@ const MyBin = (props) => {
     Bin = <h1>No Items is deleted yet!!!</h1>;
   } else {
     Bin = (
-      <DeleteCard
-        mainImg={mainItem.itemImg}
-        items={deletedItemsList}
-        restore={restoreDeletedItem}
-        delete={permanentlyDeleteItem}
-      />
+      <>
+        {deletedItemsList.map((item) => {
+          return (
+            <DeleteCard
+              key={item.id}
+              mainImg={mainItem.itemImg}
+              item={item}
+              restore={restoreDeletedItem}
+              delete={permanentlyDeleteItem}
+            />
+          );
+        })}
+      </>
     );
   }
 

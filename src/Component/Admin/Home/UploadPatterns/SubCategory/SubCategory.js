@@ -7,7 +7,7 @@ import Spinner from "../../../../UI/Spinner/Spinner";
 import qs from "qs";
 import ChangeModal from "../../../../UI/AddNewModal/ChangeModal.js";
 import LoadingBar from "react-top-loading-bar";
-// import AddNewStyle from "../../../../UI/AddNewModal/AddNewStyle";
+import AddNewStyle from "../../../../UI/AddNewModal/AddNewStyle";
 import AddNewModal from "../../../../UI/AddNewModal/AddNewModal";
 import generateId from "../../../../../Helpers/generateId";
 import DeleteConfirmModal from "../../../../UI/DeleteConfirmModal/DeleteConfirmModal";
@@ -42,6 +42,7 @@ const SubCategory = (props) => {
     noOfStyles: 0
   });
   const [addNewItem, setAddNewItem] = useState("");
+  const [newModal, setNewModal] = useState("");
   const [genderList, setGenderList] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
 
@@ -509,6 +510,75 @@ const SubCategory = (props) => {
       .catch((e) => console.log(e));
   };
 
+  const draftStyleHandler = (newData) => {
+    // console.log(newData);
+    ref.current.continuousStart();
+    let styleId = generateId("styles");
+    let bucketName = "images";
+    let storageRef = firebase.storage().ref();
+    let genderRef = db.collection("gender").doc(genderId);
+    let categoryRef = db
+      .collection("gender")
+      .doc(genderId)
+      .collection("mainProduct")
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId);
+    let subcategoryRef = db
+      .collection("gender")
+      .doc(genderId)
+      .collection("mainProduct")
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId)
+      .collection("subcategory")
+      .doc(subcategory.subcategoryId);
+    let styleRef = db
+      .collection("gender")
+      .doc(genderId)
+      .collection("mainProduct")
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId)
+      .collection("subcategory")
+      .doc(subcategory.subcategoryId)
+      .collection("styles")
+      .doc(styleId);
+    let styleImgRef = storageRef.child(`${bucketName}/${newData.img.name}`);
+    styleImgRef.put(newData.img).then(() => {
+      styleImgRef.getDownloadURL().then((styleImg) => {
+        styleRef
+          .set({
+            genderId: genderId,
+            categoryId: categoryId,
+            subcategoryId: subcategory.subcategoryId,
+            styleId: styleId, // genderate new category id
+            styleName: newData.name,
+            styleImage: styleImg,
+            delete: false,
+            hide: true
+          })
+          .then(() => {
+            ref.current.complete();
+            // gender - no_of_categories increment
+            genderRef.update({
+              noOfSubategories: firebase.firestore.FieldValue.increment(1)
+            });
+            // category - no_of_subcategories - increment
+            categoryRef.update({
+              noOfSubcategories: firebase.firestore.FieldValue.increment(1)
+            });
+            subcategoryRef.update({
+              noOfStyle: firebase.firestore.FieldValue.increment(1)
+            });
+            props.history.push(
+              `${props.match.url}/createNewPattern/styles?genderId=${genderId}&genderName=${genderName}&categoryId=${categoryId}&categoryName=${categoryName}&subcategoryId=${subcategory.subcategoryId}&subcategoryName=${subcategory.subcategoryName}`
+            );
+          });
+      });
+    });
+  };
+
   let subCategories = null;
 
   if (subCategoryList === null) {
@@ -577,7 +647,7 @@ const SubCategory = (props) => {
           subCategoryDetails={subcategory}
           view={viewHandler}
           addNew={addNewHandler}
-          addNewStyles={addNewHandler}
+          addNewStyles={() => setNewModal("Styles")}
           changeName={() => setIsChange("name")}
           changeImage={() => setIsChange("image")}
           goBack={goBackHandler}
@@ -605,6 +675,15 @@ const SubCategory = (props) => {
           categoryName={categoryName}
           categoryImg={categoryImg}
           draft={draftHandler}
+        />
+      )}
+      {newModal && (
+        <AddNewStyle
+          title={newModal}
+          newData={newData}
+          closeModal={() => setNewModal(false)}
+          onChange={onChangeHandler}
+          saveAsDraft={draftStyleHandler}
         />
       )}
       {isChange && (
