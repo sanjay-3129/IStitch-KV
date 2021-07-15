@@ -7,9 +7,10 @@ import Spinner from "../../../../UI/Spinner/Spinner";
 import qs from "qs";
 import ChangeModal from "../../../../UI/AddNewModal/ChangeModal.js";
 import LoadingBar from "react-top-loading-bar";
-import NewStyleModal from "../../../../UI/AddNewModal/NewStyleModal";
+import AddNewStyle from "../../../../UI/AddNewModal/AddNewStyle";
+// import NewStyleModal from "../../../../UI/AddNewModal/NewStyleModal";
 import DeleteConfirmModal from "../../../../UI/DeleteConfirmModal/DeleteConfirmModal";
-
+import generateId from "../../../../../Helpers/generateId";
 let genderId = undefined;
 let genderName = undefined;
 let categoryId = undefined;
@@ -37,7 +38,7 @@ const Styles = (props) => {
     categoryName: "",
     subCategoryName: ""
   }); // change to id
-  const [addNewItem, setAddNewItem] = useState("");
+  const [addNewItem, setAddNewItem] = useState(null);
 
   const closeModalHandler = () => {
     setAddNewItem(null);
@@ -105,9 +106,9 @@ const Styles = (props) => {
 
   const viewHandler = (styleId, styleName) => {
     console.log("viewing patterns");
-    // props.history.push(
-    //   `${props.match.url}/createNewPattern/styles?genderId=${genderId}&genderName=${genderName}&categoryId=${categoryId}&categoryName=${categoryName}&subcategoryId=${subcategoryId}&subcategoryName=${subcategoryName}&styleId=${styleId}&styleName=${styleName}`
-    // );
+    props.history.push(
+      `${props.match.url}/createNewPattern/patterns?genderId=${genderId}&genderName=${genderName}&categoryId=${categoryId}&categoryName=${categoryName}&subcategoryId=${subcategoryId}&subcategoryName=${subcategoryName}&styleId=${styleId}&styleName=${styleName}`
+    );
   };
 
   const selectedStylesHandler = (style) => {
@@ -249,6 +250,9 @@ const Styles = (props) => {
 
   const deleteStyleHandler = (styleId) => {
     ref.current.continuousStart();
+    let styleDet = stylesList.find((g) => {
+      return g.styleId === styleId;
+    });
     console.log("subcategory name updated", genderId);
     db.collection("gender")
       .doc(genderId)
@@ -264,50 +268,166 @@ const Styles = (props) => {
         delete: true
       })
       .then(() => {
-        console.log(" successfully deleted!!!");
-        db.collection("gender")
-          .doc(genderId)
-          .collection("mainProduct")
-          .doc("categories")
-          .collection("category")
-          .doc(categoryId)
-          .collection("subcategory")
-          .doc(subcategoryId)
-          .collection("styles")
-          .where("delete", "==", false)
-          .get()
-          .then((data) => {
-            let list = [];
-            data.forEach((doc) => {
-              list.push(doc.data());
-            });
-            ref.current.complete(); // linear loader to complete
-            if (list.length > 0) {
-              setStylesList(list);
-              setStyles(list.find((l) => l.styleId === styleId));
-            } else {
-              setStyles("subcollection_empty");
-            }
-            // console.log(list.find((l) => l.categoryId === categoryId));
-          });
+        // add data to deleteItems collections
+        let id = generateId("deleted");
+        db.collection("deleteItems")
+          .doc(id)
+          .set({
+            id: id,
+            genderId: genderId,
+            genderName: genderName,
+            genderImg: "",
+            categoryId: categoryId,
+            categoryName: categoryName,
+            categoryImg: "",
+            subcategoryId: subcategoryId,
+            subcategoryName: subcategoryName,
+            subcategoryImg: "",
+            styleId: styleDet.styleId,
+            styleName: styleDet.styleName,
+            styleImg: styleDet.styleImage,
+            patternId: "",
+            patternName: "",
+            patternImg: ""
+          })
+          .then(() => {
+            // decrement code
+            console.log(" successfully deleted!!!");
+            db.collection("gender")
+              .doc(genderId)
+              .collection("mainProduct")
+              .doc("categories")
+              .collection("category")
+              .doc(categoryId)
+              .collection("subcategory")
+              .doc(subcategoryId)
+              .collection("styles")
+              .where("delete", "==", false)
+              .get()
+              .then((data) => {
+                let list = [];
+                data.forEach((doc) => {
+                  list.push(doc.data());
+                });
+                ref.current.complete(); // linear loader to complete
+                if (list.length > 0) {
+                  setStylesList(list);
+                  setStyles(list[0]);
+                } else {
+                  setStyles("subcollection_empty");
+                }
+                setIsDelete(null);
+                // console.log(list.find((l) => l.categoryId === categoryId));
+              });
+          })
+          .catch((e) => console.log(e));
       })
       .catch((e) => console.log(e));
+  };
+
+  const addNewHandler = (value) => {
+    // props.addNewStyles();
+    if (value === "styles") {
+      setAddNewItem("styles");
+    } else {
+      // styles
+      setAddNewItem("patterns");
+    }
+  };
+
+  const draftHandler = (newData) => {
+    // console.log(newData);
+    let styleId = generateId("styles");
+    let genderRef = db.collection("gender").doc(genderId);
+    let categoryRef = db
+      .collection("gender")
+      .doc(genderId)
+      .collection("mainProduct")
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId);
+    let subcategoryRef = db
+      .collection("gender")
+      .doc(genderId)
+      .collection("mainProduct")
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId)
+      .collection("subcategory")
+      .doc(subcategoryId);
+    let styleRef = db
+      .collection("gender")
+      .doc(genderId)
+      .collection("mainProduct")
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId)
+      .collection("subcategory")
+      .doc(subcategoryId)
+      .collection("styles")
+      .doc(styleId);
+    let bucketName = "images";
+    let storageRef = firebase.storage().ref();
+    console.log("draft handler in styles", newData);
+    if (newData.name !== "" && newData.img !== null) {
+      ref.current.continuousStart();
+      let styleImgRef = storageRef.child(`${bucketName}/${newData.img.name}`);
+      styleImgRef.put(newData.img).then((snapshot) => {
+        styleImgRef.getDownloadURL().then((styleImg) => {
+          styleRef
+            .set({
+              genderId: genderId,
+              categoryId: categoryId,
+              subcategoryId: subcategoryId,
+              styleId: styleId, // genderate new category id
+              styleName: newData.name,
+              styleImage: styleImg,
+              delete: false,
+              hide: true
+            })
+            .then(() => {
+              // gender - no_of_subcategories increment
+              genderRef.update({
+                noOfSubcategories: firebase.firestore.FieldValue.increment(1)
+              });
+              // category - no_of_subcategories - increment
+              categoryRef.update({
+                noOfSubcategories: firebase.firestore.FieldValue.increment(1)
+              });
+              subcategoryRef.update({
+                noOfStyle: firebase.firestore.FieldValue.increment(1)
+              });
+              let list = [];
+              subcategoryRef
+                .collection("styles")
+                .where("delete", "==", false)
+                .get()
+                .then((data) => {
+                  data.forEach((doc) => {
+                    list.push(doc.data());
+                  });
+                  ref.current.complete(); // linear loader to complete
+                  closeModalHandler();
+                  setStylesList(list);
+                  setStyles(list[0]);
+                });
+            });
+        });
+      });
+    }
   };
 
   let style = null;
   if (stylesList === null) {
     style = <Spinner />;
   } else if (stylesList === "empty") {
-    style = <h1>No categories available</h1>;
+    style = <h1>No styles available</h1>;
   } else if (stylesList === "subcollection_empty") {
     style = <h1>No subcollection available</h1>;
   } else {
     style = (
       <>
-        <Info
-          stylesList={stylesList}
-          selectedCategory={selectedStylesHandler}
-        />
+        <Info stylesList={stylesList} selectedStyles={selectedStylesHandler} />
         <InfoBox
           title="Styles"
           genderName={genderName}
@@ -315,7 +435,8 @@ const Styles = (props) => {
           subcategoryName={subcategoryName}
           stylesDetails={styles}
           view={viewHandler}
-          addNew={() => setAddNewItem("styles")}
+          addNew={addNewHandler}
+          // addNew={() => setAddNewItem("styles")}
           changeName={() => setIsChange("name")}
           changeImage={() => setIsChange("image")}
           goBack={goBackHandler}
@@ -332,7 +453,13 @@ const Styles = (props) => {
         document.getElementById("linear-loader")
       )}
       {addNewItem && (
-        <NewStyleModal closeModal={closeModalHandler} title={addNewItem} />
+        <AddNewStyle
+          closeModal={closeModalHandler}
+          title={addNewItem}
+          saveAsDraft={draftHandler}
+          newData={newData}
+          onChange={onChangeHandler}
+        />
       )}
       {isChange && (
         <ChangeModal
@@ -363,3 +490,32 @@ const Styles = (props) => {
 };
 
 export default Styles;
+
+// let genderRef = db.collection("gender").doc(genderId);
+//     let categoryRef = db
+//       .collection("gender")
+//       .doc(genderId)
+//       .collection("mainProduct")
+//       .doc("categories")
+//       .collection("category")
+//       .doc(categoryId);
+//     let subcategoryRef = db
+//       .collection("gender")
+//       .doc(genderId)
+//       .collection("mainProduct")
+//       .doc("categories")
+//       .collection("category")
+//       .doc(categoryId)
+//       .collection("subcategory")
+//       .doc(subcategoryId);
+//     let styleRef = db
+//       .collection("gender")
+//       .doc(genderId)
+//       .collection("mainProduct")
+//       .doc("categories")
+//       .collection("category")
+//       .doc(categoryId)
+//       .collection("subcategory")
+//       .doc(subcategoryId)
+//       .collection("styles")
+//       .doc(styleId);

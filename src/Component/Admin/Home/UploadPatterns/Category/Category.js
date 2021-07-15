@@ -129,7 +129,12 @@ const Category = (props) => {
 
   const deleteCategoryHandler = (categoryId) => {
     // include decrement in all other
+    console.log(categoryId, "deleteCategoryHandler");
     ref.current.continuousStart();
+    let categoryDet = categoryList.find((g) => {
+      return g.categoryId === categoryId;
+    });
+
     db.collection("gender")
       .doc(genderId)
       .collection("mainProduct")
@@ -140,28 +145,54 @@ const Category = (props) => {
         delete: true
       })
       .then(() => {
-        console.log(" successfully updated!!!");
-        db.collection("gender")
-          .doc(genderId)
-          .collection("mainProduct")
-          .doc("categories")
-          .collection("category")
-          .where("delete", "==", false)
-          .get()
-          .then((data) => {
-            let list = [];
-            data.forEach((doc) => {
-              list.push(doc.data());
-            });
-            ref.current.complete(); // linear loader to complete
-            if (list.length > 0) {
-              setCategoryList(list);
-              setCategory(list.find((l) => l.categoryId === categoryId));
-            } else {
-              setCategoryList("subcollection_empty");
-            }
-            // console.log(list.find((l) => l.categoryId === categoryId));
-          });
+        // add data to deleteItems collections
+        let id = generateId("deleted");
+        db.collection("deleteItems")
+          .doc(id)
+          .set({
+            id: id,
+            genderId: genderId,
+            genderName: genderName,
+            genderImg: "",
+            categoryId: categoryDet.categoryId,
+            categoryName: categoryDet.categoryName,
+            categoryImg: categoryDet.categoryImage,
+            subcategoryId: "",
+            subcategoryName: "",
+            subcategoryImg: "",
+            styleId: "",
+            styleName: "",
+            styleImg: "",
+            patternId: "",
+            patternName: "",
+            patternImg: ""
+          })
+          .then(() => {
+            // get data which is not deleted
+            console.log(" successfully updated!!!");
+            db.collection("gender")
+              .doc(genderId)
+              .collection("mainProduct")
+              .doc("categories")
+              .collection("category")
+              .where("delete", "==", false)
+              .get()
+              .then((data) => {
+                let list = [];
+                data.forEach((doc) => {
+                  list.push(doc.data());
+                });
+                ref.current.complete(); // linear loader to complete
+                if (list.length > 0) {
+                  setCategoryList(list);
+                  setCategory(list[0]);
+                } else {
+                  setCategoryList("subcollection_empty");
+                }
+                setIsDelete(null);
+              });
+          })
+          .catch((e) => console.log(e));
       })
       .catch((e) => console.log(e));
   };

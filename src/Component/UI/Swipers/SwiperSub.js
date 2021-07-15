@@ -35,9 +35,9 @@ const SwiperSub = (props) => {
                     >
                       Change Image
                     </button>
-                    <button className="add-gender" onClick={props.addGender}>
+                    {/* <button className="add-gender" onClick={props.addGender}>
                       Add Gender
-                    </button>
+                    </button> */}
                     <button
                       className="delete-gender"
                       onClick={() => {
@@ -46,6 +46,16 @@ const SwiperSub = (props) => {
                     >
                       Delete Gender
                     </button>
+                    <div class="can-toggle">
+                      <input id="a" type="checkbox" />
+                      <label for="a">
+                        <div
+                          class="can-toggle__switch"
+                          data-checked="Show"
+                          data-unchecked="Hide"
+                        ></div>
+                      </label>
+                    </div>
                   </div>
                 </div>
                 <div className="count">
@@ -69,6 +79,12 @@ const SwiperSub = (props) => {
                   </p>
                 </div>
                 <div className="view-all">
+                  <button className="add-gender" onClick={props.addGender}>
+                    Add Gender
+                  </button>
+                  <button className="addNew" onClick={props.addNewCategory}>
+                    Add New Category
+                  </button>
                   <button
                     className="viewAll"
                     onClick={() =>
@@ -81,10 +97,7 @@ const SwiperSub = (props) => {
                   >
                     View All Category
                   </button>
-                  <button className="addNew" onClick={props.addNewCategory}>
-                    Add New Category
-                  </button>
-                  <button onClick={props.goBack}>GO BACK</button>
+                  {/* <button onClick={props.goBack}>GO BACK</button> */}
                 </div>
               </article>
             </li>

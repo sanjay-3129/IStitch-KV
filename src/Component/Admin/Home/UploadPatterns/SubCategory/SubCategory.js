@@ -7,7 +7,8 @@ import Spinner from "../../../../UI/Spinner/Spinner";
 import qs from "qs";
 import ChangeModal from "../../../../UI/AddNewModal/ChangeModal.js";
 import LoadingBar from "react-top-loading-bar";
-import AddNewStyle from "../../../../UI/AddNewModal/AddNewStyle";
+// import AddNewStyle from "../../../../UI/AddNewModal/AddNewStyle";
+import AddNewModal from "../../../../UI/AddNewModal/AddNewModal";
 import generateId from "../../../../../Helpers/generateId";
 import DeleteConfirmModal from "../../../../UI/DeleteConfirmModal/DeleteConfirmModal";
 
@@ -438,6 +439,10 @@ const SubCategory = (props) => {
 
   const deleteSubcategoryHandler = (subcategoryId) => {
     // include decrement in all other
+    ref.current.continuousStart();
+    let subcategoryDet = subCategoryList.find((g) => {
+      return g.subcategoryId === subcategoryId;
+    });
     db.collection("gender")
       .doc(genderId)
       .collection("mainProduct")
@@ -450,31 +455,56 @@ const SubCategory = (props) => {
         delete: true
       })
       .then(() => {
-        console.log(" successfully deleted!!!");
-        db.collection("gender")
-          .doc(genderId)
-          .collection("mainProduct")
-          .doc("categories")
-          .collection("category")
-          .doc(categoryId)
-          .collection("subcategory")
-          .where("delete", "==", false)
-          .get()
-          .then((data) => {
-            let list = [];
-            data.forEach((doc) => {
-              list.push(doc.data());
-            });
-            ref.current.complete(); // linear loader to complete
-            if (list.length > 0) {
-              setSubCategoryList(list);
-              setSubcategory(list.find((l) => l.categoryId === categoryId));
-            } else {
-              setSubCategoryList("subcollection_empty");
-            }
-
-            // console.log(list.find((l) => l.categoryId === categoryId));
-          });
+        // add data to deleteItems collections
+        let id = generateId("deleted");
+        db.collection("deleteItems")
+          .doc(id)
+          .set({
+            id: id,
+            genderId: genderId,
+            genderName: genderName,
+            genderImg: "",
+            categoryId: categoryId,
+            categoryName: categoryName,
+            categoryImg: "",
+            subcategoryId: subcategoryDet.subcategoryId,
+            subcategoryName: subcategoryDet.subcategoryName,
+            subcategoryImg: subcategoryDet.subcategoryImage,
+            styleId: "",
+            styleName: "",
+            styleImg: "",
+            patternId: "",
+            patternName: "",
+            patternImg: ""
+          })
+          .then(() => {
+            console.log(" successfully deleted!!!");
+            db.collection("gender")
+              .doc(genderId)
+              .collection("mainProduct")
+              .doc("categories")
+              .collection("category")
+              .doc(categoryId)
+              .collection("subcategory")
+              .where("delete", "==", false)
+              .get()
+              .then((data) => {
+                let list = [];
+                data.forEach((doc) => {
+                  list.push(doc.data());
+                });
+                ref.current.complete(); // linear loader to complete
+                if (list.length > 0) {
+                  setSubCategoryList(list);
+                  setSubcategory(list[0]);
+                } else {
+                  setSubCategoryList("subcollection_empty");
+                }
+                setIsDelete(null);
+                // console.log(list.find((l) => l.categoryId === categoryId));
+              });
+          })
+          .catch((e) => console.log(e));
       })
       .catch((e) => console.log(e));
   };
@@ -563,7 +593,20 @@ const SubCategory = (props) => {
         <LoadingBar color="#FF0000" ref={ref} />,
         document.getElementById("linear-loader")
       )}
-      {addNewItem && <AddNewStyle />}
+      {addNewItem && (
+        <AddNewModal
+          title={addNewItem}
+          closeModal={closeModalHandler}
+          // publish={publishHandler}
+          genderId={genderId}
+          genderName={genderName}
+          genderImg={genderImg}
+          categoryId={categoryId}
+          categoryName={categoryName}
+          categoryImg={categoryImg}
+          draft={draftHandler}
+        />
+      )}
       {isChange && (
         <ChangeModal
           title={isChange}

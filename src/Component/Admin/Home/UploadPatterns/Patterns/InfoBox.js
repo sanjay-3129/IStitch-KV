@@ -8,19 +8,19 @@ const InfoBox = (props) => {
       {/* <Tooltip title="Add" placement="top">
         <Button>top</Button>
       </Tooltip> */}
-      <h1 className="heading">{props.categoryDetails.categoryName}</h1>
+      <h1 className="heading">{props.patternsDetails.patternName}</h1>
       <article className="content">
         <div className="wrap">
           <img
             className="img-fluid"
-            src={props.categoryDetails.categoryImage}
-            alt={props.categoryDetails.categoryName}
+            src={props.patternsDetails.patternImage}
+            alt={props.patternsDetails.patternName}
           />
           <div className="btn-set">
             <button
               type="button"
               className="change-name"
-              onClick={() => props.changeName(props.categoryDetails)}
+              onClick={props.changeName}
               // onClick={() => console.log("Change Name")}
             >
               Change Name
@@ -32,11 +32,18 @@ const InfoBox = (props) => {
             >
               Change Image
             </button>
+            {/* <button
+              type="button"
+              className="delete-gender"
+              onClick={() => props.addNew("category")}
+            >
+              New
+            </button> */}
             <button
               type="button"
               className="delete-gender"
               onClick={() =>
-                props.deleteHandler(props.categoryDetails.categoryId)
+                props.deleteHandler(props.patternsDetails.patternId)
               }
             >
               Delete
@@ -51,13 +58,6 @@ const InfoBox = (props) => {
                 ></div>
               </label>
             </div>
-            {/* <button
-              type="button"
-              className="delete-gender"
-              onClick={() => props.addNew("category")}
-            >
-              New
-            </button> */}
           </div>
         </div>
         <div className="count">
@@ -66,33 +66,21 @@ const InfoBox = (props) => {
             <span className="category-count">{props.genderName}</span>{" "}
           </p>
           <p>
-            No of Sub-Categories
-            <span className="category-count">
-              {props.categoryDetails.noOfSubcategories}
-            </span>{" "}
+            Category
+            <span className="category-count">{props.categoryName}</span>{" "}
           </p>
-          <p>
-            No of Styles
-            <span className="category-count">
-              {props.categoryDetails.noOfStyles}
-            </span>{" "}
+          <p style={{ textAlign: "center" }}>
+            SubCategory
+            <span className="category-count">{props.subcategoryName}</span>
+          </p>
+
+          <p style={{ textAlign: "center" }}>
+            Style
+            <span className="category-count">{props.styleName}</span>
           </p>
         </div>
         <div className="view-all">
-          <button
-            type="button"
-            className="new-cat"
-            onClick={() => props.addNew("category")}
-          >
-            Add New Category
-          </button>
-          <button
-            className="category-new"
-            onClick={() => props.addNew("subcategory")}
-          >
-            Add New Sub-Category
-          </button>
-          <button
+          {/* <button
             className="category-link"
             onClick={() =>
               props.view(
@@ -104,12 +92,15 @@ const InfoBox = (props) => {
           >
             View All Sub-Category
           </button>
-          {/* <button onClick={props.goBack}>GO BACK</button> */}
+          <button
+            className="category-new"
+            onClick={() => props.addNew("subcategory")}
+          >
+            Add New Sub-Category
+          </button> */}
+          <button onClick={props.goBack}>GO BACK</button>
         </div>
       </article>
-      <button class="goback" onClick={props.goBack}>
-        <i class="fas fa-arrow-left" aria-hidden="true"></i>
-      </button>
     </div>
   );
 };

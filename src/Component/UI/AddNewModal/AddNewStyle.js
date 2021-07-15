@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 // import { Link } from "react-router-dom";
 // import { Button } from "react-bootstrap";
@@ -16,13 +16,13 @@ const Backdrop = (props) => {
 const ModalOverlay = (props) => {
   // $("#img").hide();
   const getFile = () => {
-    $("#uploadButton1").on("click", function () {
-      $("#genderImg").click();
+    $("#uploadButton").on("click", function () {
+      $("#img").click();
     });
 
-    $("#genderImg").change(function () {
+    $("#img").change(function () {
       var file = this.files[0];
-      console.log(file);
+      // console.log(file);
       var reader = new FileReader();
       reader.onloadend = function () {
         $("#uploadButton").css(
@@ -42,28 +42,42 @@ const ModalOverlay = (props) => {
       <div className="addnew">
         <h2>Add New</h2>
         <form method="post" name="form" className={classes.form}>
-          <label htmlFor="genderName">Enter Style Name</label>
-          <input type="text" id="styleName" name="styleName" />
+          <label htmlFor="styleName">Enter Style Name</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={props.newData.name}
+            onChange={props.onChange}
+          />
           <label>Upload Image</label>
           <div class="upload-img">
             <input
               type="file"
-              name="styleImg"
-              id="styleImg"
+              name="img"
+              id="img"
               accept=".gif, .jpg, .png"
-              // value={newData.styleImg}
+              // value={newData.img} // it may cause error
+              onChange={props.onChange}
             />
-            <label onClick={getFile} htmlFor="styleImg" id="uploadButton">
+            <label onClick={getFile} htmlFor="img" id="uploadButton">
               <span>+</span>
             </label>
           </div>
+          <button
+            type="button"
+            class="draft"
+            onClick={() => props.saveAsDraft(props.newData)}
+          >
+            Save as draft
+          </button>
         </form>
       </div>
     </Card>
   );
 };
 
-const AddNewStyle = () => {
+const AddNewStyle = (props) => {
   return (
     <React.Fragment>
       {ReactDOM.createPortal(
@@ -71,7 +85,13 @@ const AddNewStyle = () => {
         document.getElementById("backdrop-root")
       )}
       {ReactDOM.createPortal(
-        <ModalOverlay />,
+        <ModalOverlay
+          // onClose={props.closeModal}
+          title={props.title}
+          saveAsDraft={props.saveAsDraft}
+          onChange={props.onChange}
+          newData={props.newData}
+        />,
         document.getElementById("overlay-root")
       )}
     </React.Fragment>

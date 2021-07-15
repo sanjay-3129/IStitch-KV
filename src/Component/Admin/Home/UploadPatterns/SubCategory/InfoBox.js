@@ -26,13 +26,13 @@ const InfoBox = (props) => {
             >
               Change Image
             </button>
-            <button
+            {/* <button
               type="button"
               className="delete-gender"
               onClick={() => props.addNew("subcategory")}
             >
               New
-            </button>
+            </button> */}
             <button
               type="button"
               className="delete-gender"
@@ -42,6 +42,16 @@ const InfoBox = (props) => {
             >
               Delete
             </button>
+            <div class="can-toggle">
+              <input id="a" type="checkbox" />
+              <label for="a">
+                <div
+                  class="can-toggle__switch"
+                  data-checked="Show"
+                  data-unchecked="Hide"
+                ></div>
+              </label>
+            </div>
           </div>
         </div>
         <div className="count">
@@ -62,6 +72,19 @@ const InfoBox = (props) => {
         </div>
         <div class="view-all">
           <button
+            type="button"
+            className="delete-gender"
+            onClick={() => props.addNew("subcategory")}
+          >
+            Add New Sub-Category
+          </button>
+          <button
+            className="category-new"
+            onClick={() => props.addNew("styles")}
+          >
+            Add New Styles
+          </button>
+          <button
             className="category-link"
             onClick={() =>
               props.view(
@@ -72,15 +95,12 @@ const InfoBox = (props) => {
           >
             View All Styles
           </button>
-          <button
-            className="category-new"
-            onClick={() => props.addNew("styles")}
-          >
-            Add New Styles
-          </button>
-          <button onClick={props.goBack}>GO BACK</button>
+          {/* <button onClick={props.goBack}>GO BACK</button> */}
         </div>
       </article>
+      <button class="goback" onClick={props.goBack}>
+        <i class="fas fa-arrow-left" aria-hidden="true"></i>
+      </button>
     </div>
   );
 };

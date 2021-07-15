@@ -32,7 +32,7 @@ const Gender = (props) => {
   const [gender, setGender] = useState({
     genderId: "",
     genderName: "",
-    genderImage: "",
+    genderImg: "",
     noOfCategories: 0,
     noOfSubcategories: 0,
     noOfStyles: 0,
@@ -143,6 +143,9 @@ const Gender = (props) => {
     // hide status should be changed to
     // false, and it should be viewed to
     // the admin again.
+    let genderDet = genderList.find((g) => {
+      return g.genderId === genderId;
+    });
     ref.current.continuousStart();
     db.collection("gender")
       .doc(genderId)
@@ -150,19 +153,46 @@ const Gender = (props) => {
         delete: true
       })
       .then(() => {
-        list = [];
-        db.collection("gender")
-          .where("delete", "==", false)
-          .orderBy("genderName", "asc")
-          .get()
-          .then((data) => {
-            data.forEach((doc) => {
-              list.push(doc.data());
-            });
-            ref.current.complete(); // linear loader to complete
-            setGenderList(list);
-            setIsDelete(false);
-          });
+        // console.log(genderDet);
+        // add data to deleteItems collections
+        let id = generateId("deleted");
+        db.collection("deleteItems")
+          .doc(id)
+          .set({
+            id: id,
+            genderId: genderDet.genderId,
+            genderName: genderDet.genderName,
+            genderImg: genderDet.genderImage,
+            categoryId: "",
+            categoryName: "",
+            categoryImg: "",
+            subcategoryId: "",
+            subcategoryName: "",
+            subcategoryImg: "",
+            styleId: "",
+            styleName: "",
+            styleImg: "",
+            patternId: "",
+            patternName: "",
+            patternImg: ""
+          })
+          .then(() => {
+            // get data which is not deleted
+            list = [];
+            db.collection("gender")
+              .where("delete", "==", false)
+              .orderBy("genderName", "asc")
+              .get()
+              .then((data) => {
+                data.forEach((doc) => {
+                  list.push(doc.data());
+                });
+                ref.current.complete(); // linear loader to complete
+                setGenderList(list);
+                setIsDelete(false);
+              });
+          })
+          .catch((e) => console.log(e));
       });
   };
   const viewAllCategoryHandler = (genderId, genderName, genderImg) => {

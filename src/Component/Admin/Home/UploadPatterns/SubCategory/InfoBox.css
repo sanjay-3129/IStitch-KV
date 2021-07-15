@@ -1,8 +1,20 @@
 .info_box {
+  position: relative;
   width: 30%;
   padding: 10px;
   background: #a6c8cc;
 }
+
+.info_box .goback {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  background: transparent;
+  border: none;
+  padding: 5px;
+  width: 50px;
+}
+
 .heading {
   font-size: 22px;
   margin: 0;

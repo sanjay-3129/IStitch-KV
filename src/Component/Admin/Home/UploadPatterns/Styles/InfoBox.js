@@ -26,20 +26,30 @@ const InfoBox = (props) => {
             >
               Change Image
             </button>
-            <button
+            {/* <button
               type="button"
               className="delete-gender"
-              onClick={props.addNew}
+              onClick={() => props.addNew("styles")}
             >
               New
-            </button>
+            </button> */}
             <button
               type="button"
               className="delete-gender"
-              onClick={props.deleteHandler}
+              onClick={() => props.deleteHandler(props.stylesDetails.styleId)}
             >
               Delete
             </button>
+            <div class="can-toggle">
+              <input id="a" type="checkbox" />
+              <label for="a">
+                <div
+                  class="can-toggle__switch"
+                  data-checked="Show"
+                  data-unchecked="Hide"
+                ></div>
+              </label>
+            </div>
           </div>
         </div>
         <div className="count">
@@ -58,18 +68,40 @@ const InfoBox = (props) => {
         </div>
         <div class="view-all">
           <button
+            type="button"
+            className="delete-gender"
+            onClick={() => props.addNew("styles")}
+          >
+            Add New Style
+          </button>
+          {/* <button
             className="category-link"
-            onClick={props.view(
-              props.stylesDetails.styleId,
-              props.stylesDetails.styleName
-            )}
+            onClick={() =>
+              props.view(
+                props.stylesDetails.styleId,
+                props.stylesDetails.styleName
+              )
+            }
           >
             View All Patterns
+          </button> */}
+          <button
+            className="category-new"
+            onClick={() =>
+              props.view(
+                props.stylesDetails.styleId,
+                props.stylesDetails.styleName
+              )
+            }
+          >
+            Publish
           </button>
-          <button className="category-new">Publish</button>
-          <button onClick={props.goBack}>GO BACK</button>
+          {/* <button onClick={props.goBack}>GO BACK</button> */}
         </div>
       </article>
+      <button class="goback" onClick={props.goBack}>
+        <i class="fas fa-arrow-left" aria-hidden="true"></i>
+      </button>
     </div>
   );
 };

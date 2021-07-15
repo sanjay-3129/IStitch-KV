@@ -15,6 +15,10 @@ const generateId = (name) => {
     let rand = Math.random() * 10000;
     let round = Math.ceil(rand);
     return "styles" + round;
+  } else if (name === "deleted") {
+    let rand = Math.random() * 10000;
+    let round = Math.ceil(rand);
+    return "deletedItem" + round;
   } else {
     let rand = Math.random() * 10000;
     let round = Math.ceil(rand);
