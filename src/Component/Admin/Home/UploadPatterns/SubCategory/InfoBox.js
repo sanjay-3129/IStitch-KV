@@ -43,7 +43,31 @@ const InfoBox = (props) => {
               Delete
             </button>
             <div class="can-toggle">
-              <input id="a" type="checkbox" />
+              <input
+                id="toggle"
+                name="toggle"
+                type="checkbox"
+                checked={props.subCategoryDetails.hide}
+                data-toggle="toggle"
+                onChange={props.hide}
+              />
+              <label for="toggle">
+                <div
+                  class="can-toggle__switch"
+                  data-checked="Hide"
+                  data-unchecked="Show"
+                ></div>
+              </label>
+            </div>
+            {/* <div class="can-toggle">
+              <input
+              id="toggle"
+              name="toggle"
+              type="checkbox"
+              checked={props.subCategoryDetails.hide}
+              data-toggle="toggle"
+              onChange={props.hide}
+            />
               <label for="a">
                 <div
                   class="can-toggle__switch"
@@ -51,7 +75,7 @@ const InfoBox = (props) => {
                   data-unchecked="Hide"
                 ></div>
               </label>
-            </div>
+            </div> */}
           </div>
         </div>
         <div className="count">

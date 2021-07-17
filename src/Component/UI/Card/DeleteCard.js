@@ -2,15 +2,27 @@ import React from "react";
 import "./DeleteCard.css";
 
 const DeleteCard = (props) => {
+  let mainImg = null;
+  if (props.item.genderImg !== "") {
+    mainImg = props.item.genderImg;
+  } else if (props.item.categoryImg !== "") {
+    mainImg = props.item.categoryImg;
+  } else if (props.item.subcategoryImg !== "") {
+    mainImg = props.item.subcategoryImg;
+  } else if (props.item.styleImg !== "") {
+    mainImg = props.item.styleImg;
+  } else {
+    mainImg = props.item.patternImg;
+  }
   return (
     <div className="col-3 delete">
       <div className="flex-col">
         <div className="content">
           <div className="overlay">
-            <img className="img-fluid" src={props.mainImg} alt="" />
+            <img className="img-fluid" src={mainImg} alt={mainImg.name} />
           </div>
           <div className="hovereffect">
-            <img className="img-fluid p-0" src={props.mainImg} alt="" />
+            <img className="img-fluid p-0" src={mainImg} alt={mainImg.name} />
           </div>
           <p>
             Gender: <small>{props.item.genderName}</small>

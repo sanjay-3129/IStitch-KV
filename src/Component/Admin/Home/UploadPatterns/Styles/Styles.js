@@ -80,6 +80,7 @@ const Styles = (props) => {
         .doc(subcategoryId)
         .collection("styles")
         .where("delete", "==", false)
+        .orderBy("timestamp", "desc")
         .get()
         .then((sub) => {
           if (sub.docs.length > 0) {
@@ -159,6 +160,7 @@ const Styles = (props) => {
           .doc(subcategoryId)
           .collection("styles")
           .where("delete", "==", false)
+          .orderBy("timestamp", "desc")
           .get()
           .then((data) => {
             let list = [];
@@ -213,6 +215,7 @@ const Styles = (props) => {
                 .doc(subcategoryId)
                 .collection("styles")
                 .where("delete", "==", false)
+                .orderBy("timestamp", "desc")
                 .get()
                 .then((data) => {
                   let list = [];
@@ -268,6 +271,16 @@ const Styles = (props) => {
         delete: true
       })
       .then(() => {
+        // genderRef.update({
+        //   noOfStyle: firebase.firestore.FieldValue.decrement(1)
+        // });
+        // // category - no_of_subcategories - increment
+        // categoryRef.update({
+        //   noOfStyle: firebase.firestore.FieldValue.decrement(1)
+        // });
+        // subcategoryRef.update({
+        //   noOfStyle: firebase.firestore.FieldValue.increment(1)
+        // });
         // add data to deleteItems collections
         let id = generateId("deleted");
         db.collection("deleteItems")
@@ -303,6 +316,7 @@ const Styles = (props) => {
               .doc(subcategoryId)
               .collection("styles")
               .where("delete", "==", false)
+              .orderBy("timestamp", "desc")
               .get()
               .then((data) => {
                 let list = [];
@@ -334,19 +348,22 @@ const Styles = (props) => {
       setAddNewItem("patterns");
     }
   };
-
+  let genderRef;
+  let categoryRef;
+  let subcategoryRef;
+  let styleRef;
   const draftHandler = (newData) => {
-    // console.log(newData);
+    console.log("style adding...");
     let styleId = generateId("styles");
-    let genderRef = db.collection("gender").doc(genderId);
-    let categoryRef = db
+     genderRef = db.collection("gender").doc(genderId);
+     categoryRef = db
       .collection("gender")
       .doc(genderId)
       .collection("mainProduct")
       .doc("categories")
       .collection("category")
       .doc(categoryId);
-    let subcategoryRef = db
+    subcategoryRef = db
       .collection("gender")
       .doc(genderId)
       .collection("mainProduct")
@@ -355,7 +372,7 @@ const Styles = (props) => {
       .doc(categoryId)
       .collection("subcategory")
       .doc(subcategoryId);
-    let styleRef = db
+    styleRef = db
       .collection("gender")
       .doc(genderId)
       .collection("mainProduct")
@@ -369,9 +386,11 @@ const Styles = (props) => {
     let bucketName = "images";
     let storageRef = firebase.storage().ref();
     console.log("draft handler in styles", newData);
+    let styleTimestamp = null;
     if (newData.name !== "" && newData.img !== null) {
       ref.current.continuousStart();
-      let styleImgRef = storageRef.child(`${bucketName}/${newData.img.name}`);
+      styleTimestamp = firebase.firestore.FieldValue.serverTimestamp();
+      let styleImgRef = storageRef.child(`${bucketName}/${styleTimestamp}`);
       styleImgRef.put(newData.img).then((snapshot) => {
         styleImgRef.getDownloadURL().then((styleImg) => {
           styleRef
@@ -383,16 +402,17 @@ const Styles = (props) => {
               styleName: newData.name,
               styleImage: styleImg,
               delete: false,
-              hide: true
+              hide: true,
+              timestamp: styleTimestamp
             })
             .then(() => {
               // gender - no_of_subcategories increment
               genderRef.update({
-                noOfSubcategories: firebase.firestore.FieldValue.increment(1)
+                noOfStyle: firebase.firestore.FieldValue.increment(1)
               });
               // category - no_of_subcategories - increment
               categoryRef.update({
-                noOfSubcategories: firebase.firestore.FieldValue.increment(1)
+                noOfStyle: firebase.firestore.FieldValue.increment(1)
               });
               subcategoryRef.update({
                 noOfStyle: firebase.firestore.FieldValue.increment(1)
@@ -401,6 +421,7 @@ const Styles = (props) => {
               subcategoryRef
                 .collection("styles")
                 .where("delete", "==", false)
+                .orderBy("timestamp", "desc")
                 .get()
                 .then((data) => {
                   data.forEach((doc) => {
@@ -414,6 +435,73 @@ const Styles = (props) => {
             });
         });
       });
+    }
+  };
+
+  const hideHandler = (e) => {
+    console.log(e.target.checked);
+    ref.current.continuousStart();
+    // console.log(document.getElementById("toggle").checked);
+    let styleRef = db
+      .collection("gender")
+      .doc(genderId)
+      .collection("mainProduct")
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId)
+      .collection("subcategory")
+      .doc(subcategoryId)
+      .collection("styles");
+    let list = [];
+    if (e.target.checked) {
+      // true - show or hide(false)
+      styleRef
+        .doc(styles.stylesId)
+        .update({
+          hide: true
+        })
+        .then(() => {
+          // console.log("hide-false");
+          list = [];
+          styleRef
+            .where("delete", "==", false)
+            .orderBy("timestamp", "desc")
+            .get()
+            .then((data) => {
+              data.forEach((doc) => {
+                list.push(doc.data());
+              });
+              ref.current.complete(); // linear loader to complete
+              setStylesList(list);
+              setStyles(list[0]);
+            });
+        })
+        .catch((e) => console.log(e));
+      // console.log();
+    } else {
+      // false - hide(true)
+      styleRef
+        .doc(styles.stylesId)
+        .update({
+          hide: false
+        })
+        .then(() => {
+          // console.log("hide-true");
+          list = [];
+          styleRef
+            .where("delete", "==", false)
+            .orderBy("timestamp", "desc")
+            .get()
+            .then((data) => {
+              data.forEach((doc) => {
+                list.push(doc.data());
+              });
+              ref.current.complete(); // linear loader to complete
+              setStylesList(list);
+              setStyles(list[0]);
+            });
+        })
+        .catch((e) => console.log(e));
     }
   };
 
@@ -441,6 +529,7 @@ const Styles = (props) => {
           changeImage={() => setIsChange("image")}
           goBack={goBackHandler}
           deleteHandler={(id) => setIsDelete(id)}
+          hide={hideHandler}
         />
       </>
     );

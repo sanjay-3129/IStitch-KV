@@ -1,8 +1,12 @@
+import { useEffect } from "react";
 import "./InfoBox.css";
 // import Tooltip from "@material-ui/core/Tooltip";
 // import Button from "@material-ui/core/Button";
 
 const InfoBox = (props) => {
+  // useEffect(() => {
+  //   console.log("----------", props.patternsDetails);
+  // }, []);
   return (
     <div className="info_box">
       {/* <Tooltip title="Add" placement="top">
@@ -32,13 +36,6 @@ const InfoBox = (props) => {
             >
               Change Image
             </button>
-            {/* <button
-              type="button"
-              className="delete-gender"
-              onClick={() => props.addNew("category")}
-            >
-              New
-            </button> */}
             <button
               type="button"
               className="delete-gender"
@@ -63,41 +60,31 @@ const InfoBox = (props) => {
         <div className="count">
           <p>
             Gender
-            <span className="category-count">{props.genderName}</span>{" "}
+            <span className="category-count">
+              {props.genderName || props.patternsDetails.genderName}
+            </span>{" "}
           </p>
           <p>
             Category
-            <span className="category-count">{props.categoryName}</span>{" "}
+            <span className="category-count">
+              {props.categoryName || props.patternsDetails.categoryName}
+            </span>{" "}
           </p>
           <p style={{ textAlign: "center" }}>
             SubCategory
-            <span className="category-count">{props.subcategoryName}</span>
+            <span className="category-count">
+              {props.subcategoryName || props.patternsDetails.subcategoryName}
+            </span>
           </p>
 
           <p style={{ textAlign: "center" }}>
             Style
-            <span className="category-count">{props.styleName}</span>
+            <span className="category-count">
+              {props.styleName || props.patternsDetails.styleName}
+            </span>
           </p>
         </div>
         <div className="view-all">
-          {/* <button
-            className="category-link"
-            onClick={() =>
-              props.view(
-                props.categoryDetails.categoryId,
-                props.categoryDetails.categoryName,
-                props.categoryDetails.categoryImage
-              )
-            }
-          >
-            View All Sub-Category
-          </button>
-          <button
-            className="category-new"
-            onClick={() => props.addNew("subcategory")}
-          >
-            Add New Sub-Category
-          </button> */}
           <button onClick={props.goBack}>GO BACK</button>
         </div>
       </article>

@@ -56,6 +56,7 @@ const Gender = (props) => {
     db.collection("gender")
       .where("delete", "==", false)
       .orderBy("genderName", "asc")
+      // .limit(2)
       .get()
       .then((data) => {
         data.forEach((doc) => {
@@ -280,7 +281,8 @@ const Gender = (props) => {
             noOfSubcategories: 0,
             noOfStyles: 0,
             delete: false,
-            hide: true
+            hide: true,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
           })
           .then(() => {
             // gender - no_of_categories increment
@@ -321,6 +323,9 @@ const Gender = (props) => {
     let bucketName = "images";
     let storageRef = firebase.storage().ref();
     console.log("draft handler in gender", newData);
+    let genderTimestamp = null;
+    let categoryTimestamp = null;
+    let subcategoryTimestamp = null;
     // gender - category - subcategory;
     if (
       newData.genderName !== "" &&
@@ -330,15 +335,18 @@ const Gender = (props) => {
       newData.subcategoryName !== "" &&
       newData.subcategoryImg !== null
     ) {
+      genderTimestamp = firebase.firestore.FieldValue.serverTimestamp();
       ref.current.continuousStart();
       let genderImgRef = storageRef.child(
         `${bucketName}/${newData.genderImg.name}`
       );
+      categoryTimestamp = firebase.firestore.FieldValue.serverTimestamp();
       let categoryImgRef = storageRef.child(
-        `${bucketName}/${newData.categoryImg.name}`
+        `${bucketName}/${categoryTimestamp}`
       );
+      subcategoryTimestamp = firebase.firestore.FieldValue.serverTimestamp();
       let subcategoryImgRef = storageRef.child(
-        `${bucketName}/${newData.subcategoryImg.name}`
+        `${bucketName}/${subcategoryTimestamp}`
       );
 
       genderImgRef.put(newData.genderImg).then((snapshot) => {
@@ -352,7 +360,8 @@ const Gender = (props) => {
               noOfSubcategories: 0,
               noOfStyles: 0,
               delete: false,
-              hide: true
+              hide: true,
+              timestamp: genderTimestamp
             })
             .then(() => {
               // creating category
@@ -367,7 +376,8 @@ const Gender = (props) => {
                       noOfSubcategories: 0,
                       noOfStyles: 0,
                       delete: false,
-                      hide: true
+                      hide: true,
+                      timestamp: categoryTimestamp
                     })
                     .then(() => {
                       // gender - no_of_categories increment
@@ -393,12 +403,13 @@ const Gender = (props) => {
                                   subcategoryImage: subcategoryImg,
                                   noOfStyles: 0,
                                   delete: false,
-                                  hide: true
+                                  hide: true,
+                                  timestamp: subcategoryTimestamp
                                 })
                                 .then(() => {
                                   // gender - no_of_subcategories - increment
                                   genderRef.update({
-                                    noOfSubategories: firebase.firestore.FieldValue.increment(
+                                    noOfSubcategories: firebase.firestore.FieldValue.increment(
                                       1
                                     )
                                   });
@@ -463,7 +474,8 @@ const Gender = (props) => {
               noOfSubcategories: 0,
               noOfStyles: 0,
               delete: false,
-              hide: true
+              hide: true,
+              timestamp: firebase.firestore.FieldValue.serverTimestamp()
             })
             .then(() => {
               // id - update
@@ -480,7 +492,8 @@ const Gender = (props) => {
                       noOfSubcategories: 0,
                       noOfStyles: 0,
                       delete: false,
-                      hide: true
+                      hide: true,
+                      timestamp: firebase.firestore.FieldValue.serverTimestamp()
                     })
                     .then((categoryRef) => {
                       // gender - no_of_categories increment &&
@@ -534,7 +547,8 @@ const Gender = (props) => {
               noOfSubcategories: 0,
               noOfStyles: 0,
               delete: false,
-              hide: true
+              hide: true,
+              timestamp: firebase.firestore.FieldValue.serverTimestamp()
             })
             .then(() => {
               list = [];
@@ -555,6 +569,58 @@ const Gender = (props) => {
     }
 
     setAddNewItem(null);
+  };
+
+  const hideHandler = (e) => {
+    console.log(e.target.checked);
+    // console.log(document.getElementById("toggle").checked);
+    let genderRef = db.collection("gender").doc(gender.genderId);
+    if (e.target.checked) {
+      // true - show or hide(false)
+      genderRef
+        .update({
+          hide: true
+        })
+        .then(() => {
+          console.log("hide-false");
+          list = [];
+          db.collection("gender")
+            .where("delete", "==", false)
+            .orderBy("genderName", "asc")
+            .get()
+            .then((data) => {
+              data.forEach((doc) => {
+                list.push(doc.data());
+              });
+              ref.current.complete(); // linear loader to complete
+              setGenderList(list);
+            });
+        })
+        .catch((e) => console.log(e));
+      // console.log();
+    } else {
+      // false - hide(true)
+      genderRef
+        .update({
+          hide: false
+        })
+        .then(() => {
+          console.log("hide-true");
+          list = [];
+          db.collection("gender")
+            .where("delete", "==", false)
+            .orderBy("genderName", "asc")
+            .get()
+            .then((data) => {
+              data.forEach((doc) => {
+                list.push(doc.data());
+              });
+              ref.current.complete(); // linear loader to complete
+              setGenderList(list);
+            });
+        })
+        .catch((e) => console.log(e));
+    }
   };
 
   return (
@@ -617,6 +683,7 @@ const Gender = (props) => {
             addNewCategory={() => setNewModal("Category")}
             changeNameModal={() => setIsChange("name")}
             changeImageModal={() => setIsChange("image")}
+            hide={hideHandler}
             goBack={goBackHandler}
           />
         </>

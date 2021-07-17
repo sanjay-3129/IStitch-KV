@@ -278,7 +278,7 @@ const ModalOverlay = (props) => {
                     </label>
                   </div>
                 </div>
-                <div class="col-5">
+                <div class="col-6">
                   <label htmlfor="subcategorytype">
                     Select Sub-Category Type
                   </label>

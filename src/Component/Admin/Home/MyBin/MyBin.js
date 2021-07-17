@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import ReactDOM from "react-dom";
 import firebase from "../../../../Services/firebase/firebase";
 // import Spinner from "react-loader-spinner";
 // import Spinner from "../../../UI/Spinner/Spinner";
+import LoadingBar from "react-top-loading-bar";
 import Skeleton from "react-loading-skeleton";
 import DeleteCard from "../../../UI/Card/DeleteCard";
 
 const MyBin = (props) => {
+  const ref = useRef(null); // top-loader
   const db = firebase.firestore();
   const [deletedItemsList, setDeletedItemsList] = useState([]);
   const [mainItem, setMainItem] = useState({
@@ -31,6 +34,8 @@ const MyBin = (props) => {
             list.push(item);
             if (item.genderImg !== "") {
               // gender
+              // list = [];
+              // list.push()
               setMainItem({
                 item: "gender",
                 itemImg: item.genderImg
@@ -75,6 +80,7 @@ const MyBin = (props) => {
 
   const restoreDeletedItem = (deleteItemDetail) => {
     // gender
+    ref.current.continuousStart();
     if (mainItem.item === "gender") {
       db.collection("gender")
         .doc(deleteItemDetail.genderId)
@@ -89,6 +95,7 @@ const MyBin = (props) => {
             .then(() => {
               console.log("document deleted successfully");
               getAllDeletedItems();
+              ref.current.complete();
             });
         })
         .catch((e) => console.log(e));
@@ -108,7 +115,10 @@ const MyBin = (props) => {
           db.collection("deleteItems")
             .doc(deleteItemDetail.id)
             .delete()
-            .then(() => getAllDeletedItems());
+            .then(() => {
+              getAllDeletedItems();
+              ref.current.complete();
+            });
         })
         .catch((e) => console.log(e));
     } else if (mainItem.item === "subcategory") {
@@ -129,7 +139,10 @@ const MyBin = (props) => {
           db.collection("deleteItems")
             .doc(deleteItemDetail.id)
             .delete()
-            .then(() => getAllDeletedItems());
+            .then(() => {
+              getAllDeletedItems();
+              ref.current.complete();
+            });
         })
         .catch((e) => console.log(e));
     } else if (mainItem.item === "style") {
@@ -152,7 +165,10 @@ const MyBin = (props) => {
           db.collection("deleteItems")
             .doc(deleteItemDetail.id)
             .delete()
-            .then(() => getAllDeletedItems());
+            .then(() => {
+              getAllDeletedItems();
+              ref.current.complete();
+            });
         })
         .catch((e) => console.log(e));
     } else {
@@ -177,7 +193,10 @@ const MyBin = (props) => {
           db.collection("deleteItems")
             .doc(deleteItemDetail.id)
             .delete()
-            .then(() => getAllDeletedItems());
+            .then(() => {
+              getAllDeletedItems();
+              ref.current.complete();
+            });
         })
         .catch((e) => console.log(e));
     }
@@ -185,18 +204,21 @@ const MyBin = (props) => {
 
   const permanentlyDeleteItem = (deleteItemDetail) => {
     // gender
-
+    // ref.current.continuousStart();
     if (mainItem.item === "gender") {
       db.collection("gender")
         .doc(deleteItemDetail.genderId)
         .delete()
         .then(() => {
           // delete that from the deleteItems
+          ref.current.complete();
           console.log("Your subcollections also deleted!!!");
           db.collection("deleteItems")
             .doc(deleteItemDetail.id)
             .delete()
-            .then(() => getAllDeletedItems());
+            .then(() => {
+              getAllDeletedItems();
+            });
         })
         .catch((e) => console.log(e));
     } else if (mainItem.item === "category") {
@@ -209,6 +231,7 @@ const MyBin = (props) => {
         .doc(deleteItemDetail.categoryId)
         .delete()
         .then(() => {
+          ref.current.complete();
           // delete that from the deleteItems
           console.log("Your subcollections also deleted!!!");
           db.collection("deleteItems")
@@ -229,6 +252,7 @@ const MyBin = (props) => {
         .doc(deleteItemDetail.subcategoryId)
         .delete()
         .then(() => {
+          ref.current.complete();
           // delete that from the deleteItems
           console.log("Your subcollections also deleted!!!");
           db.collection("deleteItems")
@@ -251,6 +275,7 @@ const MyBin = (props) => {
         .doc(deleteItemDetail.styleId)
         .delete()
         .then(() => {
+          ref.current.complete();
           console.log("Your subcollections also deleted!!!");
           // delete that from the deleteItems
           db.collection("deleteItems")
@@ -275,6 +300,7 @@ const MyBin = (props) => {
         .doc(deleteItemDetail.patternId)
         .delete()
         .then(() => {
+          ref.current.complete();
           // delete that from the deleteItems
           console.log("Your subcollections also deleted!!!");
           db.collection("deleteItems")
@@ -317,6 +343,10 @@ const MyBin = (props) => {
   return (
     <div className="row m-0 p-2">
       {/* <h1>Hi MyBin</h1> */}
+      {ReactDOM.createPortal(
+        <LoadingBar color="#FF0000" ref={ref} />,
+        document.getElementById("linear-loader")
+      )}
       {Bin}
     </div>
   );

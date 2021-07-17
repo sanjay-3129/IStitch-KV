@@ -85,6 +85,7 @@ const SubCategory = (props) => {
         .collection("category")
         .doc(categoryId)
         .collection("subcategory")
+        // .limit(10)
         .get()
         .then((sub) => {
           if (sub.docs.length > 0) {
@@ -206,12 +207,13 @@ const SubCategory = (props) => {
 
   const changeImageHandler = (subcategoryId, newImage) => {
     ref.current.continuousStart();
+    let subCategoryTimestamp = firebase.firestore.FieldValue.serverTimestamp();
     // casual shirt
     // https://firebasestorage.googleapis.com/v0/b/istitch-admin.appspot.com/o/1623937713452.jpg?alt=media&token=14291831-385d-4bdb-ab44-297aa0883fa9
     let bucketName = "images";
     let img = newImage;
     let storageRef = firebase.storage().ref();
-    let imgRef = storageRef.child(`${bucketName}/${img.name}`);
+    let imgRef = storageRef.child(`${bucketName}/${subCategoryTimestamp}`);
     imgRef
       .put(img)
       .then((snapshot) => {
@@ -280,21 +282,23 @@ const SubCategory = (props) => {
     });
     setIsChange(false);
   };
-
+  let genderRef;
+  let categoryRef;
+  let subcategoryRef;
   const draftHandler = (newData) => {
     // hide = true;
     // let genderId = generateId("gender");
     // let categoryId = generateId("category");
     let subcategoryId = generateId("subcategory");
-    let genderRef = db.collection("gender").doc(genderId);
-    let categoryRef = db
+    genderRef = db.collection("gender").doc(genderId);
+    categoryRef = db
       .collection("gender")
       .doc(genderId)
       .collection("mainProduct")
       .doc("categories")
       .collection("category")
       .doc(categoryId);
-    let subcategoryRef = db
+    subcategoryRef = db
       .collection("gender")
       .doc(genderId)
       .collection("mainProduct")
@@ -306,6 +310,9 @@ const SubCategory = (props) => {
     let bucketName = "images";
     let storageRef = firebase.storage().ref();
     console.log("draft handler in gender", newData);
+    // let categoryTimestamp = null; // prevgender - category - subcategory;
+    let subCategoryTimestamp = null;
+
     //prevgender-prevcategory-subcategory
     if (
       newData.genderName !== "" &&
@@ -322,8 +329,9 @@ const SubCategory = (props) => {
       // let categoryImgRef = storageRef.child(
       //   `${bucketName}/${newData.categoryImg.name}`
       // );
+      subCategoryTimestamp = firebase.firestore.FieldValue.serverTimestamp();
       let subcategoryImgRef = storageRef.child(
-        `${bucketName}/${newData.subcategoryImg.name}`
+        `${bucketName}/${subCategoryTimestamp}`
       );
       subcategoryImgRef.put(newData.subcategoryImg).then((snapshot) => {
         subcategoryImgRef.getDownloadURL().then((subcategoryImg) => {
@@ -336,7 +344,8 @@ const SubCategory = (props) => {
               subcategoryImage: subcategoryImg,
               noOfStyles: 0,
               delete: false,
-              hide: true
+              hide: true,
+              timestamp: subCategoryTimestamp
             })
             .then(() => {
               // gender - no_of_subcategories increment
@@ -352,6 +361,7 @@ const SubCategory = (props) => {
               categoryRef
                 .collection("subcategory")
                 .where("delete", "==", false)
+                .orderBy("timestamp", "desc")
                 .get()
                 .then((data) => {
                   data.forEach((doc) => {
@@ -383,6 +393,7 @@ const SubCategory = (props) => {
       .doc(category.categoryId)
       .collection("subcategory")
       .where("delete", "==", false)
+      .orderBy("timestamp", "desc")
       .get()
       .then((sub) => {
         if (sub.docs.length > 0) {
@@ -414,6 +425,7 @@ const SubCategory = (props) => {
         .doc("categories")
         .collection("category")
         .where("delete", "==", false)
+        .orderBy("timestamp", "desc")
         .get()
         .then((sub) => {
           if (sub.docs.length > 0) {
@@ -488,8 +500,20 @@ const SubCategory = (props) => {
               .doc(categoryId)
               .collection("subcategory")
               .where("delete", "==", false)
+              .orderBy("timestamp", "desc")
               .get()
               .then((data) => {
+                // db.collection("gender")
+                //   .doc(genderId)
+                //   .update({
+                //     noOfSubcategories: firebase.firestore.FieldValue.decrement(
+                //       1
+                //     )
+                //   });
+                // // category - no_of_subcategories - increment
+                // categoryRef.update({
+                //   noOfSubcategories: firebase.firestore.FieldValue.decrement(1)
+                // });
                 let list = [];
                 data.forEach((doc) => {
                   list.push(doc.data());
@@ -556,7 +580,8 @@ const SubCategory = (props) => {
             styleName: newData.name,
             styleImage: styleImg,
             delete: false,
-            hide: true
+            hide: true,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
           })
           .then(() => {
             ref.current.complete();
@@ -577,6 +602,70 @@ const SubCategory = (props) => {
           });
       });
     });
+  };
+
+  const hideHandler = (e) => {
+    // console.log(e.target.checked);
+    // console.log(document.getElementById("toggle").checked);
+    let subCategoryRef = db
+      .collection("gender")
+      .doc(genderId)
+      .collection("mainProduct")
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId)
+      .collection("subcategory");
+    let list = [];
+    if (e.target.checked) {
+      // true - show or hide(false)
+      subCategoryRef
+        .doc(subcategory.subcategoryId)
+        .update({
+          hide: true
+        })
+        .then(() => {
+          // console.log("hide-false");
+          list = [];
+          subCategoryRef
+            .where("delete", "==", false)
+            .orderBy("timestamp", "desc")
+            .get()
+            .then((data) => {
+              data.forEach((doc) => {
+                list.push(doc.data());
+              });
+              ref.current.complete(); // linear loader to complete
+              setSubCategoryList(list);
+              setSubcategory(list[0]);
+            });
+        })
+        .catch((e) => console.log(e));
+      // console.log();
+    } else {
+      // false - hide(true)
+      subCategoryRef
+        .doc(subcategory.subcategoryId)
+        .update({
+          hide: false
+        })
+        .then(() => {
+          // console.log("hide-true");
+          list = [];
+          subCategoryRef
+            .where("delete", "==", false)
+            .orderBy("timestamp", "desc")
+            .get()
+            .then((data) => {
+              data.forEach((doc) => {
+                list.push(doc.data());
+              });
+              ref.current.complete(); // linear loader to complete
+              setSubCategoryList(list);
+              setSubcategory(list[0]);
+            });
+        })
+        .catch((e) => console.log(e));
+    }
   };
 
   let subCategories = null;
@@ -652,6 +741,7 @@ const SubCategory = (props) => {
           changeImage={() => setIsChange("image")}
           goBack={goBackHandler}
           deleteHandler={(id) => setIsDelete(id)}
+          hide={hideHandler}
         />
       </>
     );

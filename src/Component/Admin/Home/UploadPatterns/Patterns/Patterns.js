@@ -137,9 +137,21 @@ const Patterns = (props) => {
         .catch((e) => console.log(e));
     } else {
       console.log("cliked directly");
-      // get gender, category from UI
-      // props.history.push(`${props.match.url}/createNewPattern/subcategory`);
-      setPatternsList("empty");
+      db.collection("patterns")
+        .where("delete", "==", false)
+        .get()
+        .then((data) => {
+          let list = [];
+          data.forEach((doc) => {
+            list.push(doc.data());
+          });
+          ref.current.complete(); // linear loader to complete
+
+          setPatternsList(list);
+          setPatterns(list[0]);
+        });
+
+      // setPatternsList("empty");
     }
   }, []);
 
@@ -372,34 +384,34 @@ const Patterns = (props) => {
   const draftHandler = (newData) => {
     console.log(newData);
     let patternId = generateId("patterns");
-    let genderRef = db.collection("gender").doc(genderId);
-    let categoryRef = db
-      .collection("gender")
-      .doc(genderId)
-      .collection("mainProduct")
-      .doc("categories")
-      .collection("category")
-      .doc(categoryId);
-    let subcategoryRef = db
-      .collection("gender")
-      .doc(genderId)
-      .collection("mainProduct")
-      .doc("categories")
-      .collection("category")
-      .doc(categoryId)
-      .collection("subcategory")
-      .doc(subcategoryId);
-    let styleRef = db
-      .collection("gender")
-      .doc(genderId)
-      .collection("mainProduct")
-      .doc("categories")
-      .collection("category")
-      .doc(categoryId)
-      .collection("subcategory")
-      .doc(subcategoryId)
-      .collection("styles")
-      .doc(styleId);
+    // let genderRef = db.collection("gender").doc(genderId);
+    // let categoryRef = db
+    //   .collection("gender")
+    //   .doc(genderId)
+    //   .collection("mainProduct")
+    //   .doc("categories")
+    //   .collection("category")
+    //   .doc(categoryId);
+    // let subcategoryRef = db
+    //   .collection("gender")
+    //   .doc(genderId)
+    //   .collection("mainProduct")
+    //   .doc("categories")
+    //   .collection("category")
+    //   .doc(categoryId)
+    //   .collection("subcategory")
+    //   .doc(subcategoryId);
+    // let styleRef = db
+    //   .collection("gender")
+    //   .doc(genderId)
+    //   .collection("mainProduct")
+    //   .doc("categories")
+    //   .collection("category")
+    //   .doc(categoryId)
+    //   .collection("subcategory")
+    //   .doc(subcategoryId)
+    //   .collection("styles")
+    //   .doc(styleId);
     let patternRef = db
       .collection("gender")
       .doc(genderId)
@@ -432,7 +444,8 @@ const Patterns = (props) => {
               patternImage: patternImg,
               delete: false,
               hide: true,
-              price: 450 // get input and make it as dynamic
+              price: 450, // get input and make it as dynamic
+              timestamp: firebase.firestore.FieldValue.serverTimestamp()
             })
             .then(() => {
               // add the above patterns to the seperate patterns collection
@@ -443,41 +456,39 @@ const Patterns = (props) => {
                   categoryId: categoryId,
                   subcategoryId: subcategoryId,
                   styleId: styleId,
+                  genderName: genderName,
+                  categoryName: categoryName,
+                  subcategoryName: subcategoryName,
+                  styleName: styleName,
                   patternId: patternId, // genderate new pattern id
                   patternName: newData.name,
                   patternImage: patternImg,
                   delete: false,
                   hide: true,
-                  price: 450 // get input and make it as dynamic
+                  price: 450, // get input and make it as dynamic
+                  timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 })
                 .then((data) => {
                   // to render client side
-                  // gender - no_of_subcategories increment
-                  genderRef.update({
-                    noOfSubcategories: firebase.firestore.FieldValue.increment(
-                      1
-                    )
-                  });
-                  // category - no_of_subcategories - increment
-                  categoryRef.update({
-                    noOfSubcategories: firebase.firestore.FieldValue.increment(
-                      1
-                    )
-                  });
-                  subcategoryRef.update({
-                    noOfStyle: firebase.firestore.FieldValue.increment(1)
-                  });
-                  styleRef.update({
-                    noOfPattern: firebase.firestore.FieldValue.increment(1)
-                  });
+
                   let list = [];
-                  patternRef
+                  db.collection("gender")
+                    .doc(genderId)
+                    .collection("mainProduct")
+                    .doc("categories")
+                    .collection("category")
+                    .doc(categoryId)
+                    .collection("subcategory")
+                    .doc(subcategoryId)
+                    .collection("styles")
+                    .doc(styleId)
                     .collection("patterns")
                     .where("delete", "==", false)
                     .get()
                     .then((data) => {
                       data.forEach((doc) => {
                         list.push(doc.data());
+                        // console.log("Patterns-464", doc.data());
                       });
                       ref.current.complete(); // linear loader to complete
 
@@ -494,9 +505,26 @@ const Patterns = (props) => {
   let pattern = null;
   if (patternsList === null) {
     pattern = <Spinner />;
-  } else if (patternsList === "empty") {
-    pattern = <h1>No patterns available</h1>;
-  } else if (patternsList === "form") {
+  }
+  // else if (patternsList === "empty") {
+  //   // pattern = <h1>No patterns available</h1>;
+  //   let list = [];
+  //   db.collection("patterns")
+  //     .where("delete", "==", false)
+  //     .get()
+  //     .then((data) => {
+  //       console.log("qqqqqqqq", data);
+
+  //       data.forEach((doc) => {
+  //         list.push(doc.data());
+  //       });
+  //       ref.current.complete(); // linear loader to complete
+
+  //       setPatternsList(list);
+  //       setPatterns(list[0]);
+  //     });
+  // }
+  else if (patternsList === "form") {
     pattern = (
       <div className="flex">
         <div className="img">
@@ -553,15 +581,6 @@ const Patterns = (props) => {
           <div className="selected_value">
             <p className="name">{styleName}</p>
           </div>
-          {/* <div className="selected_value">
-            <p className="name">Add-on Category2</p>
-          </div>
-          <div className="selected_value">
-            <p className="name">Style1</p>
-          </div>
-          <div className="selected_value">
-            <p className="name">Style2</p>
-          </div> */}
         </div>
       </div>
     );
@@ -575,14 +594,12 @@ const Patterns = (props) => {
           selectedPatterns={selectedPatternsHandler}
         />
         <InfoBox
-          title="Styles"
+          title="Patterns"
           genderName={genderName}
           categoryName={categoryName}
           subcategoryName={subcategoryName}
           styleName={styleName}
           patternsDetails={patterns}
-          // view={viewHandler}
-          // addNew={() => setAddNewItem("styles")}
           changeName={() => setIsChange("name")}
           changeImage={() => setIsChange("image")}
           goBack={goBackHandler}
@@ -652,3 +669,44 @@ export default Patterns;
 //           .catch((e) => console.log(e));
 //       })
 //       .catch((e) => console.log(e));
+
+// const directpattern = (patternId, patternImg) => {
+//   db.collection("gender")
+//     .doc(genderId)
+//     .collection("mainProduct")
+//     .doc("categories")
+//     .collection("category")
+//     .doc(categoryId)
+//     .collection("subcategory")
+//     .doc(subcategoryId)
+//     .collection("styles")
+//     .doc(styleId)
+//     .collection("patterns")
+//     .doc(patternId)
+//     .set({
+//       genderId: genderId,
+//       categoryId: categoryId,
+//       subcategoryId: subcategoryId,
+//       styleId: styleId,
+//       patternId: patternId, // genderate new pattern id
+//       patternName: newData.name,
+//       patternImage: patternImg,
+//       delete: false,
+//       hide: true,
+//       price: 450 // get input and make it as dynamic
+//     })
+//     .then(() => {
+//       db.collection("patterns").doc(patternId).set({
+//         genderId: genderId,
+//         categoryId: categoryId,
+//         subcategoryId: subcategoryId,
+//         styleId: styleId,
+//         patternId: patternId, // genderate new pattern id
+//         patternName: newData.name,
+//         patternImage: patternImg,
+//         delete: false,
+//         hide: true,
+//         price: 450 // get input and make it as dynamic
+//       });
+//     });
+// };

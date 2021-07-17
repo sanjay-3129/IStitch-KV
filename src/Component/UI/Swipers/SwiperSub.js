@@ -12,7 +12,7 @@ const SwiperSub = (props) => {
               className={`team-info-item ${
                 props.index === index ? "active" : ""
               }`}
-              key={genderDetail.genderId}
+              key={index}
             >
               <h1 className="heading">{genderDetail.genderName}</h1>
               <article className="content">
@@ -46,16 +46,32 @@ const SwiperSub = (props) => {
                     >
                       Delete Gender
                     </button>
-                    <div class="can-toggle">
-                      <input id="a" type="checkbox" />
-                      <label for="a">
+                    <input
+                      id="toggle"
+                      name="toggle"
+                      type="checkbox"
+                      checked={genderDetail.hide}
+                      data-toggle="toggle"
+                      onChange={props.hide}
+                    />
+                    Hide
+                    {/* <div className="can-toggle">
+                      <input
+                        id="toggle"
+                        name="toggle"
+                        type="checkbox"
+                        // value={!genderDetail.hide}
+                        onChange={props.hide}
+                        // value={true}
+                      />
+                      <label for="toggle">
                         <div
-                          class="can-toggle__switch"
+                          className="can-toggle__switch"
                           data-checked="Show"
                           data-unchecked="Hide"
                         ></div>
                       </label>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
                 <div className="count">
