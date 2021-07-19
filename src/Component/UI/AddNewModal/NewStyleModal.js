@@ -12,8 +12,8 @@ import firebase from "../../../Services/firebase/firebase";
 
 const NewStyleModal = (props) => {
   const db = firebase.firestore();
-  const [subcategoryList, setSubcategoryList] = useState(null);
-  const [stylesList, setStylesList] = useState(null);
+  const [subcategoryList, setSubcategoryList] = useState([]);
+  // const [stylesList, setStylesList] = useState(null);
 
   // useEffect(() => {
   //   // console.log("genderId", props.style.genderId);
@@ -137,12 +137,12 @@ const NewStyleModal = (props) => {
                 };
                 list.push(det);
                 // update state if there is
-                // setSubcategoryList((prevState) => [...prevState, det]);
+                setSubcategoryList((prevState) => [...prevState, det]);
               })
               .catch((e) => console.log(e));
           }
         });
-        setSubcategoryList(list);
+        // setSubcategoryList(list);
         // console.log("111", subcategoryList);
         // setStylesList(listOfStylesList);
       })
@@ -181,19 +181,23 @@ const NewStyleModal = (props) => {
       return (
         <div class="subcs" key={index}>
           {/* <p>disc</p> */}
-          <p>{item.subcategoryName}</p>
+          <p>{item.data.subcategoryName}</p>
           <div class="scrollview">
             {/* to add styles for particular subcategory */}
-            {stylesList === null || stylesList.length === 0 ? (
-              <Spinner />
-            ) : (
-              <div class="styles">
-                <img class="img-fluid" src="" alt="" />
-                <p class="sname">styleName</p>
-                <input type="checkbox" id="select" />
-                <label class="stretched" for="select"></label>
-              </div>
-            )}
+            {item.listOfStyles.map((style, i) => {
+              return (
+                <div class="styles" key={i}>
+                  <img
+                    class="img-fluid"
+                    src={style.styleImage}
+                    alt={style.styleName}
+                  />
+                  <p class="sname">{style.styleName}</p>
+                  <input type="checkbox" id="select" />
+                  <label class="stretched" for="select"></label>
+                </div>
+              );
+            })}
           </div>
         </div>
       );
