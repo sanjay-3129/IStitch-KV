@@ -241,9 +241,9 @@ const ModalOverlay = (props) => {
                 </div>
                 <div class="col-6">
                   <label htmlfor="categorytype">Select Category Type</label>
-                  <select name="" id="categorytype">
-                    <option value="main">Main</option>
-                    <option value="addon">Add-On</option>
+                  <select name="type" id="type">
+                    <option value="mainProduct">Main</option>
+                    <option value="addOns">Add-On</option>
                   </select>
                 </div>
               </div>
@@ -278,15 +278,15 @@ const ModalOverlay = (props) => {
                     </label>
                   </div>
                 </div>
-                <div class="col-6">
+                {/* <div class="col-6">
                   <label htmlfor="subcategorytype">
                     Select Sub-Category Type
                   </label>
-                  <select name="" id="subcategorytype">
+                  <select name="subcategorytype" id="subcategorytype">
                     <option value="main">Main</option>
                     <option value="addon">Add-On</option>
                   </select>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

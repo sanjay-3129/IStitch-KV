@@ -27,6 +27,7 @@ const SubCategory = (props) => {
   const [subCategoryList, setSubCategoryList] = useState(null);
   const [isChange, setIsChange] = useState(null); // for modal
   const [isDelete, setIsDelete] = useState(null);
+  const [type, setType] = useState("mainProduct"); // mainProduct or addOns
   const [newData, setNewData] = useState({
     name: "",
     img: null
@@ -45,14 +46,6 @@ const SubCategory = (props) => {
   const [newModal, setNewModal] = useState("");
   const [genderList, setGenderList] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
-
-  const closeModalHandler = () => {
-    setAddNewItem(null);
-  };
-
-  const goBackHandler = () => {
-    props.history.goBack();
-  };
 
   useEffect(() => {
     genderId = qs.parse(props.location.search, {
@@ -80,7 +73,7 @@ const SubCategory = (props) => {
       // get only categories specific to gender
       db.collection("gender")
         .doc(genderId)
-        .collection("mainProduct")
+        .collection(type)
         .doc("categories")
         .collection("category")
         .doc(categoryId)
@@ -171,7 +164,7 @@ const SubCategory = (props) => {
     // console.log("subcategory name updated", genderId);
     db.collection("gender")
       .doc(genderId)
-      .collection("mainProduct")
+      .collection(type)
       .doc("categories")
       .collection("category")
       .doc(categoryId)
@@ -184,7 +177,7 @@ const SubCategory = (props) => {
         console.log(newName + " successfully updated!!!");
         db.collection("gender")
           .doc(genderId)
-          .collection("mainProduct")
+          .collection(type)
           .doc("categories")
           .collection("category")
           .doc(categoryId)
@@ -210,7 +203,7 @@ const SubCategory = (props) => {
     let subCategoryTimestamp = firebase.firestore.FieldValue.serverTimestamp();
     // casual shirt
     // https://firebasestorage.googleapis.com/v0/b/istitch-admin.appspot.com/o/1623937713452.jpg?alt=media&token=14291831-385d-4bdb-ab44-297aa0883fa9
-    let bucketName = "images";
+    let bucketName = "Images";
     let img = newImage;
     let storageRef = firebase.storage().ref();
     let imgRef = storageRef.child(`${bucketName}/${subCategoryTimestamp}`);
@@ -222,7 +215,7 @@ const SubCategory = (props) => {
           // now adding the data to firestore
           db.collection("gender")
             .doc(genderId)
-            .collection("mainProduct")
+            .collection(type)
             .doc("categories")
             .collection("category")
             .doc(categoryId)
@@ -236,7 +229,7 @@ const SubCategory = (props) => {
               // then set the state again to reload and render it again
               db.collection("gender")
                 .doc(genderId)
-                .collection("mainProduct")
+                .collection(type)
                 .doc("categories")
                 .collection("category")
                 .doc(categoryId)
@@ -282,32 +275,38 @@ const SubCategory = (props) => {
     });
     setIsChange(false);
   };
-  let genderRef;
-  let categoryRef;
-  let subcategoryRef;
+
+  const closeModalHandler = () => {
+    setAddNewItem(null);
+  };
+
+  const goBackHandler = () => {
+    props.history.goBack();
+  };
+
   const draftHandler = (newData) => {
     // hide = true;
     // let genderId = generateId("gender");
     // let categoryId = generateId("category");
     let subcategoryId = generateId("subcategory");
-    genderRef = db.collection("gender").doc(genderId);
-    categoryRef = db
+    let genderRef = db.collection("gender").doc(genderId);
+    let categoryRef = db
       .collection("gender")
       .doc(genderId)
-      .collection("mainProduct")
+      .collection(type)
       .doc("categories")
       .collection("category")
       .doc(categoryId);
-    subcategoryRef = db
+    let subcategoryRef = db
       .collection("gender")
       .doc(genderId)
-      .collection("mainProduct")
+      .collection(type)
       .doc("categories")
       .collection("category")
       .doc(categoryId)
       .collection("subcategory")
       .doc(subcategoryId);
-    let bucketName = "images";
+    let bucketName = "Images";
     let storageRef = firebase.storage().ref();
     console.log("draft handler in gender", newData);
     // let categoryTimestamp = null; // prevgender - category - subcategory;
@@ -387,7 +386,7 @@ const SubCategory = (props) => {
     });
     db.collection("gender")
       .doc(gender.genderId)
-      .collection("mainProduct")
+      .collection(type)
       .doc("categories")
       .collection("category")
       .doc(category.categoryId)
@@ -421,7 +420,7 @@ const SubCategory = (props) => {
     if (gender !== undefined) {
       db.collection("gender")
         .doc(gender.genderId)
-        .collection("mainProduct")
+        .collection(type)
         .doc("categories")
         .collection("category")
         .where("delete", "==", false)
@@ -458,7 +457,7 @@ const SubCategory = (props) => {
     });
     db.collection("gender")
       .doc(genderId)
-      .collection("mainProduct")
+      .collection(type)
       .doc("categories")
       .collection("category")
       .doc(categoryId)
@@ -494,7 +493,7 @@ const SubCategory = (props) => {
             console.log(" successfully deleted!!!");
             db.collection("gender")
               .doc(genderId)
-              .collection("mainProduct")
+              .collection(type)
               .doc("categories")
               .collection("category")
               .doc(categoryId)
@@ -503,17 +502,26 @@ const SubCategory = (props) => {
               .orderBy("timestamp", "desc")
               .get()
               .then((data) => {
-                // db.collection("gender")
-                //   .doc(genderId)
-                //   .update({
-                //     noOfSubcategories: firebase.firestore.FieldValue.decrement(
-                //       1
-                //     )
-                //   });
-                // // category - no_of_subcategories - increment
-                // categoryRef.update({
-                //   noOfSubcategories: firebase.firestore.FieldValue.decrement(1)
-                // });
+                // decrement in gender
+                db.collection("gender")
+                  .doc(genderId)
+                  .update({
+                    noOfSubcategories: firebase.firestore.FieldValue.increment(
+                      -1
+                    )
+                  });
+                // category - no_of_subcategories - increment
+                db.collection("gender")
+                  .doc(genderId)
+                  .collection(type)
+                  .doc("categories")
+                  .collection("category")
+                  .doc(categoryId)
+                  .update({
+                    noOfSubcategories: firebase.firestore.FieldValue.increment(
+                      -1
+                    )
+                  });
                 let list = [];
                 data.forEach((doc) => {
                   list.push(doc.data());
@@ -538,20 +546,20 @@ const SubCategory = (props) => {
     // console.log(newData);
     ref.current.continuousStart();
     let styleId = generateId("styles");
-    let bucketName = "images";
+    let bucketName = "Images";
     let storageRef = firebase.storage().ref();
     let genderRef = db.collection("gender").doc(genderId);
     let categoryRef = db
       .collection("gender")
       .doc(genderId)
-      .collection("mainProduct")
+      .collection(type)
       .doc("categories")
       .collection("category")
       .doc(categoryId);
     let subcategoryRef = db
       .collection("gender")
       .doc(genderId)
-      .collection("mainProduct")
+      .collection(type)
       .doc("categories")
       .collection("category")
       .doc(categoryId)
@@ -560,7 +568,7 @@ const SubCategory = (props) => {
     let styleRef = db
       .collection("gender")
       .doc(genderId)
-      .collection("mainProduct")
+      .collection(type)
       .doc("categories")
       .collection("category")
       .doc(categoryId)
@@ -568,7 +576,8 @@ const SubCategory = (props) => {
       .doc(subcategory.subcategoryId)
       .collection("styles")
       .doc(styleId);
-    let styleImgRef = storageRef.child(`${bucketName}/${newData.img.name}`);
+    let styleTimestamp = firebase.firestore.FieldValue.serverTimestamp();
+    let styleImgRef = storageRef.child(`${bucketName}/${styleTimestamp}`);
     styleImgRef.put(newData.img).then(() => {
       styleImgRef.getDownloadURL().then((styleImg) => {
         styleRef
@@ -581,20 +590,20 @@ const SubCategory = (props) => {
             styleImage: styleImg,
             delete: false,
             hide: true,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            timestamp: styleTimestamp
           })
           .then(() => {
             ref.current.complete();
             // gender - no_of_categories increment
             genderRef.update({
-              noOfSubategories: firebase.firestore.FieldValue.increment(1)
+              noOfStyles: firebase.firestore.FieldValue.increment(1)
             });
             // category - no_of_subcategories - increment
             categoryRef.update({
-              noOfSubcategories: firebase.firestore.FieldValue.increment(1)
+              noOfStyles: firebase.firestore.FieldValue.increment(1)
             });
             subcategoryRef.update({
-              noOfStyle: firebase.firestore.FieldValue.increment(1)
+              noOfStyles: firebase.firestore.FieldValue.increment(1)
             });
             props.history.push(
               `${props.match.url}/createNewPattern/styles?genderId=${genderId}&genderName=${genderName}&categoryId=${categoryId}&categoryName=${categoryName}&subcategoryId=${subcategory.subcategoryId}&subcategoryName=${subcategory.subcategoryName}`
@@ -610,7 +619,7 @@ const SubCategory = (props) => {
     let subCategoryRef = db
       .collection("gender")
       .doc(genderId)
-      .collection("mainProduct")
+      .collection(type)
       .doc("categories")
       .collection("category")
       .doc(categoryId)
@@ -666,6 +675,34 @@ const SubCategory = (props) => {
         })
         .catch((e) => console.log(e));
     }
+  };
+
+  const selectedType = (type) => {
+    console.log("subcategory.js", type);
+    let list = [];
+    db.collection("gender")
+      .doc(genderId)
+      .collection(type)
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId)
+      .collection("subcategory")
+      .where("delete", "==", false)
+      .orderBy("timestamp", "desc")
+      .get()
+      .then((data) => {
+        data.forEach((doc) => {
+          list.push(doc.data());
+        });
+        ref.current.complete(); // linear loader to complete
+        setType(type);
+        if (list.length === 0) {
+          setSubCategoryList("subcollection_empty");
+        } else {
+          setSubCategoryList(list);
+          setSubcategory(list[0]);
+        }
+      });
   };
 
   let subCategories = null;
@@ -728,6 +765,8 @@ const SubCategory = (props) => {
         <Info
           subCategoryList={subCategoryList}
           selectedSubCategory={selectedSubCategory}
+          selectedType={selectedType}
+          type={type}
         />
         <InfoBox
           title="SubCategory"

@@ -7,6 +7,7 @@ import InfoBox from "./InfoBox";
 import Spinner from "../../../../UI/Spinner/Spinner";
 import DeleteConfirmModal from "../../../../UI/DeleteConfirmModal/DeleteConfirmModal";
 import ChangeModal from "../../../../UI/AddNewModal/ChangeModal.js";
+import AddNewStyle from "../../../../UI/AddNewModal/AddNewStyle";
 import LoadingBar from "react-top-loading-bar";
 import generateId from "../../../../../Helpers/generateId";
 import firebase from "../../../../../Services/firebase/firebase";
@@ -27,6 +28,8 @@ const Patterns = (props) => {
   const [patternsList, setPatternsList] = useState([]);
   const [isChange, setIsChange] = useState(null); // for modal
   const [isDelete, setIsDelete] = useState(null);
+  const [newModal, setNewModal] = useState("");
+  const [type, setType] = useState("mainProduct"); // mainProduct or addOns
   const [patterns, setPatterns] = useState({
     patternsId: "",
     patternsName: "",
@@ -107,7 +110,7 @@ const Patterns = (props) => {
       console.log("inside if");
       db.collection("gender")
         .doc(genderId)
-        .collection("mainProduct")
+        .collection(type)
         .doc("categories")
         .collection("category")
         .doc(categoryId)
@@ -176,7 +179,7 @@ const Patterns = (props) => {
     console.log("subcategory name updated", genderId);
     db.collection("gender")
       .doc(genderId)
-      .collection("mainProduct")
+      .collection(type)
       .doc("categories")
       .collection("category")
       .doc(categoryId)
@@ -193,7 +196,7 @@ const Patterns = (props) => {
         console.log(newName + " successfully updated!!!");
         db.collection("gender")
           .doc(genderId)
-          .collection("mainProduct")
+          .collection(type)
           .doc("categories")
           .collection("category")
           .doc(categoryId)
@@ -222,10 +225,11 @@ const Patterns = (props) => {
     ref.current.continuousStart();
     // casual shirt
     // https://firebasestorage.googleapis.com/v0/b/istitch-admin.appspot.com/o/1623937713452.jpg?alt=media&token=14291831-385d-4bdb-ab44-297aa0883fa9
-    let bucketName = "images";
+    let bucketName = "Images";
     let img = newImage;
     let storageRef = firebase.storage().ref();
-    let imgRef = storageRef.child(`${bucketName}/${img.name}`);
+    let patternTimstamp = firebase.firestore.FieldValue.serverTimestamp();
+    let imgRef = storageRef.child(`${bucketName}/${patternTimstamp}`);
     imgRef
       .put(img)
       .then((snapshot) => {
@@ -234,7 +238,7 @@ const Patterns = (props) => {
           // now adding the data to firestore
           db.collection("gender")
             .doc(genderId)
-            .collection("mainProduct")
+            .collection(type)
             .doc("categories")
             .collection("category")
             .doc(categoryId)
@@ -252,7 +256,7 @@ const Patterns = (props) => {
               // then set the state again to reload and render it again
               db.collection("gender")
                 .doc(genderId)
-                .collection("mainProduct")
+                .collection(type)
                 .doc("categories")
                 .collection("category")
                 .doc(categoryId)
@@ -301,23 +305,57 @@ const Patterns = (props) => {
     let patternDet = patternsList.find((g) => {
       return g.patternId === patternId;
     });
-    console.log("subcategory name updated", genderId);
-    db.collection("gender")
+    let genderRef = db.collection("gender").doc(genderId);
+    let categoryRef = db
+      .collection("gender")
       .doc(genderId)
-      .collection("mainProduct")
+      .collection(type)
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId);
+    let subcategoryRef = db
+      .collection("gender")
+      .doc(genderId)
+      .collection(type)
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId)
+      .collection("subcategory")
+      .doc(subcategoryId);
+    let styleRef = db
+      .collection("gender")
+      .doc(genderId)
+      .collection(type)
       .doc("categories")
       .collection("category")
       .doc(categoryId)
       .collection("subcategory")
       .doc(subcategoryId)
       .collection("styles")
-      .doc(styleId)
+      .doc(styleId);
+
+    console.log("subcategory name updated", genderId);
+    styleRef
       .collection("patterns")
       .doc(patternId)
       .update({
         delete: true
       })
       .then(() => {
+        // adding
+        genderRef.update({
+          noOfPatterns: firebase.firestore.FieldValue.increment(-1)
+        });
+        // category - no_of_subcategories - increment
+        categoryRef.update({
+          noOfPatterns: firebase.firestore.FieldValue.increment(-1)
+        });
+        subcategoryRef.update({
+          noOfPatterns: firebase.firestore.FieldValue.increment(-1)
+        });
+        styleRef.update({
+          noOfPatterns: firebase.firestore.FieldValue.increment(-1)
+        });
         // add data to deleteItems collections
         let id = generateId("deleted");
         db.collection("deleteItems")
@@ -344,7 +382,7 @@ const Patterns = (props) => {
             console.log(" successfully deleted!!!");
             db.collection("gender")
               .doc(genderId)
-              .collection("mainProduct")
+              .collection(type)
               .doc("categories")
               .collection("category")
               .doc(categoryId)
@@ -384,38 +422,10 @@ const Patterns = (props) => {
   const draftHandler = (newData) => {
     console.log(newData);
     let patternId = generateId("patterns");
-    // let genderRef = db.collection("gender").doc(genderId);
-    // let categoryRef = db
-    //   .collection("gender")
-    //   .doc(genderId)
-    //   .collection("mainProduct")
-    //   .doc("categories")
-    //   .collection("category")
-    //   .doc(categoryId);
-    // let subcategoryRef = db
-    //   .collection("gender")
-    //   .doc(genderId)
-    //   .collection("mainProduct")
-    //   .doc("categories")
-    //   .collection("category")
-    //   .doc(categoryId)
-    //   .collection("subcategory")
-    //   .doc(subcategoryId);
-    // let styleRef = db
-    //   .collection("gender")
-    //   .doc(genderId)
-    //   .collection("mainProduct")
-    //   .doc("categories")
-    //   .collection("category")
-    //   .doc(categoryId)
-    //   .collection("subcategory")
-    //   .doc(subcategoryId)
-    //   .collection("styles")
-    //   .doc(styleId);
     let patternRef = db
       .collection("gender")
       .doc(genderId)
-      .collection("mainProduct")
+      .collection(type)
       .doc("categories")
       .collection("category")
       .doc(categoryId)
@@ -425,12 +435,13 @@ const Patterns = (props) => {
       .doc(styleId)
       .collection("patterns")
       .doc(patternId);
-    let bucketName = "images";
+    let bucketName = "Images";
     let storageRef = firebase.storage().ref();
     console.log("draft handler in patterns", newData);
     if (newData.name !== "" && newData.img !== null) {
       ref.current.continuousStart();
-      let patternImgRef = storageRef.child(`${bucketName}/${newData.img.name}`);
+      let patternTimstamp = firebase.firestore.FieldValue.serverTimestamp();
+      let patternImgRef = storageRef.child(`${bucketName}/${patternTimstamp}`);
       patternImgRef.put(newData.img).then((snapshot) => {
         patternImgRef.getDownloadURL().then((patternImg) => {
           patternRef
@@ -445,7 +456,7 @@ const Patterns = (props) => {
               delete: false,
               hide: true,
               price: 450, // get input and make it as dynamic
-              timestamp: firebase.firestore.FieldValue.serverTimestamp()
+              timestamp: patternTimstamp
             })
             .then(() => {
               // add the above patterns to the seperate patterns collection
@@ -474,7 +485,7 @@ const Patterns = (props) => {
                   let list = [];
                   db.collection("gender")
                     .doc(genderId)
-                    .collection("mainProduct")
+                    .collection(type)
                     .doc("categories")
                     .collection("category")
                     .doc(categoryId)
@@ -500,6 +511,140 @@ const Patterns = (props) => {
         });
       });
     }
+  };
+
+  const draftPatternHandler = (newData) => {
+    // console.log(newData);
+    ref.current.continuousStart();
+    let patternId = generateId("patterns");
+    let bucketName = "Images";
+    let storageRef = firebase.storage().ref();
+    let genderRef = db.collection("gender").doc(genderId);
+    let categoryRef = db
+      .collection("gender")
+      .doc(genderId)
+      .collection(type)
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId);
+    let subcategoryRef = db
+      .collection("gender")
+      .doc(genderId)
+      .collection(type)
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId)
+      .collection("subcategory")
+      .doc(subcategoryId);
+    let styleRef = db
+      .collection("gender")
+      .doc(genderId)
+      .collection(type)
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId)
+      .collection("subcategory")
+      .doc(subcategoryId)
+      .collection("styles")
+      .doc(styleId);
+    let patternRef = db
+      .collection("gender")
+      .doc(genderId)
+      .collection(type)
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId)
+      .collection("subcategory")
+      .doc(subcategoryId)
+      .collection("styles")
+      .doc(styleId)
+      .collection("patterns")
+      .doc(patternId);
+    let patternTimestamp = firebase.firestore.FieldValue.serverTimestamp();
+    let patternImgRef = storageRef.child(`${bucketName}/${patternTimestamp}`);
+    patternImgRef.put(newData.img).then(() => {
+      patternImgRef.getDownloadURL().then((patternImg) => {
+        patternRef
+          .set({
+            genderId: genderId,
+            categoryId: categoryId,
+            subcategoryId: subcategoryId,
+            styleId: styleId, // genderate new category id
+            patternId: patternId, // genderate new category id
+            patternName: newData.name,
+            patternImage: patternImg,
+            delete: false,
+            hide: true,
+            timestamp: patternTimestamp
+          })
+          .then(() => {
+            ref.current.complete();
+            // gender - no_of_categories increment
+            genderRef.update({
+              noOfPatterns: firebase.firestore.FieldValue.increment(1)
+            });
+            // category - no_of_subcategories - increment
+            categoryRef.update({
+              noOfPatterns: firebase.firestore.FieldValue.increment(1)
+            });
+            subcategoryRef.update({
+              noOfPatterns: firebase.firestore.FieldValue.increment(1)
+            });
+            styleRef.update({
+              noOfPatterns: firebase.firestore.FieldValue.increment(1)
+            });
+            // setNewModal(false);
+            let list = [];
+            styleRef
+              .collection("patterns")
+              .get()
+              .then((data) => {
+                data.forEach((doc) => {
+                  list.push(doc.data());
+                });
+                ref.current.complete(); // linear loader to complete
+                // closeModalHandler();
+                setPatternsList(list);
+                setPatterns(list[0]);
+                setNewModal(false);
+                setNewData({
+                  name: "",
+                  img: null
+                });
+              });
+          });
+      });
+    });
+  };
+
+  const selectedType = (type) => {
+    console.log("category.js", type);
+    let list = [];
+    db.collection("gender")
+      .doc(genderId)
+      .collection(type)
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId)
+      .collection("subcategory")
+      .doc(subcategoryId)
+      .collection("styles")
+      .doc(styleId)
+      .collection("patterns")
+      .get()
+      .then((data) => {
+        data.forEach((doc) => {
+          list.push(doc.data());
+        });
+        ref.current.complete(); // linear loader to complete
+        setType(type);
+        if (list.length === 0) {
+          setPatternsList("subcollection_empty");
+        } else {
+          setPatternsList(list);
+          setPatterns(list[0]);
+        }
+      });
   };
 
   let pattern = null;
@@ -592,6 +737,8 @@ const Patterns = (props) => {
         <Info
           patternsList={patternsList}
           selectedPatterns={selectedPatternsHandler}
+          selectedType={selectedType}
+          type={type}
         />
         <InfoBox
           title="Patterns"
@@ -605,6 +752,7 @@ const Patterns = (props) => {
           goBack={goBackHandler}
           deleteHandler={(id) => setIsDelete(id)}
           saveAsDraft={draftHandler}
+          addNewPatterns={() => setNewModal("Patterns")}
         />
       </>
     );
@@ -615,6 +763,16 @@ const Patterns = (props) => {
       {ReactDOM.createPortal(
         <LoadingBar color="#FF0000" ref={ref} />,
         document.getElementById("linear-loader")
+      )}
+      {/* new pattern */}
+      {newModal && (
+        <AddNewStyle
+          title={newModal}
+          newData={newData}
+          closeModal={() => setNewModal(false)}
+          onChange={onChangeHandler}
+          saveAsDraft={draftPatternHandler}
+        />
       )}
       {isChange && (
         <ChangeModal

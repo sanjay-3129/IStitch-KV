@@ -46,12 +46,19 @@ const InfoBox = (props) => {
               Delete
             </button>
             <div class="can-toggle">
-              <input id="a" type="checkbox" />
-              <label for="a">
+              <input
+                id="toggle"
+                name="toggle"
+                type="checkbox"
+                checked={props.stylesDetails.hide}
+                data-toggle="toggle"
+                onChange={props.hide}
+              />
+              <label for="toggle">
                 <div
                   class="can-toggle__switch"
-                  data-checked="Show"
-                  data-unchecked="Hide"
+                  data-checked="Hide"
+                  data-unchecked="Show"
                 ></div>
               </label>
             </div>
@@ -86,6 +93,9 @@ const InfoBox = (props) => {
         </div>
         <div className="view-all">
           <button onClick={props.goBack}>GO BACK</button>
+        </div>
+        <div className="view-all">
+          <button onClick={props.addNewPatterns}>Add new pattern</button>
         </div>
       </article>
     </div>

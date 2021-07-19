@@ -5,12 +5,22 @@ const Info = (props) => {
     <div className="info">
       <div className="flex">
         <div className="left">
-          <a href="#l" className="link active">
+          <button
+            type="button"
+            className={`link ${props.type === "mainProduct" ? "active" : ""}`}
+            // onClick={props.selectMain}
+            onClick={() => props.selectedType("mainProduct")}
+          >
             Main
-          </a>
-          <a href="#l" className="link">
+          </button>
+          <button
+            type="button"
+            className={`link ${props.type === "addOns" ? "active" : ""}`}
+            // onClick={props.selectAddOn}
+            onClick={() => props.selectedType("addOns")}
+          >
             Add-ons
-          </a>
+          </button>
         </div>
         <div className="right">
           <input type="search" placeholder="search using this" />

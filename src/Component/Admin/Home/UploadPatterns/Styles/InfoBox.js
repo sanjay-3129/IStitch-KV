@@ -113,6 +113,9 @@ const InfoBox = (props) => {
           >
             Publish
           </button>
+          <div className="view-all">
+            <button onClick={props.addNewPatterns}>Add new pattern</button>
+          </div>
           {/* <button onClick={props.goBack}>GO BACK</button> */}
         </div>
       </article>

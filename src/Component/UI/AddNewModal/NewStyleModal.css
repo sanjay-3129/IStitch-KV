@@ -25,42 +25,6 @@ li.sty {
   color: #ffffff;
 }
 
-.signin-active a {
-  padding-bottom: 10px;
-  color: #1059ff;
-  text-decoration: none;
-  border-bottom: solid 2px #1059ff;
-  transition: all 0.25s ease;
-  cursor: pointer;
-}
-
-.signin-inactive a {
-  padding-bottom: 10px;
-  color: #1059ff;
-  text-decoration: none;
-  border-bottom: none;
-  cursor: pointer;
-  border-bottom: solid 2px transparent;
-}
-
-.signup-active a {
-  cursor: pointer;
-  padding-bottom: 10px;
-  color: #1059ff;
-  text-decoration: none;
-  border-bottom: solid 2px #1059ff;
-  padding-bottom: 10px;
-}
-
-.signup-inactive a {
-  cursor: pointer;
-  padding-bottom: 10px;
-  color: #1059ff;
-  border-bottom: solid 2px transparent;
-  text-decoration: none;
-  transition: all 0.25s ease;
-}
-
 .addnew label {
   margin: 0 0 15px;
   font-size: 20px;
@@ -152,4 +116,81 @@ li.sty {
 .addnew button:hover {
   background: #005b7f;
   color: #fff;
+}
+
+.addnew .container-fluid {
+  padding: 15px;
+}
+
+.container-fluid input[type="text"] {
+  width: 400px;
+  display: block;
+}
+
+.addnew .subcs {
+  margin: 0 0 5px;
+}
+
+.subcs p {
+  font-size: 20px;
+  font-weight: 500;
+  font-family: initial;
+  padding: 7px;
+  margin: 0;
+}
+
+.subcs .scrollview {
+  padding: 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  border: 1px solid #005b7f;
+  border-radius: 5px;
+}
+
+.scrollview .styles {
+  position: relative;
+  display: inline-block;
+  white-space: pre-wrap;
+  width: 100px;
+  margin: 0 5px;
+  border: 1px solid #a6c8cc;
+}
+
+.scrollview > .styles:first-child {
+  margin-left: 0;
+}
+
+.scrollview .styles input[type="checkbox"] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  box-shadow: none;
+  width: initial;
+  margin: 5px;
+}
+
+.scrollview .styles .stretched {
+  position: absolute;
+  cursor: pointer;
+  width: -webkit-fill-available;
+  height: -webkit-fill-available;
+  margin: 0;
+  top: 0;
+  left: 0;
+}
+
+.styles .img-fluid {
+  height: 80px;
+  display: inline-block;
+}
+
+.styles p.sname {
+  font-size: 14px;
+  font-weight: 500;
+  padding: 5px;
+  margin: 0;
+  display: inline-block;
+  width: 100%;
+  text-align: center;
 }

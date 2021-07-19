@@ -64,6 +64,13 @@ const ModalOverlay = (props) => {
               <span>+</span>
             </label>
           </div>
+          <div class="col-6">
+            <label htmlfor="categorytype">Select Category Type</label>
+            <select name="type" id="type">
+              <option value="mainProduct">Main</option>
+              <option value="addOns">Add-On</option>
+            </select>
+          </div>
           <button
             type="button"
             class="draft"

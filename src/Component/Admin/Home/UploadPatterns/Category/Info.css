@@ -8,7 +8,29 @@
   flex-wrap: wrap;
   justify-content: space-between;
 }
-.left a.link {
+
+.left button {
+  display: inline-block;
+  padding: 5px;
+  margin: 0 5px;
+  width: 85px;
+  border: 1px solid transparent;
+  font-size: 16px;
+  font-weight: 500;
+  background: #fff;
+  border-radius: 5px;
+}
+
+.left button.active {
+  color: #005b7f;
+  border: 1px solid;
+  border-bottom: 5px solid transparent;
+}
+
+.left > button:first-child {
+  margin-left: -5px;
+}
+/* .left a.link {
   font-size: 18px;
   color: #a6c8cc;
   font-family: initial;
@@ -23,7 +45,7 @@
   color: #005b7f;
   border: 1px solid #005b7f;
   border-bottom: 5px solid transparent;
-}
+} */
 .right input {
   padding: 5px 12px;
   margin: 0 0 10px;
