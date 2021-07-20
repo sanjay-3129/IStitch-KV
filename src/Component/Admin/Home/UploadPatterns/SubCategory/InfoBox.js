@@ -93,6 +93,12 @@ const InfoBox = (props) => {
               {props.subCategoryDetails.noOfStyles}
             </span>{" "}
           </p>
+          <p>
+            No of Patterns
+            <span className="category-count">
+              {props.subCategoryDetails.noOfPatterns}
+            </span>{" "}
+          </p>
         </div>
         <div class="view-all">
           <button

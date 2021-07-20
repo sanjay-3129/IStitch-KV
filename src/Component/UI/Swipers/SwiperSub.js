@@ -93,6 +93,12 @@ const SwiperSub = (props) => {
                       {genderDetail.noOfStyles}
                     </span>{" "}
                   </p>
+                  <p>
+                    No of Patterns
+                    <span className="category-count">
+                      {genderDetail.noOfPatterns}
+                    </span>{" "}
+                  </p>
                 </div>
                 <div className="view-all">
                   <button className="add-gender" onClick={props.addGender}>

@@ -177,7 +177,7 @@ const NewStyleModal = (props) => {
   } else if (subcategoryList !== null) {
     // console.log("92", stylesList);
     relations = subcategoryList.map((item, index) => {
-      // console.log(item.data);
+      console.log(item.data);
       return (
         <div class="subcs" key={index}>
           {/* <p>disc</p> */}

@@ -36,7 +36,8 @@ const Gender = (props) => {
     noOfCategories: 0,
     noOfSubcategories: 0,
     noOfStyles: 0,
-    hide: false,
+    noOfPatterns: 0,
+    hide: true,
     delete: false
   });
   const [addNewItem, setAddNewItem] = useState("");
@@ -103,7 +104,8 @@ const Gender = (props) => {
     let bucketName = "Images";
     let img = newImage;
     let storageRef = firebase.storage().ref();
-    let imgRef = storageRef.child(`${bucketName}/${img.name}`);
+    let genderTimestamp = +new Date().getTime() + "-" + newData.genderImg.name;
+    let imgRef = storageRef.child(`${bucketName}/${genderTimestamp}`);
     imgRef
       .put(img)
       .then((snapshot) => {
@@ -220,19 +222,26 @@ const Gender = (props) => {
       newData.subcategoryName !== "" &&
       newData.subcategoryImg !== null
     ) {
-      genderTimestamp = firebase.firestore.FieldValue.serverTimestamp();
+      var metadata = {
+        contentType: "image/jpeg"
+      };
+      genderTimestamp = +new Date().getTime() + "-" + newData.genderImg.name;
       ref.current.continuousStart();
-      let genderImgRef = storageRef.child(`${bucketName}/${genderTimestamp}`);
-      categoryTimestamp = firebase.firestore.FieldValue.serverTimestamp();
-      let categoryImgRef = storageRef.child(
-        `${bucketName}/${categoryTimestamp}`
+      let genderImgRef = storageRef.child(
+        `${bucketName}/${newData.genderImg.name}`
       );
-      subcategoryTimestamp = firebase.firestore.FieldValue.serverTimestamp();
+      categoryTimestamp =
+        +new Date().getTime() + "-" + newData.categoryImg.name;
+      let categoryImgRef = storageRef.child(
+        `${bucketName}/${newData.categoryImg.name}`
+      );
+      subcategoryTimestamp =
+        +new Date().getTime() + "-" + newData.subcategoryImg.name;
       let subcategoryImgRef = storageRef.child(
-        `${bucketName}/${subcategoryTimestamp}`
+        `${bucketName}/${newData.subcategoryImg.name}`
       );
 
-      genderImgRef.put(newData.genderImg).then((snapshot) => {
+      genderImgRef.put(newData.genderImg, metadata).then((snapshot) => {
         genderImgRef.getDownloadURL().then((genderImg) => {
           genderRef
             .set({
@@ -242,9 +251,10 @@ const Gender = (props) => {
               noOfCategories: 0,
               noOfSubcategories: 0,
               noOfStyles: 0,
+              noOfPatterns: 0,
               delete: false,
               hide: true,
-              timestamp: genderTimestamp
+              timestamp: firebase.firestore.FieldValue.serverTimestamp()
             })
             .then(() => {
               // creating category
@@ -262,9 +272,10 @@ const Gender = (props) => {
                       categoryImage: categoryImg,
                       noOfSubcategories: 0,
                       noOfStyles: 0,
+                      noOfPatterns: 0,
                       delete: false,
-                      hide: true,
-                      timestamp: categoryTimestamp
+                      hide: false,
+                      timestamp: firebase.firestore.FieldValue.serverTimestamp()
                     })
                     .then(() => {
                       // gender - no_of_categories increment
@@ -295,9 +306,10 @@ const Gender = (props) => {
                                   subcategoryName: newData.subcategoryName,
                                   subcategoryImage: subcategoryImg,
                                   noOfStyles: 0,
+                                  noOfPatterns: 0,
                                   delete: false,
                                   hide: true,
-                                  timestamp: subcategoryTimestamp
+                                  timestamp: firebase.firestore.FieldValue.serverTimestamp()
                                 })
                                 .then(() => {
                                   // gender - no_of_subcategories - increment
@@ -353,9 +365,10 @@ const Gender = (props) => {
       newData.subcategoryImg === null
     ) {
       ref.current.continuousStart();
-      genderTimestamp = firebase.firestore.FieldValue.serverTimestamp();
+      genderTimestamp = +new Date().getTime() + "-" + newData.genderImg.name;
       let genderImgRef = storageRef.child(`${bucketName}/${genderTimestamp}`);
-      categoryTimestamp = firebase.firestore.FieldValue.serverTimestamp();
+      categoryTimestamp =
+        +new Date().getTime() + "-" + newData.categoryImg.name;
       let categoryImgRef = storageRef.child(
         `${bucketName}/${categoryTimestamp}`
       );
@@ -373,7 +386,7 @@ const Gender = (props) => {
               noOfStyles: 0,
               delete: false,
               hide: true,
-              timestamp: genderTimestamp
+              timestamp: firebase.firestore.FieldValue.serverTimestamp()
             })
             .then(() => {
               // id - update
@@ -393,9 +406,10 @@ const Gender = (props) => {
                       categoryImage: categoryImg,
                       noOfSubcategories: 0,
                       noOfStyles: 0,
+                      noOfPatterns: 0,
                       delete: false,
-                      hide: true,
-                      timestamp: categoryTimestamp
+                      hide: false,
+                      timestamp: firebase.firestore.FieldValue.serverTimestamp()
                     })
                     .then((categoryRef) => {
                       // gender - no_of_categories increment &&
@@ -434,7 +448,7 @@ const Gender = (props) => {
       newData.subcategoryImg === null
     ) {
       ref.current.continuousStart();
-      genderTimestamp = firebase.firestore.FieldValue.serverTimestamp();
+      genderTimestamp = +new Date().getTime() + "-" + newData.genderImg.name;
       let genderImgRef = storageRef.child(`${bucketName}/${genderTimestamp}`);
 
       genderImgRef.put(newData.genderImg).then((snapshot) => {
@@ -447,9 +461,10 @@ const Gender = (props) => {
               noOfCategories: 0,
               noOfSubcategories: 0,
               noOfStyles: 0,
+              noOfPatterns: 0,
               delete: false,
               hide: true,
-              timestamp: genderTimestamp
+              timestamp: firebase.firestore.FieldValue.serverTimestamp()
             })
             .then(() => {
               list = [];
@@ -496,9 +511,10 @@ const Gender = (props) => {
             categoryImage: categoryImg,
             noOfSubcategories: 0,
             noOfStyles: 0,
+            noOfPatterns: 0,
             delete: false,
-            hide: true,
-            timestamp: categoryTimestamp
+            hide: false,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
           })
           .then(() => {
             // gender - no_of_categories increment

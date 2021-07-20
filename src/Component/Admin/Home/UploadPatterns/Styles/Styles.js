@@ -9,6 +9,7 @@ import ChangeModal from "../../../../UI/AddNewModal/ChangeModal.js";
 import NewStyleModal from "../../../../UI/AddNewModal/NewStyleModal.js";
 import LoadingBar from "react-top-loading-bar";
 import AddNewStyle from "../../../../UI/AddNewModal/AddNewStyle";
+import Suggestion from "../../../../UI/AddNewModal/Suggestions";
 // import NewStyleModal from "../../../../UI/AddNewModal/NewStyleModal";
 import DeleteConfirmModal from "../../../../UI/DeleteConfirmModal/DeleteConfirmModal";
 import generateId from "../../../../../Helpers/generateId";
@@ -187,7 +188,7 @@ const Styles = (props) => {
     let bucketName = "Images";
     let img = newImage;
     let storageRef = firebase.storage().ref();
-    let styleTimestamp = firebase.firestore.FieldValue.serverTimestamp();
+    let styleTimestamp = +new Date().getTime() + "-" + newData.styleImg.name;
     let imgRef = storageRef.child(`${bucketName}/${styleTimestamp}`);
     imgRef
       .put(img)
@@ -291,44 +292,44 @@ const Styles = (props) => {
       .collection("styles")
       .doc(styleId);
 
-    styleRef
-      .update({
-        delete: true
+    // add data to deleteItems collections
+    let id = generateId("deleted");
+    db.collection("deleteItems")
+      .doc(id)
+      .set({
+        id: id,
+        genderId: genderId,
+        genderName: genderName,
+        genderImg: "",
+        categoryId: categoryId,
+        categoryName: categoryName,
+        categoryImg: "",
+        subcategoryId: subcategoryId,
+        subcategoryName: subcategoryName,
+        subcategoryImg: "",
+        styleId: styleDet.styleId,
+        styleName: styleDet.styleName,
+        styleImg: styleDet.styleImage,
+        patternId: "",
+        patternName: "",
+        patternImg: ""
       })
       .then(() => {
-        genderRef.update({
-          noOfStyles: firebase.firestore.FieldValue.increment(-1)
-        });
-        // category - no_of_subcategories - increment
-        categoryRef.update({
-          noOfStyles: firebase.firestore.FieldValue.increment(-1)
-        });
-        subcategoryRef.update({
-          noOfStyles: firebase.firestore.FieldValue.increment(-1)
-        });
-        // add data to deleteItems collections
-        let id = generateId("deleted");
-        db.collection("deleteItems")
-          .doc(id)
-          .set({
-            id: id,
-            genderId: genderId,
-            genderName: genderName,
-            genderImg: "",
-            categoryId: categoryId,
-            categoryName: categoryName,
-            categoryImg: "",
-            subcategoryId: subcategoryId,
-            subcategoryName: subcategoryName,
-            subcategoryImg: "",
-            styleId: styleDet.styleId,
-            styleName: styleDet.styleName,
-            styleImg: styleDet.styleImage,
-            patternId: "",
-            patternName: "",
-            patternImg: ""
+        styleRef
+          .update({
+            delete: true
           })
           .then(() => {
+            genderRef.update({
+              noOfStyles: firebase.firestore.FieldValue.increment(-1)
+            });
+            // category - no_of_subcategories - increment
+            categoryRef.update({
+              noOfStyles: firebase.firestore.FieldValue.increment(-1)
+            });
+            subcategoryRef.update({
+              noOfStyles: firebase.firestore.FieldValue.increment(-1)
+            });
             // decrement code
             console.log(" successfully deleted!!!");
             db.collection("gender")
@@ -374,7 +375,7 @@ const Styles = (props) => {
     }
   };
 
-  const draftHandler = (newData) => {
+  const draftHandler = (relations) => {
     console.log("style adding...");
     let styleId = generateId("styles");
     let genderRef = db.collection("gender").doc(genderId);
@@ -407,11 +408,13 @@ const Styles = (props) => {
       .doc(styleId);
     let bucketName = "Images";
     let storageRef = firebase.storage().ref();
-    console.log("draft handler in styles", newData);
+    // console.log("draft handler in styles", newData);
+    // console.log("draft handler in styles", relations);
+
     let styleTimestamp = null;
     if (newData.name !== "" && newData.img !== null) {
       ref.current.continuousStart();
-      styleTimestamp = firebase.firestore.FieldValue.serverTimestamp();
+      styleTimestamp = +new Date().getTime() + "-" + newData.name;
       let styleImgRef = storageRef.child(`${bucketName}/${styleTimestamp}`);
       styleImgRef.put(newData.img).then((snapshot) => {
         styleImgRef.getDownloadURL().then((styleImg) => {
@@ -425,7 +428,9 @@ const Styles = (props) => {
               styleImage: styleImg,
               delete: false,
               hide: true,
-              timestamp: styleTimestamp
+              noOfPatterns: 0,
+              timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+              relations: [...relations] // copy totally and put into type
             })
             .then(() => {
               // gender - no_of_subcategories increment
@@ -507,7 +512,8 @@ const Styles = (props) => {
       .doc(styles.styleId)
       .collection("patterns")
       .doc(patternId);
-    let patternTimestamp = firebase.firestore.FieldValue.serverTimestamp();
+    let patternTimestamp =
+      +new Date().getTime() + "-" + newData.patternImg.name;
     let patternImgRef = storageRef.child(`${bucketName}/${patternTimestamp}`);
     patternImgRef.put(newData.img).then(() => {
       patternImgRef.getDownloadURL().then((patternImg) => {
@@ -522,7 +528,8 @@ const Styles = (props) => {
             patternImage: patternImg,
             delete: false,
             hide: true,
-            timestamp: patternTimestamp
+            noOfPatterns: 0,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
           })
           .then(() => {
             ref.current.complete();
@@ -656,7 +663,17 @@ const Styles = (props) => {
   } else {
     if (addNewItem) {
       style = (
-        <NewStyleModal
+        // <NewStyleModal
+        //   closeModal={closeModalHandler}
+        //   title={addNewItem}
+        //   saveAsDraft={draftHandler}
+        //   newData={newData}
+        //   onChange={onChangeHandler}
+        //   style={styles}
+        //   type={type}
+        //   goBack={goBackHandler}
+        // />
+        <Suggestion
           closeModal={closeModalHandler}
           title={addNewItem}
           saveAsDraft={draftHandler}

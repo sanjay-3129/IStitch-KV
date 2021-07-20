@@ -228,7 +228,7 @@ const Patterns = (props) => {
     let bucketName = "Images";
     let img = newImage;
     let storageRef = firebase.storage().ref();
-    let patternTimstamp = firebase.firestore.FieldValue.serverTimestamp();
+    let patternTimstamp = +new Date().getTime() + "-" + newData.patternImg.name;
     let imgRef = storageRef.child(`${bucketName}/${patternTimstamp}`);
     imgRef
       .put(img)
@@ -343,19 +343,7 @@ const Patterns = (props) => {
       })
       .then(() => {
         // adding
-        genderRef.update({
-          noOfPatterns: firebase.firestore.FieldValue.increment(-1)
-        });
-        // category - no_of_subcategories - increment
-        categoryRef.update({
-          noOfPatterns: firebase.firestore.FieldValue.increment(-1)
-        });
-        subcategoryRef.update({
-          noOfPatterns: firebase.firestore.FieldValue.increment(-1)
-        });
-        styleRef.update({
-          noOfPatterns: firebase.firestore.FieldValue.increment(-1)
-        });
+
         // add data to deleteItems collections
         let id = generateId("deleted");
         db.collection("deleteItems")
@@ -379,6 +367,19 @@ const Patterns = (props) => {
             patternImg: patternDet.patternImage
           })
           .then(() => {
+            genderRef.update({
+              noOfPatterns: firebase.firestore.FieldValue.increment(-1)
+            });
+            // category - no_of_subcategories - increment
+            categoryRef.update({
+              noOfPatterns: firebase.firestore.FieldValue.increment(-1)
+            });
+            subcategoryRef.update({
+              noOfPatterns: firebase.firestore.FieldValue.increment(-1)
+            });
+            styleRef.update({
+              noOfPatterns: firebase.firestore.FieldValue.increment(-1)
+            });
             console.log(" successfully deleted!!!");
             db.collection("gender")
               .doc(genderId)
@@ -440,7 +441,8 @@ const Patterns = (props) => {
     console.log("draft handler in patterns", newData);
     if (newData.name !== "" && newData.img !== null) {
       ref.current.continuousStart();
-      let patternTimstamp = firebase.firestore.FieldValue.serverTimestamp();
+      let patternTimstamp =
+        +new Date().getTime() + "-" + newData.patternImg.name;
       let patternImgRef = storageRef.child(`${bucketName}/${patternTimstamp}`);
       patternImgRef.put(newData.img).then((snapshot) => {
         patternImgRef.getDownloadURL().then((patternImg) => {
@@ -456,9 +458,48 @@ const Patterns = (props) => {
               delete: false,
               hide: true,
               price: 450, // get input and make it as dynamic
-              timestamp: patternTimstamp
+              timestamp: firebase.firestore.FieldValue.serverTimestamp()
             })
             .then(() => {
+              db.collection("gender")
+                .doc(genderId)
+                .update({
+                  noOfPatterns: firebase.firestore.FieldValue.increment(-1)
+                });
+              // category - no_of_subcategories - increment
+              db.collection("gender")
+                .doc(genderId)
+                .collection(type)
+                .doc("categories")
+                .collection("category")
+                .doc(categoryId)
+                .update({
+                  noOfPatterns: firebase.firestore.FieldValue.increment(-1)
+                });
+              db.collection("gender")
+                .doc(genderId)
+                .collection(type)
+                .doc("categories")
+                .collection("category")
+                .doc(categoryId)
+                .collection("subcategory")
+                .doc(subcategoryId)
+                .update({
+                  noOfPatterns: firebase.firestore.FieldValue.increment(-1)
+                });
+              db.collection("gender")
+                .doc(genderId)
+                .collection(type)
+                .doc("categories")
+                .collection("category")
+                .doc(categoryId)
+                .collection("subcategory")
+                .doc(subcategoryId)
+                .collection("styles")
+                .doc(styleId)
+                .update({
+                  noOfPatterns: firebase.firestore.FieldValue.increment(-1)
+                });
               // add the above patterns to the seperate patterns collection
               db.collection("patterns")
                 .doc(patternId)
@@ -560,7 +601,8 @@ const Patterns = (props) => {
       .doc(styleId)
       .collection("patterns")
       .doc(patternId);
-    let patternTimestamp = firebase.firestore.FieldValue.serverTimestamp();
+    let patternTimestamp =
+      +new Date().getTime() + "-" + newData.patternImg.name;
     let patternImgRef = storageRef.child(`${bucketName}/${patternTimestamp}`);
     patternImgRef.put(newData.img).then(() => {
       patternImgRef.getDownloadURL().then((patternImg) => {
@@ -575,7 +617,7 @@ const Patterns = (props) => {
             patternImage: patternImg,
             delete: false,
             hide: true,
-            timestamp: patternTimestamp
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
           })
           .then(() => {
             ref.current.complete();
