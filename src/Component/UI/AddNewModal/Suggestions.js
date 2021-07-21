@@ -119,7 +119,7 @@ const Suggestion = (props) => {
             id="name"
             name="name"
             value={props.newData.name}
-            onChange={props.onChange}
+            onChange={props.onChange} 
           />
           <label>Upload Image</label>
           <div class="upload-img">

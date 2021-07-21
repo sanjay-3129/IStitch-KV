@@ -206,8 +206,7 @@ const SubCategory = (props) => {
 
   const changeImageHandler = (subcategoryId, newImage) => {
     ref.current.continuousStart();
-    let subCategoryTimestamp =
-      +new Date().getTime() + "-" + newData.subCategoryImg.name;
+    let subCategoryTimestamp = +new Date().getTime() + "-" + newData.img.name;
     // casual shirt
     // https://firebasestorage.googleapis.com/v0/b/istitch-admin.appspot.com/o/1623937713452.jpg?alt=media&token=14291831-385d-4bdb-ab44-297aa0883fa9
     let bucketName = "Images";
@@ -482,6 +481,7 @@ const SubCategory = (props) => {
           .doc(id)
           .set({
             id: id,
+            type: type,
             genderId: genderId,
             genderName: genderName,
             genderImg: "",
@@ -583,7 +583,7 @@ const SubCategory = (props) => {
       .doc(subcategory.subcategoryId)
       .collection("styles")
       .doc(styleId);
-    let styleTimestamp = +new Date().getTime() + "-" + newData.styleImg.name;
+    let styleTimestamp = +new Date().getTime() + "-" + newData.img.name;
     let styleImgRef = storageRef.child(`${bucketName}/${styleTimestamp}`);
     styleImgRef.put(newData.img).then(() => {
       styleImgRef.getDownloadURL().then((styleImg) => {
@@ -597,6 +597,7 @@ const SubCategory = (props) => {
             styleImage: styleImg,
             delete: false,
             hide: true,
+            noOfPatterns: 0,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
           })
           .then(() => {
@@ -631,7 +632,8 @@ const SubCategory = (props) => {
       .collection("category")
       .doc(categoryId)
       .collection("subcategory");
-    let list = [];
+    // console.log(genderId, type, categoryId);
+    // let list = [];
     if (e.target.checked) {
       // true - show or hide(false)
       subCategoryRef
@@ -701,8 +703,8 @@ const SubCategory = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
-        ref.current.complete(); // linear loader to complete
-        setType(type);
+        // ref.current.complete(); // linear loader to complete
+        // setType(type);
         if (list.length === 0) {
           setSubCategoryList("subcollection_empty");
         } else {
@@ -765,7 +767,18 @@ const SubCategory = (props) => {
       </form>
     );
   } else if (subCategoryList === "subcollection_empty") {
-    subCategories = <h1>No subcollection available</h1>;
+    subCategories = (
+      <>
+        <h1>No subcollection available</h1>
+        <button
+          className="btn btn-primary"
+          type="button"
+          onClick={goBackHandler}
+        >
+          Go Back
+        </button>
+      </>
+    );
   } else {
     subCategories = (
       <>

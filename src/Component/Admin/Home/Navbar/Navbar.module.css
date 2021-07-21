@@ -36,8 +36,8 @@
   height: 10px;
   padding: 10px;
   transform: rotate(45deg);
-  background-color: #ffffff;
-  border: 1px solid #1b1212;
+  background-color: #a6c8cc;
+  /* border: 1px solid #1b1212; */
   border-bottom-width: 0;
   border-right-width: 0;
 }
@@ -45,12 +45,14 @@
   padding: 10px 15px;
   height: fit-content;
   border-radius: 5px;
-  border: 1px solid #1b1212;
+  background: #a6c8cc;
+  /* border: 1px solid #1b1212; */
 }
 .header .prfl_img .overlay .header p {
   margin: 0;
 }
 .header .prfl_img .overlay .header p.signout {
+  position: relative;
   margin: 10px 0 0;
   padding: 10px;
   background-color: #fff;
@@ -58,6 +60,8 @@
 }
 .header .prfl_img .overlay .header p.signout a.link {
   color: #005b7f;
+  display: inline-block;
+  width: 100%;
   text-decoration: none;
 }
 .header .prfl_img .overlay .header p.signout:hover {
@@ -71,8 +75,9 @@
   color: #1b1212;
 }
 .header .prfl_img .overlay .header p.signout i.fas {
-  float: right;
-  margin-top: 4px;
+  position: absolute;
+  right: 4px;
+  top: 14px;
 }
 .header .prfl_img .btn .img_fluid {
   width: 60px;
@@ -93,3 +98,4 @@
   font-family: "Times New Roman", Times, serif;
   text-align: right;
 }
+display: inline-block;

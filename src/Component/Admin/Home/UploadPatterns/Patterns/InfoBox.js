@@ -50,7 +50,7 @@ const InfoBox = (props) => {
                 id="toggle"
                 name="toggle"
                 type="checkbox"
-                checked={props.stylesDetails.hide}
+                checked={props.patternsDetails.hide}
                 data-toggle="toggle"
                 onChange={props.hide}
               />

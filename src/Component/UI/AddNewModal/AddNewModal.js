@@ -83,7 +83,7 @@ const ModalOverlay = (props) => {
 
     $("#categoryImg").change(function () {
       var file = this.files[0];
-      console.log(file);
+      // console.log(file);
       var reader = new FileReader();
       reader.onloadend = function () {
         $("#uploadButton2").css(
@@ -241,7 +241,7 @@ const ModalOverlay = (props) => {
                 </div>
                 <div class="col-6">
                   <label htmlfor="categorytype">Select Category Type</label>
-                  <select name="type" id="type">
+                  <select name="type" id="categorytype">
                     <option value="mainProduct">Main</option>
                     <option value="addOns">Add-On</option>
                   </select>

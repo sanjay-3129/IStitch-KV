@@ -46,16 +46,33 @@ const SwiperSub = (props) => {
                     >
                       Delete Gender
                     </button>
-                    <input
+                    <div class="can-toggle">
+                      <label for="toggle">
+                        <div
+                          class="can-toggle__switch"
+                          data-checked="Hide"
+                          data-unchecked="Show"
+                        ></div>
+                      </label>
+                      <input
+                        id="toggle"
+                        name="toggle"
+                        type="checkbox"
+                        checked={genderDetail.hide}
+                        data-toggle="toggle"
+                        onChange={props.hide}
+                      />
+                    </div>
+                    {/* <input
                       id="toggle"
                       name="toggle"
                       type="checkbox"
                       checked={genderDetail.hide}
                       data-toggle="toggle"
                       onChange={props.hide}
-                    />
-                    Hide
-                    {/* <div className="can-toggle">
+                    /> */}
+                    {/*
+                    <div className="can-toggle">
                       <input
                         id="toggle"
                         name="toggle"

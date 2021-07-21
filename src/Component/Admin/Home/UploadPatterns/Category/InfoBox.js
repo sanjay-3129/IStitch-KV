@@ -67,55 +67,98 @@ const InfoBox = (props) => {
             </button> */}
           </div>
         </div>
-        <div className="count">
-          <p>
-            Gender
-            <span className="category-count">{props.genderName}</span>{" "}
-          </p>
-          <p>
-            No of Sub-Categories
-            <span className="category-count">
-              {props.categoryDetails.noOfSubcategories}
-            </span>{" "}
-          </p>
-          <p>
-            No of Styles
-            <span className="category-count">
-              {props.categoryDetails.noOfStyles}
-            </span>{" "}
-          </p>
-          <p>
-            No of Patterns
-            <span className="category-count">
-              {props.categoryDetails.noOfPatterns}
-            </span>{" "}
-          </p>
-        </div>
-        <div className="view-all">
-          <button
-            type="button"
-            className="new-cat"
-            onClick={() => props.addNew("category")}
-          >
-            Add New Category
-          </button>
-          <button className="category-new" onClick={props.addNewSub}>
-            Add New Sub-Category
-          </button>
-          <button
-            className="category-link"
-            onClick={() =>
-              props.view(
-                props.categoryDetails.categoryId,
-                props.categoryDetails.categoryName,
-                props.categoryDetails.categoryImage
-              )
-            }
-          >
-            View All Sub-Category
-          </button>
-          {/* <button onClick={props.goBack}>GO BACK</button> */}
-        </div>
+
+        {props.type === "mainProduct" ? (
+          <>
+            <div className="count">
+              <p>
+                Gender
+                <span className="category-count">{props.genderName}</span>{" "}
+              </p>
+              <p>
+                No of Sub-Categories
+                <span className="category-count">
+                  {props.categoryDetails.noOfSubcategories}
+                </span>{" "}
+              </p>
+              <p>
+                No of Styles
+                <span className="category-count">
+                  {props.categoryDetails.noOfStyles}
+                </span>{" "}
+              </p>
+              <p>
+                No of Patterns
+                <span className="category-count">
+                  {props.categoryDetails.noOfPatterns}
+                </span>{" "}
+              </p>
+            </div>
+            <div className="view-all">
+              <button
+                type="button"
+                className="new-cat"
+                onClick={() => props.addNew("category")}
+              >
+                Add New Category
+              </button>
+              <button className="category-new" onClick={props.addNewSub}>
+                Add New Sub-Category
+              </button>
+              <button
+                className="category-link"
+                onClick={() =>
+                  props.view(
+                    props.categoryDetails.categoryId,
+                    props.categoryDetails.categoryName,
+                    props.categoryDetails.categoryImage
+                  )
+                }
+              >
+                View All Sub-Category
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="count">
+              <p>
+                Gender
+                <span className="category-count">{props.genderName}</span>{" "}
+              </p>
+              <p>
+                No of Patterns
+                <span className="category-count">
+                  {props.categoryDetails.noOfPatterns}
+                </span>{" "}
+              </p>
+            </div>
+            <div className="view-all">
+              <button
+                type="button"
+                className="new-cat"
+                onClick={() => props.addNew("category")}
+              >
+                Add New Category
+              </button>
+              <button className="category-new" onClick={props.addNewPattern}>
+                Add New Pattern
+              </button>
+              <button
+                className="category-link"
+                onClick={() =>
+                  props.view(
+                    props.categoryDetails.categoryId,
+                    props.categoryDetails.categoryName,
+                    props.categoryDetails.categoryImage
+                  )
+                }
+              >
+                View All Patterns
+              </button>
+            </div>
+          </>
+        )}
       </article>
       <button class="goback" onClick={props.goBack}>
         <i class="fas fa-arrow-left" aria-hidden="true"></i>

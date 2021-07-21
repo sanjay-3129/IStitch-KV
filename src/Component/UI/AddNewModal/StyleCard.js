@@ -26,7 +26,11 @@ const StyleCard = (props) => {
         docs.forEach((doc) => {
           list.push(doc.data());
         });
-        setStylesList(list);
+        if (list.length > 0) {
+          setStylesList(list);
+        } else {
+          setStylesList("empty");
+        }
       })
       .catch((e) => console.log(e));
   }, []);
@@ -39,6 +43,10 @@ const StyleCard = (props) => {
   let styles = null;
   if (stylesList === null) {
     styles = <Spinner />;
+  } else if (stylesList === "empty") {
+    styles = (
+      <h3>No style is available yet. Please add it to view the styles.</h3>
+    );
   } else {
     styles = stylesList.map((style, i) => {
       // console.log(i);

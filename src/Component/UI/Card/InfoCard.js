@@ -1,20 +1,22 @@
 import React from "react";
 
 const InfoCard = (props) => {
-    return (
+  return (
+    <div class="col-3">
       <div
         className="content_box"
-        key={category.categoryId}
-        onClick={() => props.selectedCategory(category)}
+        key={props.item.categoryId}
+        onClick={() => props.selectedCategory(props.item)}
       >
         <img
           className="img_fluid"
-          src={category.categoryImage}
-          alt={category.categoryName}
+          src={props.item.categoryImage}
+          alt={props.item.categoryName}
         />
-        <p className="name">{category.categoryName}</p>
+        <p className="name">{props.item.categoryName}</p>
       </div>
-    );
-  };
+    </div>
+  );
+};
 
 export default InfoCard;

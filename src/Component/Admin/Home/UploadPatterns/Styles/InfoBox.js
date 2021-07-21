@@ -82,6 +82,12 @@ const InfoBox = (props) => {
             SubCategory
             <span className="category-count">{props.subcategoryName}</span>
           </p>
+          <p>
+            No of Patterns
+            <span className="category-count">
+              {props.stylesDetails.noOfPatterns}
+            </span>
+          </p>
         </div>
         <div class="view-all">
           <button
@@ -91,6 +97,16 @@ const InfoBox = (props) => {
           >
             Add New Style
           </button>
+          <button
+            type="button"
+            className="delete-gender"
+            onClick={() => props.addNew("stylesUpdate")}
+          >
+            Add/Update Relations
+          </button>
+          <div className="view-all">
+            <button onClick={props.addNewPatterns}>Add new pattern</button>
+          </div>
           <button
             className="category-link"
             onClick={() =>
@@ -102,7 +118,7 @@ const InfoBox = (props) => {
           >
             View All Patterns
           </button>
-          <button
+          {/* <button
             className="category-new"
             onClick={() =>
               props.view(
@@ -112,10 +128,8 @@ const InfoBox = (props) => {
             }
           >
             Publish
-          </button>
-          <div className="view-all">
-            <button onClick={props.addNewPatterns}>Add new pattern</button>
-          </div>
+          </button> */}
+
           {/* <button onClick={props.goBack}>GO BACK</button> */}
         </div>
       </article>

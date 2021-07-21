@@ -8,20 +8,20 @@ const Info = (props) => {
         <div className="left">
           <button
             type="button"
-            className={`link ${props.type === "mainProduct" ? "active" : ""}`}
+            className={`link active`}
             // onClick={props.selectMain}
-            onClick={() => props.selectedType("mainProduct")}
+            // onClick={() => props.selectedType("mainProduct")}
           >
-            Main
+            {props.type === "mainProduct" ? "Main" : "Add-ons"}
           </button>
-          <button
+          {/* <button
             type="button"
             className={`link ${props.type === "addOns" ? "active" : ""}`}
             // onClick={props.selectAddOn}
             onClick={() => props.selectedType("addOns")}
           >
             Add-ons
-          </button>
+          </button> */}
         </div>
         <div className="right">
           <input type="search" placeholder="search using this" />
@@ -30,17 +30,19 @@ const Info = (props) => {
       <div className="content">
         {props.patternsList.map((pattern) => {
           return (
-            <div
-              className="content_box"
-              key={pattern.patternId}
-              onClick={() => props.selectedPatterns(pattern)}
-            >
-              <img
-                className="img_fluid"
-                src={pattern.patternImage}
-                alt={pattern.patternName}
-              />
-              <p className="name">{pattern.patternName}</p>
+            <div class="col-3">
+              <div
+                className="content_box"
+                key={pattern.patternId}
+                onClick={() => props.selectedPatterns(pattern)}
+              >
+                <img
+                  className="img_fluid"
+                  src={pattern.patternImage}
+                  alt={pattern.patternName}
+                />
+                <p className="name">{pattern.patternName}</p>
+              </div>
             </div>
           );
         })}

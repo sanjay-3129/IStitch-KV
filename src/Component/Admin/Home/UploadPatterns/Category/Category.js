@@ -13,7 +13,6 @@ import AddNewStyle from "../../../../UI/AddNewModal/AddNewStyle";
 import generateId from "../../../../../Helpers/generateId";
 import DeleteConfirmModal from "../../../../UI/DeleteConfirmModal/DeleteConfirmModal";
 
-// let type = undefined;
 let genderId = undefined;
 let genderName = undefined;
 let genderImg = undefined;
@@ -47,9 +46,14 @@ const Category = (props) => {
   });
   const [addNewItem, setAddNewItem] = useState("");
   const [newModal, setNewModal] = useState("");
+  const [newPatternModal, setNewPatternModal] = useState("");
 
   const closeModalHandler = () => {
     setAddNewItem(null);
+    setNewData({
+      name: "",
+      img: null
+    });
   };
 
   const goBackHandler = () => {
@@ -60,6 +64,13 @@ const Category = (props) => {
 
   useEffect(() => {
     // getting query parameters through Links
+    let types = qs.parse(props.location.search, {
+      ignoreQueryPrefix: true
+    }).type;
+    if (types !== undefined) {
+      // if new category created from gender
+      setType(type);
+    }
     genderId = qs.parse(props.location.search, {
       ignoreQueryPrefix: true
     }).genderId;
@@ -117,10 +128,17 @@ const Category = (props) => {
   }, []);
 
   const viewHandler = (categoryId, categoryName, categoryImg) => {
-    console.log("viewing subcategory", props.location.search);
-    props.history.push(
-      `${props.match.url}/createNewPattern/subCategory?type=${type}&genderId=${genderId}&genderName=${genderName}&genderImg=${genderImg}&categoryId=${categoryId}&categoryName=${categoryName}&categoryImg=${categoryImg}`
-    );
+    if (type === "mainProduct") {
+      console.log("viewing subcategory", props.location.search);
+      props.history.push(
+        `${props.match.url}/createNewPattern/subCategory?type=${type}&genderId=${genderId}&genderName=${genderName}&genderImg=${genderImg}&categoryId=${categoryId}&categoryName=${categoryName}&categoryImg=${categoryImg}`
+      );
+    } else {
+      console.log("viewing subcategory", props.location.search);
+      props.history.push(
+        `${props.match.url}/createNewPattern/patterns?type=${type}&genderId=${genderId}&genderName=${genderName}&genderImg=${genderImg}&categoryId=${categoryId}&categoryName=${categoryName}&categoryImg=${categoryImg}`
+      );
+    }
   };
 
   const addNewHandler = (value) => {
@@ -196,8 +214,7 @@ const Category = (props) => {
     let bucketName = "Images";
     let img = newImage;
     let storageRef = firebase.storage().ref();
-    let categoryTimestamp =
-      +new Date().getTime() + "-" + newData.categoryImg.name;
+    let categoryTimestamp = +new Date().getTime() + "-" + newData.img.name;
     let imgRef = storageRef.child(`${bucketName}/${categoryTimestamp}`);
     imgRef
       .put(img)
@@ -470,8 +487,7 @@ const Category = (props) => {
       .doc(category.categoryId)
       .collection("subcategory")
       .doc(subcategoryId);
-    let subCategoryTimestamp =
-      +new Date().getTime() + "-" + newData.subcategoryImg.name;
+    let subCategoryTimestamp = +new Date().getTime() + "-" + newData.img.name;
     let subcategoryImgRef = storageRef.child(
       `${bucketName}/${subCategoryTimestamp}`
     );
@@ -500,7 +516,7 @@ const Category = (props) => {
               noOfSubcategories: firebase.firestore.FieldValue.increment(1)
             });
             props.history.push(
-              `${props.match.url}/createNewPattern/subCategory?genderId=${genderId}&genderName=${genderName}&genderImg=${genderImg}&categoryId=${category.categoryId}&categoryName=${category.categoryName}&categoryImg=${category.categoryImg}`
+              `${props.match.url}/createNewPattern/subCategory?type=${type}&genderId=${genderId}&genderName=${genderName}&genderImg=${genderImg}&categoryId=${category.categoryId}&categoryName=${category.categoryName}&categoryImg=${category.categoryImg}`
             );
           });
       });
@@ -550,14 +566,9 @@ const Category = (props) => {
       .doc(genderId)
       .collection(type)
       .doc("categories")
-      .collection("category")
-      .doc(categoryId);
+      .collection("category");
 
-    db.collection("gender")
-      .doc(genderId)
-      .collection(type)
-      .doc("categories")
-      .collection("category")
+    categoryRef
       .doc(categoryId)
       .update({
         delete: true
@@ -569,6 +580,7 @@ const Category = (props) => {
           .doc(id)
           .set({
             id: id,
+            type: type,
             genderId: genderId,
             genderName: genderName,
             genderImg: "",
@@ -591,11 +603,7 @@ const Category = (props) => {
             });
             // get data which is not deleted
             console.log(" successfully updated!!!");
-            db.collection("gender")
-              .doc(genderId)
-              .collection(type)
-              .doc("categories")
-              .collection("category")
+            categoryRef
               .where("delete", "==", false)
               .orderBy("timestamp", "desc")
               .get()
@@ -610,6 +618,7 @@ const Category = (props) => {
                   setCategory(list[0]);
                 } else {
                   setCategoryList("subcollection_empty");
+                  // UI - back button or form
                 }
                 setIsDelete(null);
               });
@@ -697,7 +706,7 @@ const Category = (props) => {
           list.push(doc.data());
         });
         ref.current.complete(); // linear loader to complete
-        setType(type);
+        setType(type); // mainProduct or addOns
         if (list.length === 0) {
           setCategoryList("subcollection_empty");
         } else {
@@ -705,6 +714,57 @@ const Category = (props) => {
           setCategory(list[0]);
         }
       });
+  };
+
+  const addOnsNewPatternHandler = (newData) => {
+    console.log("00000000", newData);
+    ref.current.continuousStart();
+    let patternId = generateId("patterns");
+    let bucketName = "Images";
+    let storageRef = firebase.storage().ref();
+    // let genderRef = db.collection("gender").doc(genderId);
+    let patternRef = db
+      .collection("gender")
+      .doc(genderId)
+      .collection("addOns")
+      .doc("categories")
+      .collection("category")
+      .doc(category.categoryId)
+      .collection("patterns")
+      .doc(patternId);
+    let patternTimestamp = +new Date().getTime() + "-" + newData.img.name;
+    let patternImgRef = storageRef.child(`${bucketName}/${patternTimestamp}`);
+    patternImgRef.put(newData.img).then(() => {
+      patternImgRef.getDownloadURL().then((patternImg) => {
+        patternRef
+          .set({
+            genderId: genderId,
+            categoryId: category.categoryId,
+            patternId: patternId, // genderate new category id
+            patternName: newData.name,
+            patternImage: patternImg,
+            delete: false,
+            hide: true,
+            noOfPatterns: 0,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          })
+          .then(() => {
+            // gender - no_of_categories increment
+            // genderRef.update({
+            //   noOfPatterns: firebase.firestore.FieldValue.increment(1)
+            // });
+            // // category - no_of_subcategories - increment
+            // categoryRef.update({
+            //   noOfPatterns: firebase.firestore.FieldValue.increment(1)
+            // });
+            ref.current.complete();
+            setNewModal(false);
+            props.history.push(
+              `${props.match.url}/createNewPattern/patterns?type="addOns"&genderId=${genderId}&genderName=${genderName}&categoryId=${category.categoryId}&categoryName=${category.categoryName}`
+            );
+          });
+      });
+    });
   };
 
   let categories = null;
@@ -743,7 +803,19 @@ const Category = (props) => {
     );
     // all gender
   } else if (categoryList === "subcollection_empty") {
-    categories = <h1>No subcollection available</h1>;
+    // add a form
+    categories = (
+      <>
+        <h1>No subcollection available</h1>
+        <button
+          className="btn btn-primary"
+          type="button"
+          onClick={goBackHandler}
+        >
+          Go Back
+        </button>
+      </>
+    );
   } else {
     categories = (
       <>
@@ -761,12 +833,15 @@ const Category = (props) => {
           categoryDetails={category}
           view={viewHandler}
           addNew={addNewHandler}
+          // addNewPattern={addOnsNewPatternHandler}
+          addNewPattern={() => setNewPatternModal("Patterns")}
           addNewSub={() => setNewModal("Subcategory")}
           changeName={() => setIsChange("name")}
           changeImage={() => setIsChange("image")}
           goBack={goBackHandler}
           deleteHandler={(id) => setIsDelete(id)}
           hide={hideHandler}
+          type={type}
         />
       </>
     );
@@ -798,6 +873,17 @@ const Category = (props) => {
           saveAsDraft={draftSubcategoryHandler}
         />
       )}
+      {/* // addons pattern */}
+      {newPatternModal && (
+        <AddNewStyle
+          title={newModal}
+          newData={newData}
+          closeModal={() => setNewPatternModal(false)}
+          onChange={onChangeHandler}
+          saveAsDraft={addOnsNewPatternHandler}
+        />
+      )}
+
       {isChange && (
         <ChangeModal
           title={isChange}

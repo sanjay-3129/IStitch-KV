@@ -104,7 +104,7 @@ const Gender = (props) => {
     let bucketName = "Images";
     let img = newImage;
     let storageRef = firebase.storage().ref();
-    let genderTimestamp = +new Date().getTime() + "-" + newData.genderImg.name;
+    let genderTimestamp = +new Date().getTime() + "-" + newData.img.name;
     let imgRef = storageRef.child(`${bucketName}/${genderTimestamp}`);
     imgRef
       .put(img)
@@ -200,7 +200,7 @@ const Gender = (props) => {
   };
 
   const draftHandler = (newData) => {
-    let type = document.getElementById("type").value;
+    let type = document.getElementById("categorytype").value;
     // console.log(type);
     let genderId = generateId("gender");
     let categoryId = generateId("category");
@@ -227,18 +227,16 @@ const Gender = (props) => {
       };
       genderTimestamp = +new Date().getTime() + "-" + newData.genderImg.name;
       ref.current.continuousStart();
-      let genderImgRef = storageRef.child(
-        `${bucketName}/${newData.genderImg.name}`
-      );
+      let genderImgRef = storageRef.child(`${bucketName}/${genderTimestamp}`);
       categoryTimestamp =
         +new Date().getTime() + "-" + newData.categoryImg.name;
       let categoryImgRef = storageRef.child(
-        `${bucketName}/${newData.categoryImg.name}`
+        `${bucketName}/${categoryTimestamp}`
       );
       subcategoryTimestamp =
         +new Date().getTime() + "-" + newData.subcategoryImg.name;
       let subcategoryImgRef = storageRef.child(
-        `${bucketName}/${newData.subcategoryImg.name}`
+        `${bucketName}/${subcategoryTimestamp}`
       );
 
       genderImgRef.put(newData.genderImg, metadata).then((snapshot) => {
@@ -408,7 +406,7 @@ const Gender = (props) => {
                       noOfStyles: 0,
                       noOfPatterns: 0,
                       delete: false,
-                      hide: false,
+                      hide: true,
                       timestamp: firebase.firestore.FieldValue.serverTimestamp()
                     })
                     .then((categoryRef) => {
@@ -488,14 +486,15 @@ const Gender = (props) => {
   };
 
   const draftCategoryHandler = (newData) => {
-    let type = document.getElementById("type").value;
-    // console.log(type);
+    let type = document.getElementById("categorytype").value;
+    // console.log(newData);
     ref.current.continuousStart();
     let categoryId = generateId("category");
     let bucketName = "Images";
     let storageRef = firebase.storage().ref();
     let genderRef = db.collection("gender").doc(gender.genderId);
-    let categoryTimestamp = firebase.firestore.FieldValue.serverTimestamp();
+    let categoryTimestamp = +new Date().getTime() + "-" + newData.img.name;
+    // newData.img.name - is bcs we use the newData state name and img nly
     let categoryImgRef = storageRef.child(`${bucketName}/${categoryTimestamp}`);
     categoryImgRef.put(newData.img).then(() => {
       categoryImgRef.getDownloadURL().then((categoryImg) => {
@@ -513,7 +512,7 @@ const Gender = (props) => {
             noOfStyles: 0,
             noOfPatterns: 0,
             delete: false,
-            hide: false,
+            hide: true,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
           })
           .then(() => {
@@ -523,7 +522,7 @@ const Gender = (props) => {
               noOfCategories: firebase.firestore.FieldValue.increment(1)
             });
             props.history.push(
-              `${props.match.url}/createNewPattern/category?genderId=${gender.genderId}&genderName=${gender.genderName}&genderImg=${gender.genderImg}`
+              `${props.match.url}/createNewPattern/category?type=${type}&genderId=${gender.genderId}&genderName=${gender.genderName}&genderImg=${gender.genderImg}`
             );
           });
       });
@@ -681,7 +680,13 @@ const Gender = (props) => {
             <AddNewStyle
               title={newModal}
               newData={newData}
-              closeModal={() => setNewModal(false)}
+              closeModal={() => {
+                setNewModal(null);
+                setNewData({
+                  name: "",
+                  img: null
+                });
+              }}
               onChange={onChangeHandler}
               saveAsDraft={draftCategoryHandler}
             />
