@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import Spinner from "../Spinner/Spinner";
 import Firebase from "../../../Services/firebase/firebase";
 
-const StyleCard = (props) => {
+const StyleCardUpdate = (props) => {
   const db = Firebase.firestore();
   const [stylesList, setStylesList] = useState(null);
   // const [currentRelations, setCurrentRelations] = useState([]);
 
   useEffect(() => {
-    // console.log(props.style);
+    // console.log("stylerelations-", props.style.relations);
+    // console.log("relations-", props.relations);
     // setCurrentRelations(props.style.relations);
     let sub = props.data;
     db.collection("gender")
@@ -44,7 +45,12 @@ const StyleCard = (props) => {
     // console.log("select");
   };
 
-  // const checkedHandler = (styleId) => {};
+  const checkedHandler = () => {
+    // console.log(
+    //   currentRelations.includes((r) => r.styleId === style.styleId)
+    // );
+    console.log("chekced");
+  };
 
   let styles = null;
   if (stylesList === null) {
@@ -64,11 +70,10 @@ const StyleCard = (props) => {
             type="checkbox"
             id={style.styleId}
             onChange={() => onSelectHandler(style)}
-            // checked={() => {
-            //   console.log(
-            //     currentRelations.includes((r) => r.styleId === style.styleId)
-            //   );
-            // }}
+            // checked={props.relations.includes(
+            //   (r) => r.styleId === style.styleId
+            // )}
+            checked={checkedHandler}
           />
           <label class="stretched" for={style.styleId}></label>
         </div>
@@ -78,4 +83,4 @@ const StyleCard = (props) => {
   return <div class="scrollview">{styles}</div>;
 };
 
-export default StyleCard;
+export default StyleCardUpdate;

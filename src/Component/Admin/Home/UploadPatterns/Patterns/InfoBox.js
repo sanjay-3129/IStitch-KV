@@ -77,19 +77,24 @@ const InfoBox = (props) => {
               {props.categoryName || props.patternsDetails.categoryName}
             </span>{" "}
           </p>
-          <p style={{ textAlign: "center" }}>
-            SubCategory
-            <span className="category-count">
-              {props.subcategoryName || props.patternsDetails.subcategoryName}
-            </span>
-          </p>
+          {props.type === "mainProduct" ? (
+            <>
+              <p style={{ textAlign: "center" }}>
+                SubCategory
+                <span className="category-count">
+                  {props.subcategoryName ||
+                    props.patternsDetails.subcategoryName}
+                </span>
+              </p>
 
-          <p style={{ textAlign: "center" }}>
-            Style
-            <span className="category-count">
-              {props.styleName || props.patternsDetails.styleName}
-            </span>
-          </p>
+              <p style={{ textAlign: "center" }}>
+                Style
+                <span className="category-count">
+                  {props.styleName || props.patternsDetails.styleName}
+                </span>
+              </p>
+            </>
+          ) : null}
         </div>
         <div className="view-all">
           <button onClick={props.goBack}>GO BACK</button>

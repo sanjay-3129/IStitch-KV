@@ -19,10 +19,10 @@ const DeleteCard = (props) => {
       <div className="flex-col">
         <div className="content">
           <div className="overlay">
-            <img className="img-fluid" src={mainImg} alt={mainImg.name} />
+            <img className="img-fluid" src={mainImg} alt={props.item.id} />
           </div>
           <div className="hovereffect">
-            <img className="img-fluid p-0" src={mainImg} alt={mainImg.name} />
+            <img className="img-fluid p-0" src={mainImg} alt={props.item.id} />
           </div>
           <p>
             Gender: <small>{props.item.genderName}</small>

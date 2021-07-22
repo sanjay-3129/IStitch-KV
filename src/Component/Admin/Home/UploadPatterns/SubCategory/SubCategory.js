@@ -261,6 +261,7 @@ const SubCategory = (props) => {
 
   // updating image or name
   const changeSubmitHandler = () => {
+    setIsChange(false);
     // console.log(newName, newImage);
     // update the changes in firebase
     // db.collection("gender").doc(category.genderName).collection("category");
@@ -279,7 +280,6 @@ const SubCategory = (props) => {
       name: "",
       img: null
     });
-    setIsChange(false);
   };
 
   const closeModalHandler = () => {
@@ -291,6 +291,7 @@ const SubCategory = (props) => {
   };
 
   const draftHandler = (newData) => {
+    setAddNewItem(false);
     // hide = true;
     // let genderId = generateId("gender");
     // let categoryId = generateId("category");
@@ -502,7 +503,13 @@ const SubCategory = (props) => {
             db.collection("gender")
               .doc(genderId)
               .update({
-                noOfSubcategories: firebase.firestore.FieldValue.increment(-1)
+                noOfSubcategories: firebase.firestore.FieldValue.increment(-1),
+                noOfStyles: firebase.firestore.FieldValue.increment(
+                  -subcategory.noOfStyles
+                ),
+                noOfPatterns: firebase.firestore.FieldValue.increment(
+                  -subcategory.noOfPatterns
+                )
               });
             db.collection("gender")
               .doc(genderId)
@@ -511,7 +518,13 @@ const SubCategory = (props) => {
               .collection("category")
               .doc(categoryId)
               .update({
-                noOfSubcategories: firebase.firestore.FieldValue.increment(-1)
+                noOfSubcategories: firebase.firestore.FieldValue.increment(-1),
+                noOfStyles: firebase.firestore.FieldValue.increment(
+                  -subcategory.noOfStyles
+                ),
+                noOfPatterns: firebase.firestore.FieldValue.increment(
+                  -subcategory.noOfPatterns
+                )
               });
             console.log(" successfully deleted!!!");
             db.collection("gender")

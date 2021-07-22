@@ -1,11 +1,75 @@
 import React, { useEffect, useState } from "react";
 import "./Info.css";
 import InfoCard from "../../../../UI/Card/InfoCard";
+import Spinner from "../../../..//UI/Spinner/Spinner";
+
+// will create a state
+
+const Pagination = (props) => {
+  const [pages] = useState(Math.round(props.length / 8));
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageGroup, setPageGroup] = useState([]);
+
+  const goToNextPage = () => {
+    setCurrentPage((page) => page + 1);
+  };
+
+  const goToPreviousPage = () => {
+    setCurrentPage((page) => page + 1);
+  };
+
+  const changePage = (event) => {
+    const pageNumber = Number(event.target.textContent);
+    setCurrentPage(pageNumber);
+  };
+
+  const getPaginatedData = () => {
+    const startIndex = currentPage * 8 - 8;
+    const endIndex = startIndex + 8;
+  };
+
+  const getPaginationGroup = () => {
+    let start = Math.floor((currentPage - 1) / 3) * 3;
+    let total = new Array(3).fill().map((_, idx) => start + idx + 1);
+    setPageGroup(total);
+  };
+};
 
 const InfoPage = (props) => {
-  const [cat, setCat] = useState([]);
+  const [categoryList, setCategoryList] = useState([]);
+  // props.length
+  useEffect(() => {
+    setCategoryList(props.categoryList);
+    // console.log("categoryList", props.categoryList);
+  }, []);
 
-  useEffect(() => {}, []);
+  // const next = () => {};
+
+  // if (categoryList < 8) {
+  //   return (
+  //     <div className="info">
+  //       <Pagination
+  //         length={props.length}
+  //         categoryList={categoryList}
+  //         selectedCategory={props.selectedCategory}
+  //       />
+  //     </div>
+  //   );
+  // } else if (categoryList >= 8) {
+  //   return (
+  //     <div className="info">
+  //       <Pagination
+  //         length={props.length}
+  //         categoryList={categoryList}
+  //         selectedCategory={props.selectedCategory}
+  //       />
+  //       <button type="button" class="" onClick={next}>
+  //         Load More
+  //       </button>
+  //     </div>
+  //   );
+  // }
+
   return (
     <div className="info">
       <div className="flex">
@@ -32,7 +96,7 @@ const InfoPage = (props) => {
         </div>
       </div>
       <div className="content">
-        {props.categoryList.map((category) => {
+        {categoryList.map((category) => {
           return (
             <InfoCard
               item={category}
@@ -40,6 +104,14 @@ const InfoPage = (props) => {
             />
           );
         })}
+        {/* <Pagination
+          length={props.length}
+          categoryList={categoryList}
+          selectedCategory={props.selectedCategory}
+        /> */}
+        {/* <button onClick>prev</button> */}
+        {/* <button>1</button> */}
+        {/* <button onClick>next</button> */}
       </div>
     </div>
   );

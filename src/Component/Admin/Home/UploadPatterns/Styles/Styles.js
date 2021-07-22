@@ -10,6 +10,7 @@ import NewStyleModal from "../../../../UI/AddNewModal/NewStyleModal.js";
 import LoadingBar from "react-top-loading-bar";
 import AddNewStyle from "../../../../UI/AddNewModal/AddNewStyle";
 import Suggestion from "../../../../UI/AddNewModal/Suggestions";
+import SuggestionsUpdate from "../../../../UI/AddNewModal/SuggestionsUpdate";
 // import NewStyleModal from "../../../../UI/AddNewModal/NewStyleModal";
 import DeleteConfirmModal from "../../../../UI/DeleteConfirmModal/DeleteConfirmModal";
 import generateId from "../../../../../Helpers/generateId";
@@ -322,33 +323,39 @@ const Styles = (props) => {
           })
           .then(() => {
             // check logic
-            if (styles.noOfPatterns > 0) {
-              genderRef.update({
-                noOfStyles: firebase.firestore.FieldValue.increment(-1),
-                noOfPatterns: firebase.firestore.FieldValue.increment(-1)
-              });
-              // category - no_of_subcategories - increment
-              categoryRef.update({
-                noOfStyles: firebase.firestore.FieldValue.increment(-1),
-                noOfPatterns: firebase.firestore.FieldValue.increment(-1)
-              });
-              subcategoryRef.update({
-                noOfStyles: firebase.firestore.FieldValue.increment(-1),
-                noOfPatterns: firebase.firestore.FieldValue.increment(-1)
-              });
-              // styleRef.update({}); - it is deleted, its not gonna show noOfPatterns and its fine
-            } else {
-              genderRef.update({
-                noOfStyles: firebase.firestore.FieldValue.increment(-1)
-              });
-              // category - no_of_subcategories - increment
-              categoryRef.update({
-                noOfStyles: firebase.firestore.FieldValue.increment(-1)
-              });
-              subcategoryRef.update({
-                noOfStyles: firebase.firestore.FieldValue.increment(-1)
-              });
-            }
+            // if (styles.noOfPatterns > 0) {
+            genderRef.update({
+              noOfStyles: firebase.firestore.FieldValue.increment(-1),
+              noOfPatterns: firebase.firestore.FieldValue.increment(
+                -styles.noOfPatterns
+              )
+            });
+            // category - no_of_subcategories - increment
+            categoryRef.update({
+              noOfStyles: firebase.firestore.FieldValue.increment(-1),
+              noOfPatterns: firebase.firestore.FieldValue.increment(
+                -styles.noOfPatterns
+              )
+            });
+            subcategoryRef.update({
+              noOfStyles: firebase.firestore.FieldValue.increment(-1),
+              noOfPatterns: firebase.firestore.FieldValue.increment(
+                -styles.noOfPatterns
+              )
+            });
+            // styleRef.update({}); - it is deleted, its not gonna show noOfPatterns and its fine
+            // } else {
+            //   genderRef.update({
+            //     noOfStyles: firebase.firestore.FieldValue.increment(-1)
+            //   });
+            //   // category - no_of_subcategories - increment
+            //   categoryRef.update({
+            //     noOfStyles: firebase.firestore.FieldValue.increment(-1)
+            //   });
+            //   subcategoryRef.update({
+            //     noOfStyles: firebase.firestore.FieldValue.increment(-1)
+            //   });
+            // }
 
             // decrement code
             console.log(" successfully deleted!!!");
@@ -738,7 +745,7 @@ const Styles = (props) => {
       );
     } else if (addNewItem === "stylesUpdate") {
       style = (
-        <Suggestion
+        <SuggestionsUpdate
           closeModal={closeModalHandler}
           title={addNewItem}
           saveAsDraft={draftHandler}

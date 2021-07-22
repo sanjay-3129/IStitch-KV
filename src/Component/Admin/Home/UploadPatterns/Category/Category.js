@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import qs from "qs";
 import firebase from "../../../../../Services/firebase/firebase";
 import Spinner from "../../../../UI/Spinner/Spinner";
-// import Info from "./Info";
+import Info from "./Info";
 import InfoPage from "./InfoPage";
 import InfoBox from "./InfoBox";
 import ChangeModal from "../../../../UI/AddNewModal/ChangeModal.js";
@@ -47,6 +47,7 @@ const Category = (props) => {
   const [addNewItem, setAddNewItem] = useState("");
   const [newModal, setNewModal] = useState("");
   const [newPatternModal, setNewPatternModal] = useState("");
+  const [length, setLength] = useState(0);
 
   const closeModalHandler = () => {
     setAddNewItem(null);
@@ -91,8 +92,10 @@ const Category = (props) => {
         .collection("category")
         .where("delete", "==", false)
         .orderBy("timestamp", "desc")
+        .limit(8)
         .get()
         .then((sub) => {
+          console.log("size of category", sub.size, sub.docs.length);
           if (sub.docs.length > 0) {
             // subcollection exists
             let list = [];
@@ -101,6 +104,7 @@ const Category = (props) => {
             });
             setCategoryList(list);
             setCategory(list[0]);
+            setLength(sub.size);
           } else {
             // subcollection not exists
             setCategoryList("subcollection_empty");
@@ -114,6 +118,7 @@ const Category = (props) => {
         .where("delete", "==", false)
         .get()
         .then((sub) => {
+          setLength(sub.size);
           if (sub.docs.length > 0) {
             // subcollection exists
             let list = [];
@@ -193,8 +198,10 @@ const Category = (props) => {
           .collection("category")
           .where("delete", "==", false)
           .orderBy("timestamp", "desc")
+          .limit(8)
           .get()
           .then((data) => {
+            setLength(data.size);
             let list = [];
             data.forEach((doc) => {
               list.push(doc.data());
@@ -241,8 +248,10 @@ const Category = (props) => {
                 .collection("category")
                 .where("delete", "==", false)
                 .orderBy("timestamp", "desc")
+                .limit(8)
                 .get()
                 .then((data) => {
+                  setLength(data.size);
                   let list = [];
                   data.forEach((doc) => {
                     list.push(doc.data());
@@ -261,6 +270,7 @@ const Category = (props) => {
 
   // updating image or name
   const changeSubmitHandler = () => {
+    setIsChange(false);
     // console.log(newName, newImage);
     // update the changes in firebase
     // db.collection("gender").doc(category.genderName).collection("category");
@@ -275,10 +285,10 @@ const Category = (props) => {
       name: "",
       img: null
     });
-    setIsChange(false);
   };
 
   const draftHandler = (newData) => {
+    setAddNewItem(false);
     // hide = true;
     let type = document.getElementById("categorytype").value;
     // let subcategoryType = document.getElementById("subcategorytype").value;
@@ -386,8 +396,10 @@ const Category = (props) => {
                         .collection("category")
                         .where("delete", "==", false)
                         .orderBy("timestamp", "desc")
+                        .limit(8)
                         .get()
                         .then((data) => {
+                          setLength(data.size);
                           data.forEach((doc) => {
                             list.push(doc.data());
                           });
@@ -448,6 +460,7 @@ const Category = (props) => {
                 .collection("category")
                 .where("delete", "==", false)
                 .orderBy("timestamp", "desc")
+                .limit(8)
                 .get()
                 .then((data) => {
                   data.forEach((doc) => {
@@ -534,6 +547,7 @@ const Category = (props) => {
       .collection("category")
       .where("delete", "==", false)
       .orderBy("timestamp", "desc")
+      .limit(8)
       .get()
       .then((sub) => {
         if (sub.docs.length > 0) {
@@ -606,6 +620,7 @@ const Category = (props) => {
             categoryRef
               .where("delete", "==", false)
               .orderBy("timestamp", "desc")
+              .limit(8)
               .get()
               .then((data) => {
                 let list = [];
@@ -651,6 +666,7 @@ const Category = (props) => {
           categoryRef
             .where("delete", "==", false)
             .orderBy("timestamp", "desc")
+            .limit(8)
             .get()
             .then((data) => {
               data.forEach((doc) => {
@@ -676,6 +692,7 @@ const Category = (props) => {
           categoryRef
             .where("delete", "==", false)
             .orderBy("timestamp", "desc")
+            .limit(8)
             .get()
             .then((data) => {
               data.forEach((doc) => {
@@ -700,6 +717,7 @@ const Category = (props) => {
       .collection("category")
       .where("delete", "==", false)
       .orderBy("timestamp", "desc")
+      .limit(8)
       .get()
       .then((data) => {
         data.forEach((doc) => {
@@ -826,6 +844,7 @@ const Category = (props) => {
           // selectMain={selectedMainHandler}
           selectedType={selectedType}
           type={type}
+          length={length}
         />
         <InfoBox
           title="Category"

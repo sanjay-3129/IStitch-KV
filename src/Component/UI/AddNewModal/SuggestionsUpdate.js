@@ -9,9 +9,10 @@ import "./NewStyleModal.css";
 import $ from "jquery";
 import Spinner from "../../UI/Spinner/Spinner";
 import firebase from "../../../Services/firebase/firebase";
-import StyleCard from "../AddNewModal/StyleCard";
+// import StyleCard from "../AddNewModal/StyleCard";
+import StyleCardUpdate from "../AddNewModal/StyleCardUpdate";
 
-const Suggestion = (props) => {
+const SuggestionsUpdate = (props) => {
   const db = firebase.firestore();
   const [subcategoryList, setSubcategoryList] = useState([]);
   const [selectedStyles, setSelectedStyles] = useState([]);
@@ -19,6 +20,8 @@ const Suggestion = (props) => {
   useEffect(() => {
     // console.log("genderId", props.style.genderId);
     // props.action
+    setSelectedStyles(props.style.relations);
+    // console.log("sugUpdate", props.style);
     let dbRef = db
       .collection("gender")
       .doc(props.style.genderId)
@@ -42,9 +45,11 @@ const Suggestion = (props) => {
           }
         });
         setSubcategoryList(list);
+        // already relations availabel
       })
       .catch((e) => console.log(e));
     // setStylesList(listOfStylesList);
+    // console.log("selectedStyles1", selectedStyles);
   }, []);
 
   const getFile = () => {
@@ -96,11 +101,18 @@ const Suggestion = (props) => {
     // console.log("92", stylesList);
     relations = subcategoryList.map((item, index) => {
       // console.log(item.data);
+      // console.log("selectedStyles2", selectedStyles);
       return (
         <div class="subcs" key={index}>
           {/* <p>disc</p> */}
           <p>{item.subcategoryName}</p>
-          <StyleCard data={item} type={props.type} onSelect={onSelectHandler} />
+          <StyleCardUpdate
+            data={item}
+            relations={selectedStyles}
+            style={props.style}
+            type={props.type}
+            onSelect={onSelectHandler}
+          />
         </div>
       );
     });
@@ -108,8 +120,6 @@ const Suggestion = (props) => {
 
   return (
     <div className="addnew col-12">
-      {/* {console.log("selectedStyles", selectedStyles)} */}
-
       <h2>Add New Style</h2>
       <form method="post" name="form" className={classes.form}>
         <div class="container-fluid">
@@ -118,8 +128,9 @@ const Suggestion = (props) => {
             type="text"
             id="name"
             name="name"
-            value={props.newData.name}
+            value={props.style.styleName}
             onChange={props.onChange}
+            disabled
           />
           <label>Upload Image</label>
           <div class="upload-img">
@@ -130,8 +141,17 @@ const Suggestion = (props) => {
               accept=".gif, .jpg, .png"
               // value={newData.img} // it may cause error
               onChange={props.onChange}
+              disabled
             />
-            <label onClick={getFile} htmlFor="img" id="uploadButton">
+            <label
+              onClick={getFile}
+              htmlFor="img"
+              id="uploadButton"
+              disabled
+              style={{
+                backgroundImage: `url('${props.style.styleImage}')`
+              }}
+            >
               <span>+</span>
             </label>
           </div>
@@ -155,7 +175,7 @@ const Suggestion = (props) => {
   );
 };
 
-export default Suggestion;
+export default SuggestionsUpdate;
 
 /**
  * we have to show muliple styles into each subcategory

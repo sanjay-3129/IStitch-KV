@@ -30,7 +30,7 @@ const MyBin = (props) => {
           let list = [];
           docs.forEach((doc) => {
             let item = doc.data();
-            console.log("--------", item);
+            // console.log("--------", item);
             list.push(item);
             if (item.genderImg !== "") {
               // gender

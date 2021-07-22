@@ -142,6 +142,7 @@ const Gender = (props) => {
 
   // updating image or name
   const changeSubmitHandler = () => {
+    setIsChange(false);
     // console.log(newName, newImage);
     // update the changes in firebase
     // db.collection("gender").doc(category.genderName).collection("category");
@@ -156,7 +157,6 @@ const Gender = (props) => {
       name: "",
       img: null
     });
-    setIsChange(false);
   };
 
   const closeModalHandler = () => {
@@ -200,6 +200,7 @@ const Gender = (props) => {
   };
 
   const draftHandler = (newData) => {
+    setAddNewItem(false);
     let type = document.getElementById("categorytype").value;
     // console.log(type);
     let genderId = generateId("gender");
@@ -486,6 +487,7 @@ const Gender = (props) => {
   };
 
   const draftCategoryHandler = (newData) => {
+    setNewModal(null);
     let type = document.getElementById("categorytype").value;
     // console.log(newData);
     ref.current.continuousStart();
