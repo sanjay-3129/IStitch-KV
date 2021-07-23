@@ -3,7 +3,7 @@ import IdleTimer from "react-idle-timer";
 
 const IdleTimerContainer = (props) => {
   const idleTimerRef = useRef(null);
-  const [timeoutDuration, setTimeoutDuration] = useState(1000 * 60 * 15);
+  const [timeoutDuration, setTimeoutDuration] = useState(1000 * 60 * 10); // 10mins
 
   const onIdleHandler = () => {
     console.log("user is idle...");

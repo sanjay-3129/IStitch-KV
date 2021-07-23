@@ -490,26 +490,29 @@ const Patterns = (props) => {
           });
           // add data to deleteItems collections
           let id = generateId("deleted");
+          let item = {
+            id: id,
+            type: type,
+            genderId: genderId,
+            genderName: genderName,
+            genderImg: "",
+            categoryId: categoryId,
+            categoryName: categoryName,
+            categoryImg: "",
+            subcategoryId: subcategoryId,
+            subcategoryName: subcategoryName,
+            subcategoryImg: "",
+            styleId: styleId,
+            styleName: styleName,
+            styleImg: "",
+            patternId: patternDet.patternId,
+            patternName: patternDet.patternName,
+            patternImg: patternDet.patternImage
+          };
           db.collection("deleteItems")
-            .doc(id)
-            .set({
-              id: id,
-              type: type,
-              genderId: genderId,
-              genderName: genderName,
-              genderImg: "",
-              categoryId: categoryId,
-              categoryName: categoryName,
-              categoryImg: "",
-              subcategoryId: subcategoryId,
-              subcategoryName: subcategoryName,
-              subcategoryImg: "",
-              styleId: styleId,
-              styleName: styleName,
-              styleImg: "",
-              patternId: patternDet.patternId,
-              patternName: patternDet.patternName,
-              patternImg: patternDet.patternImage
+            .doc("deletedItems")
+            .update({
+              items: firebase.firestore.FieldValue.arrayUnion(item)
             })
             .then(() => {
               genderRef.update({
@@ -525,7 +528,7 @@ const Patterns = (props) => {
               styleRef.update({
                 noOfPatterns: firebase.firestore.FieldValue.increment(-1)
               });
-              console.log(" successfully deleted!!!");
+              // console.log(" successfully deleted!!!");
               db.collection("gender")
                 .doc(genderId)
                 .collection(type)
@@ -579,27 +582,30 @@ const Patterns = (props) => {
           // adding
           // add data to deleteItems collections
           let id = generateId("deleted");
+          let item = {
+            id: id,
+            type: type,
+            genderId: genderId,
+            genderName: genderName,
+            genderImg: "",
+            categoryId: categoryId,
+            categoryName: categoryName,
+            categoryImg: "",
+            patternId: patternDet.patternId,
+            patternName: patternDet.patternName,
+            patternImg: patternDet.patternImage
+          };
           db.collection("deleteItems")
-            .doc(id)
-            .set({
-              id: id,
-              type: type,
-              genderId: genderId,
-              genderName: genderName,
-              genderImg: "",
-              categoryId: categoryId,
-              categoryName: categoryName,
-              categoryImg: "",
-              patternId: patternDet.patternId,
-              patternName: patternDet.patternName,
-              patternImg: patternDet.patternImage
+            .doc("deletedItems")
+            .update({
+              items: firebase.firestore.FieldValue.arrayUnion(item)
             })
             .then(() => {
               // categoryRef.update({
               //   noOfPatterns: firebase.firestore.FieldValue.increment(-1)
               // });
 
-              console.log(" successfully deleted!!!");
+              // console.log(" successfully deleted!!!");
               db.collection("gender")
                 .doc(genderId)
                 .collection("addOns")
@@ -637,7 +643,7 @@ const Patterns = (props) => {
   };
 
   const draftPatternHandler = (newData) => {
-    console.log(newData);
+    // console.log(newData);
     let patternId = generateId("patterns");
     let patternRef = db
       .collection("gender")
@@ -654,7 +660,7 @@ const Patterns = (props) => {
       .doc(patternId);
     let bucketName = "Images";
     let storageRef = firebase.storage().ref();
-    console.log("draft handler in patterns", newData);
+    // console.log("draft handler in patterns", newData);
     if (newData.name !== "" && newData.img !== null && type === "mainProduct") {
       ref.current.continuousStart();
       let patternTimstamp = +new Date().getTime() + "-" + newData.img.name;

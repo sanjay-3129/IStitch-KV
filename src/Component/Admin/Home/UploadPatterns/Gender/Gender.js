@@ -531,14 +531,69 @@ const Gender = (props) => {
     });
   };
 
+  // const deleteGenderHandler = (genderId) => {
+  //   // - can hide and store it in bin
+  //   // - if he clear the bin, then it will
+  //   // be deleted from the db
+  //   // - if he press restore, then the
+  //   // hide status should be changed to
+  //   // false, and it should be viewed to
+  //   // the admin again.
+  //   let genderDet = genderList.find((g) => {
+  //     return g.genderId === genderId;
+  //   });
+  //   ref.current.continuousStart();
+  //   db.collection("gender")
+  //     .doc(genderId)
+  //     .update({
+  //       delete: true
+  //     })
+  //     .then(() => {
+  //       // console.log(genderDet);
+  //       // add data to deleteItems collections
+  //       let id = generateId("deleted");
+  //       db.collection("deleteItems")
+  //         .doc(id)
+  //         .set({
+  //           id: id,
+  //           genderId: genderDet.genderId,
+  //           genderName: genderDet.genderName,
+  //           genderImg: genderDet.genderImage,
+  //           categoryId: "",
+  //           categoryName: "",
+  //           categoryImg: "",
+  //           subcategoryId: "",
+  //           subcategoryName: "",
+  //           subcategoryImg: "",
+  //           styleId: "",
+  //           styleName: "",
+  //           styleImg: "",
+  //           patternId: "",
+  //           patternName: "",
+  //           patternImg: ""
+  //         })
+  //         .then(() => {
+  //           // get data which is not deleted
+
+  //           list = [];
+  //           db.collection("gender")
+  //             .where("delete", "==", false)
+  //             .orderBy("genderName", "asc")
+  //             .get()
+  //             .then((data) => {
+  //               data.forEach((doc) => {
+  //                 list.push(doc.data());
+  //               });
+  //               ref.current.complete(); // linear loader to complete
+  //               setGenderList(list);
+  //               setIsDelete(false);
+  //             });
+  //         })
+  //         .catch((e) => console.log(e));
+  //     });
+  // };
+
   const deleteGenderHandler = (genderId) => {
-    // - can hide and store it in bin
-    // - if he clear the bin, then it will
-    // be deleted from the db
-    // - if he press restore, then the
-    // hide status should be changed to
-    // false, and it should be viewed to
-    // the admin again.
     let genderDet = genderList.find((g) => {
       return g.genderId === genderId;
     });
@@ -552,29 +607,32 @@ const Gender = (props) => {
         // console.log(genderDet);
         // add data to deleteItems collections
         let id = generateId("deleted");
+        let item = {
+          id: id, // id as gender id and using it
+          genderId: genderDet.genderId,
+          genderName: genderDet.genderName,
+          genderImg: genderDet.genderImage,
+          categoryId: "",
+          categoryName: "",
+          categoryImg: "",
+          subcategoryId: "",
+          subcategoryName: "",
+          subcategoryImg: "",
+          styleId: "",
+          styleName: "",
+          styleImg: "",
+          patternId: "",
+          patternName: "",
+          patternImg: ""
+        };
         db.collection("deleteItems")
-          .doc(id)
-          .set({
-            id: id,
-            genderId: genderDet.genderId,
-            genderName: genderDet.genderName,
-            genderImg: genderDet.genderImage,
-            categoryId: "",
-            categoryName: "",
-            categoryImg: "",
-            subcategoryId: "",
-            subcategoryName: "",
-            subcategoryImg: "",
-            styleId: "",
-            styleName: "",
-            styleImg: "",
-            patternId: "",
-            patternName: "",
-            patternImg: ""
+          .doc("deletedItems")
+          .update({
+            // initially set manually   in firestore, (id: item)
+            items: firebase.firestore.FieldValue.arrayUnion(item)
           })
           .then(() => {
             // get data which is not deleted
-
             list = [];
             db.collection("gender")
               .where("delete", "==", false)
@@ -588,8 +646,7 @@ const Gender = (props) => {
                 setGenderList(list);
                 setIsDelete(false);
               });
-          })
-          .catch((e) => console.log(e));
+          });
       });
   };
 

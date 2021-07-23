@@ -6,15 +6,12 @@ import firebase from "../../../../Services/firebase/firebase";
 import LoadingBar from "react-top-loading-bar";
 import Skeleton from "react-loading-skeleton";
 import DeleteCard from "../../../UI/Card/DeleteCard";
+import qs from "qs";
 
 const MyBin = (props) => {
   const ref = useRef(null); // top-loader
   const db = firebase.firestore();
   const [deletedItemsList, setDeletedItemsList] = useState([]);
-  const [mainItem, setMainItem] = useState({
-    item: "",
-    itemImg: ""
-  });
 
   useEffect(() => {
     getAllDeletedItems();
@@ -22,52 +19,18 @@ const MyBin = (props) => {
 
   const getAllDeletedItems = () => {
     db.collection("deleteItems")
+      .doc("deletedItems")
       .get()
-      .then((docs) => {
+      .then((doc) => {
         // console.log("docs.length", docs.size);
-        if (docs.size > 0) {
+        if (doc.exists) {
           // docs exists
-          let list = [];
-          docs.forEach((doc) => {
-            let item = doc.data();
-            // console.log("--------", item);
-            list.push(item);
-            if (item.genderImg !== "") {
-              // gender
-              // list = [];
-              // list.push()
-              setMainItem({
-                item: "gender",
-                itemImg: item.genderImg
-              });
-            } else if (item.categoryImg !== "") {
-              // category
-              // console.log("elseif", item);
-              setMainItem({
-                item: "category",
-                itemImg: item.categoryImg
-              });
-            } else if (item.subcategoryImg !== "") {
-              // subcategory
-              setMainItem({
-                item: "subcategory",
-                itemImg: item.subcategoryImg
-              });
-            } else if (item.styleImg !== "") {
-              // style
-              setMainItem({
-                item: "style",
-                itemImg: item.styleImg
-              });
-            } else if (item.patternImg !== "") {
-              // pattern
-              setMainItem({
-                item: "pattern",
-                itemImg: item.patternImg
-              });
-            }
-          });
+          let list = doc.data().items;
+          console.log("deltedItems", list);
           setDeletedItemsList(list);
+          if (list.length === 0) {
+            setDeletedItemsList("empty");
+          }
         } else {
           // console.log("Im in else");
           // docs not exists
@@ -78,8 +41,8 @@ const MyBin = (props) => {
       .catch((e) => console.log(e));
   };
 
-  const restoreDeletedItem = (deleteItemDetail) => {
-    // gender
+  const restoreDeletedItem = (deleteItemDetail, mainItem) => {
+    // console.log(deleteItemDetail, mainItem);
     ref.current.continuousStart();
     if (mainItem.item === "gender") {
       db.collection("gender")
@@ -89,9 +52,24 @@ const MyBin = (props) => {
         })
         .then(() => {
           // delete that from the deleteItems
+          // db.collection("deleteItems")
+          //   .doc(deleteItemDetail.id)
+          //   .delete()
+          //   .then(() => {
+          //     console.log("document deleted successfully");
+          //     getAllDeletedItems();
+          //     ref.current.complete();
+          //   });
+          // let filteredList = deletedItemsList.filter(
+          //   (delItem) => deleteItemDetail.id !== delItem.id
+          // );
+          // console.log("filter", filteredList);
           db.collection("deleteItems")
-            .doc(deleteItemDetail.id)
-            .delete()
+            .doc("deletedItems")
+            .update({
+              items: firebase.firestore.FieldValue.arrayRemove(deleteItemDetail)
+              // items: filteredList
+            })
             .then(() => {
               console.log("document deleted successfully");
               getAllDeletedItems();
@@ -100,27 +78,60 @@ const MyBin = (props) => {
         })
         .catch((e) => console.log(e));
     } else if (mainItem.item === "category") {
-      // category
-      db.collection("gender")
+      let noOfSubcategories = 0;
+      let noOfStyles = 0;
+      let noOfPatterns = 0;
+      let categoryRef = db
+        .collection("gender")
         .doc(deleteItemDetail.genderId)
         .collection(deleteItemDetail.type)
         .doc("categories")
         .collection("category")
-        .doc(deleteItemDetail.categoryId)
+        .doc(deleteItemDetail.categoryId);
+
+      // category
+      categoryRef
         .update({
           delete: false
         })
         .then(() => {
-          // incrementing noOfCategories
-          db.collection("gender")
-            .doc(deleteItemDetail.genderId)
-            .update({
-              noOfCategories: firebase.firestore.FieldValue.increment(1)
-            });
+          categoryRef.get().then((doc) => {
+            if (doc.exists) {
+              noOfSubcategories = doc.data().noOfSubcategories;
+              noOfStyles = doc.data().noOfStyles;
+              noOfPatterns = doc.data().noOfPatterns;
+              // console.log(
+              //   "Numbers",
+              //   noOfSubcategories,
+              //   noOfStyles,
+              //   noOfPatterns
+              // );
+              // incrementing noOfCategories
+              db.collection("gender")
+                .doc(deleteItemDetail.genderId)
+                .update({
+                  noOfCategories: firebase.firestore.FieldValue.increment(1),
+                  noOfSubcategories: firebase.firestore.FieldValue.increment(
+                    noOfSubcategories
+                  ),
+                  noOfStyles: firebase.firestore.FieldValue.increment(
+                    noOfStyles
+                  ),
+                  noOfPatterns: firebase.firestore.FieldValue.increment(
+                    noOfPatterns
+                  )
+                });
+            } else {
+              console.log("No doc exists");
+            }
+          });
+
           // delete that from the deleteItems
           db.collection("deleteItems")
-            .doc(deleteItemDetail.id)
-            .delete()
+            .doc("deletedItems")
+            .update({
+              items: firebase.firestore.FieldValue.arrayRemove(deleteItemDetail)
+            })
             .then(() => {
               getAllDeletedItems();
               ref.current.complete();
@@ -128,49 +139,79 @@ const MyBin = (props) => {
         })
         .catch((e) => console.log(e));
     } else if (mainItem.item === "subcategory") {
-      // subcategory
-      db.collection("gender")
+      let noOfStyles = 0;
+      let noOfPatterns = 0;
+      let subcategoryRef = db
+        .collection("gender")
         .doc(deleteItemDetail.genderId)
         .collection(deleteItemDetail.type)
         .doc("categories")
         .collection("category")
         .doc(deleteItemDetail.categoryId)
         .collection("subcategory")
-        .doc(deleteItemDetail.subcategoryId)
+        .doc(deleteItemDetail.subcategoryId);
+
+      // subcategory
+      subcategoryRef
         .update({
           delete: false
         })
         .then(() => {
-          // incrementing noOfSubcategories
-          db.collection("deleteItems")
-            .doc(deleteItemDetail.id)
-            .update({
-              noOfSubcategories: firebase.firestore.FieldValue.increment(1)
-            });
+          subcategoryRef.get().then((doc) => {
+            if (doc.exists) {
+              noOfStyles = doc.data().noOfStyles;
+              noOfPatterns = doc.data().noOfPatterns;
 
-          // incrementing noOfSubcategories
-          db.collection("gender")
-            .doc(deleteItemDetail.genderId)
-            .collection(deleteItemDetail.type)
-            .doc("categories")
-            .collection("category")
-            .doc(deleteItemDetail.categoryId)
-            .update({
-              noOfSubcategories: firebase.firestore.FieldValue.increment(1)
-            });
-          // delete that from the deleteItems
-          db.collection("deleteItems")
-            .doc(deleteItemDetail.id)
-            .delete()
-            .then(() => {
-              getAllDeletedItems();
-              ref.current.complete();
-            });
+              // incrementing noOfSubcategories
+              db.collection("gender")
+                .doc(deleteItemDetail.genderId)
+                .update({
+                  noOfSubcategories: firebase.firestore.FieldValue.increment(1),
+                  noOfStyles: firebase.firestore.FieldValue.increment(
+                    noOfStyles
+                  ),
+                  noOfPatterns: firebase.firestore.FieldValue.increment(
+                    noOfPatterns
+                  )
+                });
+              // incrementing noOfSubcategories
+              db.collection("gender")
+                .doc(deleteItemDetail.genderId)
+                .collection(deleteItemDetail.type)
+                .doc("categories")
+                .collection("category")
+                .doc(deleteItemDetail.categoryId)
+                .update({
+                  noOfSubcategories: firebase.firestore.FieldValue.increment(1),
+                  noOfStyles: firebase.firestore.FieldValue.increment(
+                    noOfStyles
+                  ),
+                  noOfPatterns: firebase.firestore.FieldValue.increment(
+                    noOfPatterns
+                  )
+                });
+              // delete that from the deleteItems
+              db.collection("deleteItems")
+                .doc("deletedItems")
+                .update({
+                  items: firebase.firestore.FieldValue.arrayRemove(
+                    deleteItemDetail
+                  )
+                })
+                .then(() => {
+                  getAllDeletedItems();
+                  ref.current.complete();
+                });
+            } else {
+              console.log("No doc exists");
+            }
+          });
         })
         .catch((e) => console.log(e));
     } else if (mainItem.item === "style") {
-      // style
-      db.collection("gender")
+      let noOfPatterns = 0;
+      let styleRef = db
+        .collection("gender")
         .doc(deleteItemDetail.genderId)
         .collection(deleteItemDetail.type)
         .doc("categories")
@@ -179,49 +220,71 @@ const MyBin = (props) => {
         .collection("subcategory")
         .doc(deleteItemDetail.subcategoryId)
         .collection("styles")
-        .doc(deleteItemDetail.styleId)
+        .doc(deleteItemDetail.styleId);
+
+      // style
+      styleRef
         .update({
           delete: false
         })
         .then(() => {
-          // incrementing noOfStyles
-          db.collection("gender")
-            .doc(deleteItemDetail.genderId)
-            .update({
-              noOfStyles: firebase.firestore.FieldValue.increment(1)
-            });
+          styleRef.get().then((doc) => {
+            if (doc.exists) {
+              noOfPatterns = doc.data().noOfPatterns;
+              // incrementing noOfStyles
+              db.collection("gender")
+                .doc(deleteItemDetail.genderId)
+                .update({
+                  noOfStyles: firebase.firestore.FieldValue.increment(1),
+                  noOfPatterns: firebase.firestore.FieldValue.increment(
+                    noOfPatterns
+                  )
+                });
+              // incrementing noOfStyles
+              db.collection("gender")
+                .doc(deleteItemDetail.genderId)
+                .collection(deleteItemDetail.type)
+                .doc("categories")
+                .collection("category")
+                .doc(deleteItemDetail.categoryId)
+                .update({
+                  noOfStyles: firebase.firestore.FieldValue.increment(1),
+                  noOfPatterns: firebase.firestore.FieldValue.increment(
+                    noOfPatterns
+                  )
+                });
+              // incrementing noOfStyles
+              db.collection("gender")
+                .doc(deleteItemDetail.genderId)
+                .collection(deleteItemDetail.type)
+                .doc("categories")
+                .collection("category")
+                .doc(deleteItemDetail.categoryId)
+                .collection("subcategory")
+                .doc(deleteItemDetail.subcategoryId)
+                .update({
+                  noOfStyles: firebase.firestore.FieldValue.increment(1),
+                  noOfPatterns: firebase.firestore.FieldValue.increment(
+                    noOfPatterns
+                  )
+                });
 
-          // incrementing noOfStyles
-          db.collection("gender")
-            .doc(deleteItemDetail.genderId)
-            .collection(deleteItemDetail.type)
-            .doc("categories")
-            .collection("category")
-            .doc(deleteItemDetail.categoryId)
-            .update({
-              noOfStyles: firebase.firestore.FieldValue.increment(1)
-            });
-
-          // incrementing noOfStyles
-          db.collection("gender")
-            .doc(deleteItemDetail.genderId)
-            .collection(deleteItemDetail.type)
-            .doc("categories")
-            .collection("category")
-            .doc(deleteItemDetail.categoryId)
-            .collection("subcategory")
-            .doc(deleteItemDetail.subcategoryId)
-            .update({
-              noOfStyles: firebase.firestore.FieldValue.increment(1)
-            });
-          // delete that from the deleteItems
-          db.collection("deleteItems")
-            .doc(deleteItemDetail.id)
-            .delete()
-            .then(() => {
-              getAllDeletedItems();
-              ref.current.complete();
-            });
+              // delete that from the deleteItems
+              db.collection("deleteItems")
+                .doc("deletedItems")
+                .update({
+                  items: firebase.firestore.FieldValue.arrayRemove(
+                    deleteItemDetail
+                  )
+                })
+                .then(() => {
+                  getAllDeletedItems();
+                  ref.current.complete();
+                });
+            } else {
+              console.log("No doc exists");
+            }
+          });
         })
         .catch((e) => console.log(e));
     } else {
@@ -251,7 +314,6 @@ const MyBin = (props) => {
             .update({
               noOfPatterns: firebase.firestore.FieldValue.increment(1)
             });
-
           // incrementing noOfPatterns
           db.collection("gender")
             .doc(deleteItemDetail.genderId)
@@ -262,7 +324,6 @@ const MyBin = (props) => {
             .update({
               noOfPatterns: firebase.firestore.FieldValue.increment(1)
             });
-
           // incrementing noOfPatterns
           db.collection("gender")
             .doc(deleteItemDetail.genderId)
@@ -275,7 +336,6 @@ const MyBin = (props) => {
             .update({
               noOfPatterns: firebase.firestore.FieldValue.increment(1)
             });
-
           // incrementing noOfPatterns
           db.collection("gender")
             .doc(deleteItemDetail.genderId)
@@ -292,8 +352,10 @@ const MyBin = (props) => {
             });
           // delete that from the deleteItems
           db.collection("deleteItems")
-            .doc(deleteItemDetail.id)
-            .delete()
+            .doc("deletedItems")
+            .update({
+              items: firebase.firestore.FieldValue.arrayRemove(deleteItemDetail)
+            })
             .then(() => {
               getAllDeletedItems();
               ref.current.complete();
@@ -303,8 +365,51 @@ const MyBin = (props) => {
     }
   };
 
-  const permanentlyDeleteItem = (deleteItemDetail) => {
+  const permanentlyDeleteItem = (deleteItemDetail, mainItem) => {
     let storageRef = firebase.storage();
+    if (mainItem.item === "gender") {
+      let filtered = deletedItemsList.filter(
+        (delId) => deleteItemDetail.genderId !== delId.genderId
+      );
+      console.log("filterePerm", filtered);
+    } else if (mainItem.item === "category") {
+      let filtered = deletedItemsList.filter((delId) => {
+        return (
+          deleteItemDetail.genderId !== delId.genderId &&
+          deleteItemDetail.categoryId !== delId.categoryId
+        );
+      });
+      console.log("filterePerm", filtered);
+    } else if (mainItem.item === "subcategory") {
+      let filtered = deletedItemsList.filter((delId) => {
+        return (
+          deleteItemDetail.genderId !== delId.genderId &&
+          deleteItemDetail.categoryId !== delId.categoryId &&
+          deleteItemDetail.subcategoryId !== delId.subcategoryId
+        );
+      });
+      console.log("filterePerm", filtered);
+    } else if (mainItem.item === "style") {
+      let filtered = deletedItemsList.filter((delId) => {
+        return (
+          deleteItemDetail.genderId !== delId.genderId &&
+          deleteItemDetail.categoryId !== delId.categoryId &&
+          deleteItemDetail.subcategoryId !== delId.subcategoryId &&
+          deleteItemDetail.styleId !== delId.styleId
+        );
+      });
+      console.log("filterePerm", filtered);
+    } else if (mainItem.item === "patternId") {
+      // check patternId
+      let filtered = deletedItemsList.filter((delId) => {
+        return (
+          deleteItemDetail.styleId !== delId.styleId &&
+          deleteItemDetail.patternId !== delId.patternId
+        );
+      });
+      console.log("filterePerm", filtered);
+    }
+
     // gender
     // ref.current.continuousStart();
     if (mainItem.item === "gender") {
@@ -315,9 +420,16 @@ const MyBin = (props) => {
           // delete that from the deleteItems
           ref.current.complete();
           console.log("Your subcollections also deleted!!!");
+
+          // calculation
+          let filtered = deletedItemsList.filter(
+            (delId) => deleteItemDetail.genderId !== delId.genderId
+          );
           db.collection("deleteItems")
             .doc(deleteItemDetail.id)
-            .delete()
+            .update({
+              items: filtered
+            })
             .then(() => {
               getAllDeletedItems();
               storageRef
@@ -474,7 +586,7 @@ const MyBin = (props) => {
           return (
             <DeleteCard
               key={item.id}
-              mainImg={mainItem.itemImg}
+              // mainImg={mainItem.itemImg}
               item={item}
               restore={restoreDeletedItem}
               delete={permanentlyDeleteItem}

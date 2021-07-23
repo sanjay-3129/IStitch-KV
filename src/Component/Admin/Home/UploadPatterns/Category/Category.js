@@ -92,7 +92,7 @@ const Category = (props) => {
         .collection("category")
         .where("delete", "==", false)
         .orderBy("timestamp", "desc")
-        .limit(8)
+        // .limit(8)
         .get()
         .then((sub) => {
           console.log("size of category", sub.size, sub.docs.length);
@@ -567,14 +567,99 @@ const Category = (props) => {
       .catch((e) => console.log(e));
   };
 
+  // const deleteCategoryHandler = (categoryId) => {
+  //   // include decrement in all other
+  //   console.log(categoryId, "deleteCategoryHandler");
+  //   ref.current.continuousStart();
+  //   let genderRef = db.collection("gender").doc(genderId);
+  //   let categoryDet = categoryList.find((g) => {
+  //     return g.categoryId === categoryId;
+  //   });
+  //   let categoryRef = db
+  //     .collection("gender")
+  //     .doc(genderId)
+  //     .collection(type)
+  //     .doc("categories")
+  //     .collection("category");
+
+  //   categoryRef
+  //     .doc(categoryId)
+  //     .update({
+  //       delete: true
+  //     })
+  //     .then(() => {
+  //       // add data to deleteItems collections
+  //       let id = generateId("deleted");
+  //       db.collection("deleteItems")
+  //         .doc(id)
+  //         .set({
+  //           id: id,
+  //           type: type,
+  //           genderId: genderId,
+  //           genderName: genderName,
+  //           genderImg: "",
+  //           categoryId: categoryDet.categoryId,
+  //           categoryName: categoryDet.categoryName,
+  //           categoryImg: categoryDet.categoryImage,
+  //           subcategoryId: "",
+  //           subcategoryName: "",
+  //           subcategoryImg: "",
+  //           styleId: "",
+  //           styleName: "",
+  //           styleImg: "",
+  //           patternId: "",
+  //           patternName: "",
+  //           patternImg: ""
+  //         })
+  //         .then(() => {
+  //           genderRef.update({
+  //             noOfCategories: firebase.firestore.FieldValue.increment(-1),
+  //             noOfSubcategories: firebase.firestore.FieldValue.increment(
+  //               -category.noOfSubcategories
+  //             ),
+  //             noOfStyles: firebase.firestore.FieldValue.increment(
+  //               -category.noOfStyles
+  //             ),
+  //             noOfPatterns: firebase.firestore.FieldValue.increment(
+  //               -category.noOfPatterns
+  //             )
+  //           });
+  //           // get data which is not deleted
+  //           console.log(" successfully updated!!!");
+  //           categoryRef
+  //             .where("delete", "==", false)
+  //             .orderBy("timestamp", "desc")
+  //             .limit(8)
+  //             .get()
+  //             .then((data) => {
+  //               let list = [];
+  //               data.forEach((doc) => {
+  //                 list.push(doc.data());
+  //               });
+  //               ref.current.complete(); // linear loader to complete
+  //               if (list.length > 0) {
+  //                 setCategoryList(list);
+  //                 setCategory(list[0]);
+  //               } else {
+  //                 setCategoryList("subcollection_empty");
+  //                 // UI - back button or form
+  //               }
+  //               setIsDelete(null);
+  //             });
+  //         })
+  //         .catch((e) => console.log(e));
+  //     })
+  //     .catch((e) => console.log(e));
+  // };
+
   const deleteCategoryHandler = (categoryId) => {
     // include decrement in all other
-    console.log(categoryId, "deleteCategoryHandler");
+    // console.log(categoryId, "deleteCategoryHandler");
     ref.current.continuousStart();
-    let genderRef = db.collection("gender").doc(genderId);
     let categoryDet = categoryList.find((g) => {
       return g.categoryId === categoryId;
     });
+    let genderRef = db.collection("gender").doc(genderId);
     let categoryRef = db
       .collection("gender")
       .doc(genderId)
@@ -590,30 +675,42 @@ const Category = (props) => {
       .then(() => {
         // add data to deleteItems collections
         let id = generateId("deleted");
+        let item = {
+          id: id,
+          type: type,
+          genderId: genderId,
+          genderName: genderName,
+          genderImg: "",
+          categoryId: categoryDet.categoryId,
+          categoryName: categoryDet.categoryName,
+          categoryImg: categoryDet.categoryImage,
+          subcategoryId: "",
+          subcategoryName: "",
+          subcategoryImg: "",
+          styleId: "",
+          styleName: "",
+          styleImg: "",
+          patternId: "",
+          patternName: "",
+          patternImg: ""
+        };
         db.collection("deleteItems")
-          .doc(id)
-          .set({
-            id: id,
-            type: type,
-            genderId: genderId,
-            genderName: genderName,
-            genderImg: "",
-            categoryId: categoryDet.categoryId,
-            categoryName: categoryDet.categoryName,
-            categoryImg: categoryDet.categoryImage,
-            subcategoryId: "",
-            subcategoryName: "",
-            subcategoryImg: "",
-            styleId: "",
-            styleName: "",
-            styleImg: "",
-            patternId: "",
-            patternName: "",
-            patternImg: ""
+          .doc("deletedItems")
+          .update({
+            items: firebase.firestore.FieldValue.arrayUnion(item)
           })
           .then(() => {
             genderRef.update({
-              noOfCategories: firebase.firestore.FieldValue.increment(-1)
+              noOfCategories: firebase.firestore.FieldValue.increment(-1),
+              noOfSubcategories: firebase.firestore.FieldValue.increment(
+                -category.noOfSubcategories
+              ),
+              noOfStyles: firebase.firestore.FieldValue.increment(
+                -category.noOfStyles
+              ),
+              noOfPatterns: firebase.firestore.FieldValue.increment(
+                -category.noOfPatterns
+              )
             });
             // get data which is not deleted
             console.log(" successfully updated!!!");

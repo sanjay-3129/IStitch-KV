@@ -478,26 +478,29 @@ const SubCategory = (props) => {
       .then(() => {
         // add data to deleteItems collections
         let id = generateId("deleted");
+        let item = {
+          id: id,
+          type: type,
+          genderId: genderId,
+          genderName: genderName,
+          genderImg: "",
+          categoryId: categoryId,
+          categoryName: categoryName,
+          categoryImg: "",
+          subcategoryId: subcategoryDet.subcategoryId,
+          subcategoryName: subcategoryDet.subcategoryName,
+          subcategoryImg: subcategoryDet.subcategoryImage,
+          styleId: "",
+          styleName: "",
+          styleImg: "",
+          patternId: "",
+          patternName: "",
+          patternImg: ""
+        };
         db.collection("deleteItems")
-          .doc(id)
-          .set({
-            id: id,
-            type: type,
-            genderId: genderId,
-            genderName: genderName,
-            genderImg: "",
-            categoryId: categoryId,
-            categoryName: categoryName,
-            categoryImg: "",
-            subcategoryId: subcategoryDet.subcategoryId,
-            subcategoryName: subcategoryDet.subcategoryName,
-            subcategoryImg: subcategoryDet.subcategoryImage,
-            styleId: "",
-            styleName: "",
-            styleImg: "",
-            patternId: "",
-            patternName: "",
-            patternImg: ""
+          .doc("deletedItems")
+          .update({
+            items: firebase.firestore.FieldValue.arrayUnion(item)
           })
           .then(() => {
             db.collection("gender")
