@@ -84,6 +84,8 @@ const SubCategory = (props) => {
         .collection("category")
         .doc(categoryId)
         .collection("subcategory")
+        .where("delete", "==", false)
+        .orderBy("timestamp", "desc")
         // .limit(10)
         .get()
         .then((sub) => {

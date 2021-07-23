@@ -367,52 +367,56 @@ const MyBin = (props) => {
 
   const permanentlyDeleteItem = (deleteItemDetail, mainItem) => {
     let storageRef = firebase.storage();
-    if (mainItem.item === "gender") {
-      let filtered = deletedItemsList.filter(
-        (delId) => deleteItemDetail.genderId !== delId.genderId
-      );
-      console.log("filterePerm", filtered);
-    } else if (mainItem.item === "category") {
-      let filtered = deletedItemsList.filter((delId) => {
-        return (
-          deleteItemDetail.genderId !== delId.genderId &&
-          deleteItemDetail.categoryId !== delId.categoryId
-        );
-      });
-      console.log("filterePerm", filtered);
-    } else if (mainItem.item === "subcategory") {
-      let filtered = deletedItemsList.filter((delId) => {
-        return (
-          deleteItemDetail.genderId !== delId.genderId &&
-          deleteItemDetail.categoryId !== delId.categoryId &&
-          deleteItemDetail.subcategoryId !== delId.subcategoryId
-        );
-      });
-      console.log("filterePerm", filtered);
-    } else if (mainItem.item === "style") {
-      let filtered = deletedItemsList.filter((delId) => {
-        return (
-          deleteItemDetail.genderId !== delId.genderId &&
-          deleteItemDetail.categoryId !== delId.categoryId &&
-          deleteItemDetail.subcategoryId !== delId.subcategoryId &&
-          deleteItemDetail.styleId !== delId.styleId
-        );
-      });
-      console.log("filterePerm", filtered);
-    } else if (mainItem.item === "patternId") {
-      // check patternId
-      let filtered = deletedItemsList.filter((delId) => {
-        return (
-          deleteItemDetail.styleId !== delId.styleId &&
-          deleteItemDetail.patternId !== delId.patternId
-        );
-      });
-      console.log("filterePerm", filtered);
-    }
+    // if (mainItem.item === "gender") {
+    //   let filtered = deletedItemsList.filter(
+    //     (delId) => deleteItemDetail.genderId !== delId.genderId
+    //   );
+    //   console.log("filterePerm", filtered);
+    // } else if (mainItem.item === "category") {
+    //   let filtered = deletedItemsList.filter((delId) => {
+    //     return (
+    //       deleteItemDetail.genderId !== delId.genderId &&
+    //       deleteItemDetail.categoryId !== delId.categoryId
+    //     );
+    //   });
+    //   console.log("filterePerm", filtered);
+    // } else if (mainItem.item === "subcategory") {
+    //   let filtered = deletedItemsList.filter((delId) => {
+    //     return (
+    //       deleteItemDetail.genderId !== delId.genderId &&
+    //       deleteItemDetail.categoryId !== delId.categoryId &&
+    //       deleteItemDetail.subcategoryId !== delId.subcategoryId
+    //     );
+    //   });
+    //   console.log("filterePerm", filtered);
+    // } else if (mainItem.item === "style") {
+    //   let filtered = deletedItemsList.filter((delId) => {
+    //     return (
+    //       deleteItemDetail.genderId !== delId.genderId &&
+    //       deleteItemDetail.categoryId !== delId.categoryId &&
+    //       deleteItemDetail.subcategoryId !== delId.subcategoryId &&
+    //       deleteItemDetail.styleId !== delId.styleId
+    //     );
+    //   });
+    //   console.log("filterePerm", filtered);
+    // } else if (mainItem.item === "patternId") {
+    //   // check patternId
+    //   let filtered = deletedItemsList.filter((delId) => {
+    //     return (
+    //       deleteItemDetail.styleId !== delId.styleId &&
+    //       deleteItemDetail.patternId !== delId.patternId
+    //     );
+    //   });
+    //   console.log("filterePerm", filtered);
+    // }
 
     // gender
     // ref.current.continuousStart();
     if (mainItem.item === "gender") {
+      let filtered = deletedItemsList.filter(
+        (delId) => deleteItemDetail.genderId !== delId.genderId
+      );
+
       db.collection("gender")
         .doc(deleteItemDetail.genderId)
         .delete()
@@ -422,11 +426,9 @@ const MyBin = (props) => {
           console.log("Your subcollections also deleted!!!");
 
           // calculation
-          let filtered = deletedItemsList.filter(
-            (delId) => deleteItemDetail.genderId !== delId.genderId
-          );
+
           db.collection("deleteItems")
-            .doc(deleteItemDetail.id)
+            .doc("deletedItems")
             .update({
               items: filtered
             })
@@ -442,6 +444,10 @@ const MyBin = (props) => {
         })
         .catch((e) => console.log(e));
     } else if (mainItem.item === "category") {
+      let filtered = deletedItemsList.filter((delId) => {
+        return deleteItemDetail.categoryId !== delId.categoryId;
+      });
+
       // category
       db.collection("gender")
         .doc(deleteItemDetail.genderId)
@@ -454,9 +460,12 @@ const MyBin = (props) => {
           ref.current.complete();
           // delete that from the deleteItems
           console.log("Your subcollections also deleted!!!");
+
           db.collection("deleteItems")
-            .doc(deleteItemDetail.id)
-            .delete()
+            .doc("deletedItems")
+            .update({
+              items: filtered
+            })
             .then(() => {
               getAllDeletedItems();
               storageRef
@@ -469,6 +478,9 @@ const MyBin = (props) => {
         })
         .catch((e) => console.log(e));
     } else if (mainItem.item === "subcategory") {
+      let filtered = deletedItemsList.filter((delId) => {
+        return deleteItemDetail.subcategoryId !== delId.subcategoryId;
+      });
       // subcategory
       db.collection("gender")
         .doc(deleteItemDetail.genderId)
@@ -484,8 +496,10 @@ const MyBin = (props) => {
           // delete that from the deleteItems
           console.log("Your subcollections also deleted!!!");
           db.collection("deleteItems")
-            .doc(deleteItemDetail.id)
-            .delete()
+            .doc("deletedItems")
+            .update({
+              items: filtered
+            })
             .then(() => {
               getAllDeletedItems();
               storageRef
@@ -498,6 +512,9 @@ const MyBin = (props) => {
         })
         .catch((e) => console.log(e));
     } else if (mainItem.item === "style") {
+      let filtered = deletedItemsList.filter((delId) => {
+        return deleteItemDetail.styleId !== delId.styleId;
+      });
       // style
       db.collection("gender")
         .doc(deleteItemDetail.genderId)
@@ -515,8 +532,10 @@ const MyBin = (props) => {
           console.log("Your subcollections also deleted!!!");
           // delete that from the deleteItems
           db.collection("deleteItems")
-            .doc(deleteItemDetail.id)
-            .delete()
+            .doc("deletedItems")
+            .update({
+              items: filtered
+            })
             .then(() => {
               getAllDeletedItems();
               storageRef
@@ -529,6 +548,9 @@ const MyBin = (props) => {
         })
         .catch((e) => console.log(e));
     } else {
+      let filtered = deletedItemsList.filter((delId) => {
+        return deleteItemDetail.patternId !== delId.patternId;
+      });
       // pattern
       db.collection("gender")
         .doc(deleteItemDetail.genderId)
@@ -546,9 +568,13 @@ const MyBin = (props) => {
         .then(() => {
           ref.current.complete();
           // delete that from the deleteItems
-          db.collection("patterns")
-            .doc(deleteItemDetail.patternId)
-            .delete()
+          db.collection("deleteItems")
+            .doc("deletedItems")
+            .update({
+              items: filtered
+            })
+            // .doc(deleteItemDetail.patternId)
+            // .delete()
             .then(() => {
               db.collection("deleteItems")
                 .doc(deleteItemDetail.id)

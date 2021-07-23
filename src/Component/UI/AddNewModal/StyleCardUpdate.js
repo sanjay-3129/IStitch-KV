@@ -45,12 +45,13 @@ const StyleCardUpdate = (props) => {
     // console.log("select");
   };
 
-  const checkedHandler = () => {
-    // console.log(
-    //   currentRelations.includes((r) => r.styleId === style.styleId)
-    // );
-    console.log("chekced");
-  };
+  // const checkedHandler = (style) => {
+  //   // console.log(
+  //   //   currentRelations.includes((r) => r.styleId === style.styleId)
+  //   // );
+  //   return props.relations.includes((r) => r.styleId === style.styleId);
+  //   // console.log("chekced");
+  // };
 
   let styles = null;
   if (stylesList === null) {
@@ -61,6 +62,9 @@ const StyleCardUpdate = (props) => {
     );
   } else {
     styles = stylesList.map((style, i) => {
+      // let checked = props.relations.includes(
+      //   (r) => r.styleId === style.styleId
+      // );
       // console.log(i);
       return (
         <div class="styles" key={i}>
@@ -73,7 +77,8 @@ const StyleCardUpdate = (props) => {
             // checked={props.relations.includes(
             //   (r) => r.styleId === style.styleId
             // )}
-            checked={checkedHandler}
+            // checked={checkedHandler(style)}
+            checked={props.relations.checked}
           />
           <label class="stretched" for={style.styleId}></label>
         </div>

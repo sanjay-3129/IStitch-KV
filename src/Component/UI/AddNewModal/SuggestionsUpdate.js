@@ -20,6 +20,7 @@ const SuggestionsUpdate = (props) => {
   useEffect(() => {
     // console.log("genderId", props.style.genderId);
     // props.action
+    console.log("update");
     setSelectedStyles(props.style.relations);
     // console.log("sugUpdate", props.style);
     let dbRef = db
@@ -81,15 +82,21 @@ const SuggestionsUpdate = (props) => {
       categoryId: style.categoryId,
       subcategoryId: style.categoryId,
       styleId: style.styleId,
-      type: props.type
+      type: props.type,
+      checked: true
     };
     // console.log(style, i);
     // initally set data, if again same data, delete it
     let index = list.findIndex((s) => sty.styleId === s.styleId);
     if (index !== -1) {
+      // checked: false
+      list[index].checked = false;
       list.splice(index, 1);
     } else {
+      // checked: true
+      sty.checked = true;
       list.push(sty);
+      // list[index].checked = true;
     }
     setSelectedStyles(list);
   };
