@@ -77,14 +77,20 @@ const Suggestion = (props) => {
       subcategoryId: style.categoryId,
       styleId: style.styleId,
       type: props.type
+      // checked: true
     };
     // console.log(style, i);
     // initally set data, if again same data, delete it
     let index = list.findIndex((s) => sty.styleId === s.styleId);
     if (index !== -1) {
+      // checked: false
+      // list[index].checked = false; // no problem even if we not give
       list.splice(index, 1);
     } else {
+      // checked: true
+      // sty.checked = true;
       list.push(sty);
+      // list[index].checked = true;
     }
     setSelectedStyles(list);
   };

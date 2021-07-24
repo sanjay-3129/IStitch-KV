@@ -407,6 +407,31 @@ const Styles = (props) => {
     }
   };
 
+  const updateHandler = (relations) => {
+    console.log("style updating...", relations);
+    let styleRef = db
+      .collection("gender")
+      .doc(genderId)
+      .collection(type)
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId)
+      .collection("subcategory")
+      .doc(subcategoryId)
+      .collection("styles")
+      .doc(styles.styleId);
+
+    styleRef
+      .update({
+        relations: [...relations]
+      })
+      .then(() => {
+        console.log("successfully updated!!!");
+        closeModalHandler();
+        styleRef.get().then((doc) => setStyles(doc.data()));
+      });
+  };
+
   const draftHandler = (relations) => {
     console.log("style adding...", relations);
     let styleId = generateId("styles");
@@ -751,7 +776,7 @@ const Styles = (props) => {
         <SuggestionsUpdate
           closeModal={closeModalHandler}
           title={addNewItem}
-          saveAsDraft={draftHandler}
+          saveAsDraft={updateHandler}
           newData={newData}
           onChange={onChangeHandler}
           style={styles}

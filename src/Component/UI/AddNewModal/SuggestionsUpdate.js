@@ -20,8 +20,9 @@ const SuggestionsUpdate = (props) => {
   useEffect(() => {
     // console.log("genderId", props.style.genderId);
     // props.action
-    console.log("update");
-    setSelectedStyles(props.style.relations);
+
+    console.log("update", props.style.relations);
+
     // console.log("sugUpdate", props.style);
     let dbRef = db
       .collection("gender")
@@ -46,6 +47,7 @@ const SuggestionsUpdate = (props) => {
           }
         });
         setSubcategoryList(list);
+        setSelectedStyles(props.style.relations);
         // already relations availabel
       })
       .catch((e) => console.log(e));
@@ -82,19 +84,19 @@ const SuggestionsUpdate = (props) => {
       categoryId: style.categoryId,
       subcategoryId: style.categoryId,
       styleId: style.styleId,
-      type: props.type,
-      checked: true
+      type: props.type
+      // checked: true
     };
     // console.log(style, i);
     // initally set data, if again same data, delete it
     let index = list.findIndex((s) => sty.styleId === s.styleId);
     if (index !== -1) {
       // checked: false
-      list[index].checked = false;
+      // list[index].checked = false;
       list.splice(index, 1);
     } else {
       // checked: true
-      sty.checked = true;
+      // sty.checked = true;
       list.push(sty);
       // list[index].checked = true;
     }
@@ -119,6 +121,8 @@ const SuggestionsUpdate = (props) => {
             style={props.style}
             type={props.type}
             onSelect={onSelectHandler}
+            // currentRelations={currentRelations}
+            // setCurrentRelations={(list) => setCurrentRelations(list)}
           />
         </div>
       );
@@ -172,7 +176,7 @@ const SuggestionsUpdate = (props) => {
           class="draft m-3"
           onClick={() => props.saveAsDraft(selectedStyles)}
         >
-          Save as draft
+          Update Relations
         </button>
         <button type="button" class="draft m-3" onClick={props.goBack}>
           Go Back
