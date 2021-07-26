@@ -367,48 +367,6 @@ const MyBin = (props) => {
 
   const permanentlyDeleteItem = (deleteItemDetail, mainItem) => {
     let storageRef = firebase.storage();
-    // if (mainItem.item === "gender") {
-    //   let filtered = deletedItemsList.filter(
-    //     (delId) => deleteItemDetail.genderId !== delId.genderId
-    //   );
-    //   console.log("filterePerm", filtered);
-    // } else if (mainItem.item === "category") {
-    //   let filtered = deletedItemsList.filter((delId) => {
-    //     return (
-    //       deleteItemDetail.genderId !== delId.genderId &&
-    //       deleteItemDetail.categoryId !== delId.categoryId
-    //     );
-    //   });
-    //   console.log("filterePerm", filtered);
-    // } else if (mainItem.item === "subcategory") {
-    //   let filtered = deletedItemsList.filter((delId) => {
-    //     return (
-    //       deleteItemDetail.genderId !== delId.genderId &&
-    //       deleteItemDetail.categoryId !== delId.categoryId &&
-    //       deleteItemDetail.subcategoryId !== delId.subcategoryId
-    //     );
-    //   });
-    //   console.log("filterePerm", filtered);
-    // } else if (mainItem.item === "style") {
-    //   let filtered = deletedItemsList.filter((delId) => {
-    //     return (
-    //       deleteItemDetail.genderId !== delId.genderId &&
-    //       deleteItemDetail.categoryId !== delId.categoryId &&
-    //       deleteItemDetail.subcategoryId !== delId.subcategoryId &&
-    //       deleteItemDetail.styleId !== delId.styleId
-    //     );
-    //   });
-    //   console.log("filterePerm", filtered);
-    // } else if (mainItem.item === "patternId") {
-    //   // check patternId
-    //   let filtered = deletedItemsList.filter((delId) => {
-    //     return (
-    //       deleteItemDetail.styleId !== delId.styleId &&
-    //       deleteItemDetail.patternId !== delId.patternId
-    //     );
-    //   });
-    //   console.log("filterePerm", filtered);
-    // }
 
     // gender
     // ref.current.continuousStart();

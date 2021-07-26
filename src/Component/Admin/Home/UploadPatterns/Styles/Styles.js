@@ -140,9 +140,8 @@ const Styles = (props) => {
   };
 
   const changeNameHandler = (styleId, newName) => {
-    ref.current.continuousStart();
-    console.log("subcategory name updated", genderId);
-    db.collection("gender")
+    let styleRef = db
+      .collection("gender")
       .doc(genderId)
       .collection(type)
       .doc("categories")
@@ -151,39 +150,40 @@ const Styles = (props) => {
       .collection("subcategory")
       .doc(subcategoryId)
       .collection("styles")
-      .doc(styleId)
+      .doc(styleId);
+    ref.current.continuousStart();
+    console.log("subcategory name updated", genderId);
+    styleRef
       .update({
         styleName: newName
       })
       .then(() => {
         console.log(newName + " successfully updated!!!");
-        db.collection("gender")
-          .doc(genderId)
-          .collection(type)
-          .doc("categories")
-          .collection("category")
-          .doc(categoryId)
-          .collection("subcategory")
-          .doc(subcategoryId)
-          .collection("styles")
-          .where("delete", "==", false)
-          .orderBy("timestamp", "desc")
-          .get()
-          .then((data) => {
-            let list = [];
-            data.forEach((doc) => {
-              list.push(doc.data());
-            });
-            ref.current.complete(); // linear loader to complete
-            setStylesList(list);
-            setStyles(list.find((l) => l.styleId === styleId));
-            // console.log(list.find((l) => l.categoryId === categoryId));
-          });
+        styleRef.get().then((data) => {
+          let doc = data.data();
+          let list = [...stylesList];
+          let index = list.findIndex((l) => l.styleId === styleId);
+          list[index] = doc;
+          setStylesList(list);
+          setStyles(doc);
+          ref.current.complete(); // linear loader to complete
+        });
       })
       .catch((e) => console.log(e));
   };
   const changeImageHandler = (styleId, newImage) => {
     ref.current.continuousStart();
+    let styleRef = db
+      .collection("gender")
+      .doc(genderId)
+      .collection(type)
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId)
+      .collection("subcategory")
+      .doc(subcategoryId)
+      .collection("styles")
+      .doc(styleId);
     // casual shirt
     // https://firebasestorage.googleapis.com/v0/b/istitch-admin.appspot.com/o/1623937713452.jpg?alt=media&token=14291831-385d-4bdb-ab44-297aa0883fa9
     let bucketName = "Images";
@@ -197,43 +197,29 @@ const Styles = (props) => {
         // console.log(snapshot);
         imgRef.getDownloadURL().then((imgUrl) => {
           // now adding the data to firestore
-          db.collection("gender")
-            .doc(genderId)
-            .collection(type)
-            .doc("categories")
-            .collection("category")
-            .doc(categoryId)
-            .collection("subcategory")
-            .doc(subcategoryId)
-            .collection("styles")
-            .doc(styleId)
+          styleRef
             .update({
               styleImage: imgUrl // post this url first to storage
             })
             .then(() => {
               console.log("Image Updated");
+              firebase
+                .storage()
+                .refFromURL(styles.styleImage)
+                .delete()
+                .then(() =>
+                  console.log("image deleted successfullty, Styles.js[252]")
+                );
               // then set the state again to reload and render it again
-              db.collection("gender")
-                .doc(genderId)
-                .collection(type)
-                .doc("categories")
-                .collection("category")
-                .doc(categoryId)
-                .collection("subcategory")
-                .doc(subcategoryId)
-                .collection("styles")
-                .where("delete", "==", false)
-                .orderBy("timestamp", "desc")
-                .get()
-                .then((data) => {
-                  let list = [];
-                  data.forEach((doc) => {
-                    list.push(doc.data());
-                  });
-                  ref.current.complete(); // linear loader to complete
-                  setStylesList(list);
-                  setStyles(list.find((l) => l.styleId === styleId));
-                });
+              styleRef.get().then((data) => {
+                let doc = data.data();
+                let list = [...stylesList];
+                let index = list.findIndex((l) => l.styleId === styleId);
+                list[index] = doc;
+                setStylesList(list);
+                setStyles(doc);
+                ref.current.complete(); // linear loader to complete
+              });
             });
         });
       })
@@ -658,16 +644,16 @@ const Styles = (props) => {
           // console.log("hide-false");
           list = [];
           styleRef
-            .where("delete", "==", false)
-            .orderBy("timestamp", "desc")
+            .doc(styles.styleId)
             .get()
             .then((data) => {
-              data.forEach((doc) => {
-                list.push(doc.data());
-              });
-              ref.current.complete(); // linear loader to complete
+              let doc = data.data();
+              let list = [...stylesList];
+              let index = list.findIndex((l) => l.styleId === styles.styleId);
+              list[index] = doc;
               setStylesList(list);
-              setStyles(list[0]);
+              setStyles(doc);
+              ref.current.complete(); // linear loader to complete
             });
         })
         .catch((e) => console.log(e));

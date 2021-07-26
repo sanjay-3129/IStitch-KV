@@ -1,74 +1,27 @@
 import React, { useEffect, useState } from "react";
 import "./Info.css";
 import InfoCard from "../../../../UI/Card/InfoCard";
-import Spinner from "../../../..//UI/Spinner/Spinner";
-
-// will create a state
-
-const Pagination = (props) => {
-  const [pages] = useState(Math.round(props.length / 8));
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageGroup, setPageGroup] = useState([]);
-
-  const goToNextPage = () => {
-    setCurrentPage((page) => page + 1);
-  };
-
-  const goToPreviousPage = () => {
-    setCurrentPage((page) => page + 1);
-  };
-
-  const changePage = (event) => {
-    const pageNumber = Number(event.target.textContent);
-    setCurrentPage(pageNumber);
-  };
-
-  const getPaginatedData = () => {
-    const startIndex = currentPage * 8 - 8;
-    const endIndex = startIndex + 8;
-  };
-
-  const getPaginationGroup = () => {
-    let start = Math.floor((currentPage - 1) / 3) * 3;
-    let total = new Array(3).fill().map((_, idx) => start + idx + 1);
-    setPageGroup(total);
-  };
-};
+// import Spinner from "../../../..//UI/Spinner/Spinner";
+import $ from "jquery";
 
 const InfoPage = (props) => {
-  const [categoryList, setCategoryList] = useState([]);
+  // const [categoryList, setCategoryList] = useState([]);
   // props.length
-  useEffect(() => {
-    setCategoryList(props.categoryList);
-    // console.log("categoryList", props.categoryList);
-  }, []);
+  // useEffect(() => {
+  //   setCategoryList(props.categoryList);
+  //   // console.log("categoryList", props.categoryList);
+  // }, []);
 
-  // const next = () => {};
-
-  // if (categoryList < 8) {
-  //   return (
-  //     <div className="info">
-  //       <Pagination
-  //         length={props.length}
-  //         categoryList={categoryList}
-  //         selectedCategory={props.selectedCategory}
-  //       />
-  //     </div>
-  //   );
-  // } else if (categoryList >= 8) {
-  //   return (
-  //     <div className="info">
-  //       <Pagination
-  //         length={props.length}
-  //         categoryList={categoryList}
-  //         selectedCategory={props.selectedCategory}
-  //       />
-  //       <button type="button" class="" onClick={next}>
-  //         Load More
-  //       </button>
-  //     </div>
-  //   );
-  // }
+  const onScrollHandler = (e) => {
+    const bottom =
+      e.target.scrollHeight - Math.ceil(e.target.scrollTop) ===
+      e.target.clientHeight;
+    // bottom && data empty dont call db again
+    // if there is no data from, then length will be 0, so no need to call db again
+    if (bottom) {
+      props.onScroll();
+    }
+  };
 
   return (
     <div className="info">
@@ -95,8 +48,8 @@ const InfoPage = (props) => {
           <input type="search" placeholder="search using this" />
         </div>
       </div>
-      <div className="content">
-        {categoryList.map((category) => {
+      <div id="content" className="content" onScroll={onScrollHandler}>
+        {props.categoryList.map((category) => {
           return (
             <InfoCard
               item={category}
@@ -104,14 +57,6 @@ const InfoPage = (props) => {
             />
           );
         })}
-        {/* <Pagination
-          length={props.length}
-          categoryList={categoryList}
-          selectedCategory={props.selectedCategory}
-        /> */}
-        {/* <button onClick>prev</button> */}
-        {/* <button>1</button> */}
-        {/* <button onClick>next</button> */}
       </div>
     </div>
   );

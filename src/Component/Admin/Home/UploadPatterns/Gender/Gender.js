@@ -73,8 +73,8 @@ const Gender = (props) => {
   const changeNameHandler = (genderId, newName) => {
     ref.current.continuousStart();
     console.log("gender name updated", genderId);
-    db.collection("gender")
-      .doc(genderId)
+    let genderRef = db.collection("gender").doc(genderId);
+    genderRef
       .update({
         genderName: newName
       })

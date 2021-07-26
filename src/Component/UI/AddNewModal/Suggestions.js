@@ -74,7 +74,7 @@ const Suggestion = (props) => {
     let sty = {
       genderId: style.genderId,
       categoryId: style.categoryId,
-      subcategoryId: style.categoryId,
+      subcategoryId: style.subcategoryId,
       styleId: style.styleId,
       type: props.type
       // checked: true

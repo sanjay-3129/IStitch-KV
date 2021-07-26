@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import qs from "qs";
 import firebase from "../../../../../Services/firebase/firebase";
 import Spinner from "../../../../UI/Spinner/Spinner";
-import Info from "./Info";
+// import Info from "./Info";
 import InfoPage from "./InfoPage";
 import InfoBox from "./InfoBox";
 import ChangeModal from "../../../../UI/AddNewModal/ChangeModal.js";
@@ -12,6 +12,7 @@ import AddNewModal from "../../../../UI/AddNewModal/AddNewModal";
 import AddNewStyle from "../../../../UI/AddNewModal/AddNewStyle";
 import generateId from "../../../../../Helpers/generateId";
 import DeleteConfirmModal from "../../../../UI/DeleteConfirmModal/DeleteConfirmModal";
+import $ from "jquery";
 
 let genderId = undefined;
 let genderName = undefined;
@@ -48,6 +49,7 @@ const Category = (props) => {
   const [newModal, setNewModal] = useState("");
   const [newPatternModal, setNewPatternModal] = useState("");
   const [length, setLength] = useState(0);
+  const [lastDoc, setLastDoc] = useState(null);
 
   const closeModalHandler = () => {
     setAddNewItem(null);
@@ -92,10 +94,12 @@ const Category = (props) => {
         .collection("category")
         .where("delete", "==", false)
         .orderBy("timestamp", "desc")
-        // .limit(8)
+        .limit(16)
         .get()
         .then((sub) => {
-          console.log("size of category", sub.size, sub.docs.length);
+          // console.log("size of category", sub.size, sub.docs.length);
+          let lastVisible = sub.docs[sub.docs.length - 1];
+          setLastDoc(lastVisible);
           if (sub.docs.length > 0) {
             // subcollection exists
             let list = [];
@@ -180,42 +184,48 @@ const Category = (props) => {
   const changeNameHandler = (categoryId, newName) => {
     ref.current.continuousStart();
     console.log("category name updated", genderId);
-    db.collection("gender")
+    let categoryRef = db
+      .collection("gender")
       .doc(genderId)
       .collection(type)
       .doc("categories")
       .collection("category")
-      .doc(categoryId)
+      .doc(categoryId);
+
+    categoryRef
       .update({
         categoryName: newName
       })
       .then(() => {
         console.log(newName + " successfully updated!!!");
-        db.collection("gender")
-          .doc(genderId)
-          .collection(type)
-          .doc("categories")
-          .collection("category")
-          .where("delete", "==", false)
-          .orderBy("timestamp", "desc")
-          .limit(8)
-          .get()
-          .then((data) => {
-            setLength(data.size);
-            let list = [];
-            data.forEach((doc) => {
-              list.push(doc.data());
-            });
-            ref.current.complete(); // linear loader to complete
-            setCategoryList(list);
-            setCategory(list.find((l) => l.categoryId === categoryId));
-            // console.log(list.find((l) => l.categoryId === categoryId));
-          });
+        categoryRef.get().then((data) => {
+          // setLength(data.size);
+          // let list = [];
+          // data.forEach((doc) => {
+          //   list.push(doc.data());
+          //   // console.log(doc.data());
+          // });
+          let doc = data.data();
+          let list = [...categoryList];
+          let index = list.findIndex((l) => l.categoryId === categoryId);
+          list[index] = doc;
+          setCategoryList(list);
+          setCategory(doc);
+          ref.current.complete(); // linear loader to complete
+          // console.log(list.find((l) => l.categoryId === categoryId));
+        });
       })
       .catch((e) => console.log(e));
   };
   const changeImageHandler = (categoryId, newImage) => {
     ref.current.continuousStart();
+    let categoryRef = db
+      .collection("gender")
+      .doc(genderId)
+      .collection(type)
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId);
     // casual shirt
     // https://firebasestorage.googleapis.com/v0/b/istitch-admin.appspot.com/o/1623937713452.jpg?alt=media&token=14291831-385d-4bdb-ab44-297aa0883fa9
     let bucketName = "Images";
@@ -229,37 +239,30 @@ const Category = (props) => {
         // console.log(snapshot);
         imgRef.getDownloadURL().then((imgUrl) => {
           // now adding the data to firestore
-          db.collection("gender")
-            .doc(genderId)
-            .collection(type)
-            .doc("categories")
-            .collection("category")
-            .doc(categoryId)
+          categoryRef
             .update({
               categoryImage: imgUrl // post this url first to storage
             })
             .then(() => {
+              firebase
+                .storage()
+                .refFromURL(category.categoryImage)
+                .delete()
+                .then(() =>
+                  console.log("image deleted successfullty, Category.js[252]")
+                );
               console.log("Image Updated");
               // then set the state again to reload and render it again
-              db.collection("gender")
-                .doc(genderId)
-                .collection(type)
-                .doc("categories")
-                .collection("category")
-                .where("delete", "==", false)
-                .orderBy("timestamp", "desc")
-                .limit(8)
-                .get()
-                .then((data) => {
-                  setLength(data.size);
-                  let list = [];
-                  data.forEach((doc) => {
-                    list.push(doc.data());
-                  });
-                  ref.current.complete(); // linear loader to complete
-                  setCategoryList(list);
-                  setCategory(list.find((l) => l.categoryId === categoryId));
-                });
+              // here only the changed category is got from the db and set - optimized
+              categoryRef.get().then((data) => {
+                let doc = data.data();
+                let list = [...categoryList];
+                let index = list.findIndex((l) => l.categoryId === categoryId);
+                list[index] = doc;
+                setCategoryList(list);
+                setCategory(doc);
+                ref.current.complete(); // linear loader to complete
+              });
             });
         });
       })
@@ -315,7 +318,7 @@ const Category = (props) => {
       .doc(subcategoryId);
     let bucketName = "Images";
     let storageRef = firebase.storage().ref();
-    console.log("draft handler");
+    // console.log("draft handler");
     let categoryTimestamp = null; // prevgender - category - subcategory;
     let subCategoryTimestamp = null;
     // prevgender - category - subcategory;
@@ -389,16 +392,16 @@ const Category = (props) => {
                         )
                       });
 
-                      let list = [];
                       genderRef
                         .collection(type)
                         .doc("categories")
                         .collection("category")
                         .where("delete", "==", false)
                         .orderBy("timestamp", "desc")
-                        .limit(8)
+                        .limit(16)
                         .get()
                         .then((data) => {
+                          let list = [];
                           setLength(data.size);
                           data.forEach((doc) => {
                             list.push(doc.data());
@@ -406,7 +409,8 @@ const Category = (props) => {
                           ref.current.complete(); // linear loader to complete
                           setCategoryList(list);
                           setCategory(list[0]);
-                          setAddNewItem(null);
+                          setType(type);
+                          // setAddNewItem(null);
                         });
                     })
                     .catch((e) => console.log(e));
@@ -460,7 +464,7 @@ const Category = (props) => {
                 .collection("category")
                 .where("delete", "==", false)
                 .orderBy("timestamp", "desc")
-                .limit(8)
+                .limit(16)
                 .get()
                 .then((data) => {
                   data.forEach((doc) => {
@@ -469,7 +473,7 @@ const Category = (props) => {
                   ref.current.complete(); // linear loader to complete
                   setCategoryList(list);
                   setCategory(list[0]);
-                  setAddNewItem(null);
+                  // setAddNewItem(null);
                 });
             });
         });
@@ -567,94 +571,10 @@ const Category = (props) => {
       .catch((e) => console.log(e));
   };
 
-  // const deleteCategoryHandler = (categoryId) => {
-  //   // include decrement in all other
-  //   console.log(categoryId, "deleteCategoryHandler");
-  //   ref.current.continuousStart();
-  //   let genderRef = db.collection("gender").doc(genderId);
-  //   let categoryDet = categoryList.find((g) => {
-  //     return g.categoryId === categoryId;
-  //   });
-  //   let categoryRef = db
-  //     .collection("gender")
-  //     .doc(genderId)
-  //     .collection(type)
-  //     .doc("categories")
-  //     .collection("category");
-
-  //   categoryRef
-  //     .doc(categoryId)
-  //     .update({
-  //       delete: true
-  //     })
-  //     .then(() => {
-  //       // add data to deleteItems collections
-  //       let id = generateId("deleted");
-  //       db.collection("deleteItems")
-  //         .doc(id)
-  //         .set({
-  //           id: id,
-  //           type: type,
-  //           genderId: genderId,
-  //           genderName: genderName,
-  //           genderImg: "",
-  //           categoryId: categoryDet.categoryId,
-  //           categoryName: categoryDet.categoryName,
-  //           categoryImg: categoryDet.categoryImage,
-  //           subcategoryId: "",
-  //           subcategoryName: "",
-  //           subcategoryImg: "",
-  //           styleId: "",
-  //           styleName: "",
-  //           styleImg: "",
-  //           patternId: "",
-  //           patternName: "",
-  //           patternImg: ""
-  //         })
-  //         .then(() => {
-  //           genderRef.update({
-  //             noOfCategories: firebase.firestore.FieldValue.increment(-1),
-  //             noOfSubcategories: firebase.firestore.FieldValue.increment(
-  //               -category.noOfSubcategories
-  //             ),
-  //             noOfStyles: firebase.firestore.FieldValue.increment(
-  //               -category.noOfStyles
-  //             ),
-  //             noOfPatterns: firebase.firestore.FieldValue.increment(
-  //               -category.noOfPatterns
-  //             )
-  //           });
-  //           // get data which is not deleted
-  //           console.log(" successfully updated!!!");
-  //           categoryRef
-  //             .where("delete", "==", false)
-  //             .orderBy("timestamp", "desc")
-  //             .limit(8)
-  //             .get()
-  //             .then((data) => {
-  //               let list = [];
-  //               data.forEach((doc) => {
-  //                 list.push(doc.data());
-  //               });
-  //               ref.current.complete(); // linear loader to complete
-  //               if (list.length > 0) {
-  //                 setCategoryList(list);
-  //                 setCategory(list[0]);
-  //               } else {
-  //                 setCategoryList("subcollection_empty");
-  //                 // UI - back button or form
-  //               }
-  //               setIsDelete(null);
-  //             });
-  //         })
-  //         .catch((e) => console.log(e));
-  //     })
-  //     .catch((e) => console.log(e));
-  // };
-
   const deleteCategoryHandler = (categoryId) => {
     // include decrement in all other
     // console.log(categoryId, "deleteCategoryHandler");
+    setIsDelete(null);
     ref.current.continuousStart();
     let categoryDet = categoryList.find((g) => {
       return g.categoryId === categoryId;
@@ -713,11 +633,11 @@ const Category = (props) => {
               )
             });
             // get data which is not deleted
-            console.log(" successfully updated!!!");
+            // console.log(" successfully updated!!!");
             categoryRef
               .where("delete", "==", false)
               .orderBy("timestamp", "desc")
-              .limit(8)
+              .limit(16)
               .get()
               .then((data) => {
                 let list = [];
@@ -732,7 +652,6 @@ const Category = (props) => {
                   setCategoryList("subcollection_empty");
                   // UI - back button or form
                 }
-                setIsDelete(null);
               });
           })
           .catch((e) => console.log(e));
@@ -749,7 +668,6 @@ const Category = (props) => {
       .collection(type)
       .doc("categories")
       .collection("category");
-    let list = [];
     if (e.target.checked) {
       // true - show or hide(false)
       categoryRef
@@ -759,19 +677,20 @@ const Category = (props) => {
         })
         .then(() => {
           // console.log("hide-false");
-          list = [];
           categoryRef
-            .where("delete", "==", false)
-            .orderBy("timestamp", "desc")
-            .limit(8)
+            .doc(category.categoryId)
+            // .limit(8)
             .get()
             .then((data) => {
-              data.forEach((doc) => {
-                list.push(doc.data());
-              });
-              ref.current.complete(); // linear loader to complete
+              let doc = data.data();
+              let list = [...categoryList];
+              let index = list.findIndex(
+                (l) => l.categoryId === category.categoryId
+              );
+              list[index] = doc;
               setCategoryList(list);
-              setCategory(list[0]);
+              setCategory(doc);
+              ref.current.complete(); // linear loader to complete
             });
         })
         .catch((e) => console.log(e));
@@ -785,19 +704,20 @@ const Category = (props) => {
         })
         .then(() => {
           // console.log("hide-true");
-          list = [];
+
           categoryRef
-            .where("delete", "==", false)
-            .orderBy("timestamp", "desc")
-            .limit(8)
+            .doc(category.categoryId)
             .get()
             .then((data) => {
-              data.forEach((doc) => {
-                list.push(doc.data());
-              });
-              ref.current.complete(); // linear loader to complete
+              let doc = data.data();
+              let list = [...categoryList];
+              let index = list.findIndex(
+                (l) => l.categoryId === category.categoryId
+              );
+              list[index] = doc;
               setCategoryList(list);
-              setCategory(list[0]);
+              setCategory(doc);
+              ref.current.complete(); // linear loader to complete
             });
         })
         .catch((e) => console.log(e));
@@ -814,7 +734,7 @@ const Category = (props) => {
       .collection("category")
       .where("delete", "==", false)
       .orderBy("timestamp", "desc")
-      .limit(8)
+      .limit(16)
       .get()
       .then((data) => {
         data.forEach((doc) => {
@@ -882,6 +802,44 @@ const Category = (props) => {
     });
   };
 
+  const onScrollHandler = () => {
+    console.log("onScrollHandler", length);
+    if (length > 0) {
+      ref.current.continuousStart();
+      db.collection("gender")
+        .doc(genderId)
+        .collection(type)
+        .doc("categories")
+        .collection("category")
+        .where("delete", "==", false)
+        .orderBy("timestamp", "desc")
+        .startAfter(lastDoc) // cursor for pagination
+        .limit(8)
+        .get()
+        .then((sub) => {
+          let lastVisible = sub.docs[sub.docs.length - 1];
+          setLastDoc(lastVisible);
+
+          let list = [...categoryList];
+          sub.forEach((doc) => {
+            list.push(doc.data());
+          });
+          ref.current.complete(); // linear loader to complete
+
+          // append data to bottom page
+          // $("#content").append(`<p>hi</p>`);
+          // $("#content").animate({ scrollTop: $("#content").height() }, 1000);
+          setCategoryList(list);
+          setCategory(list[0]);
+          setLength(sub.size);
+        });
+      // $("#content").append(`<p>hi</p>`);
+      // $("#content").animate({ scrollTop: $("#content").height() }, 1000);
+    } else {
+      console.log("no data to append");
+    }
+  };
+
   let categories = null;
   if (categoryList === null) {
     categories = <Spinner />;
@@ -939,6 +897,7 @@ const Category = (props) => {
           selectedCategory={selectedCategoryHandler}
           // selectAddon={selectedAddonHandler}
           // selectMain={selectedMainHandler}
+          onScroll={onScrollHandler}
           selectedType={selectedType}
           type={type}
           length={length}

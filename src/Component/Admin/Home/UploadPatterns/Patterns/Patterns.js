@@ -221,52 +221,42 @@ const Patterns = (props) => {
   };
 
   const changeNameHandler = (patternId, newName) => {
+    let patternRef = db
+      .collection("gender")
+      .doc(genderId)
+      .collection(type)
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId)
+      .collection("subcategory")
+      .doc(subcategoryId)
+      .collection("styles")
+      .doc(styleId)
+      .collection("patterns")
+      .doc(patternId);
+
     ref.current.continuousStart();
-    if (type == "mainProduct") {
+    if (type === "mainProduct") {
       console.log("subcategory name updated", genderId);
-      db.collection("gender")
-        .doc(genderId)
-        .collection(type)
-        .doc("categories")
-        .collection("category")
-        .doc(categoryId)
-        .collection("subcategory")
-        .doc(subcategoryId)
-        .collection("styles")
-        .doc(styleId)
-        .collection("patterns")
-        .doc(patternId)
+      patternRef
         .update({
           patternName: newName
         })
         .then(() => {
           console.log(newName + " successfully updated!!!");
-          db.collection("gender")
-            .doc(genderId)
-            .collection(type)
-            .doc("categories")
-            .collection("category")
-            .doc(categoryId)
-            .collection("subcategory")
-            .doc(subcategoryId)
-            .collection("styles")
-            .doc(styleId)
-            .collection("patterns")
-            .where("delete", "==", false)
-            .get()
-            .then((data) => {
-              db.collection("patterns").doc(patterns.patternId).update({
-                patternName: newName
-              });
-              let list = [];
-              data.forEach((doc) => {
-                list.push(doc.data());
-              });
-              ref.current.complete(); // linear loader to complete
-              setPatternsList(list);
-              setPatterns(list.find((l) => l.patternId === patternId));
-              // console.log(list.find((l) => l.categoryId === categoryId));
+          patternRef.get().then((data) => {
+            // changing the name in patterns collection
+            db.collection("patterns").doc(patterns.patternId).update({
+              patternName: newName
             });
+            let doc = data.data();
+            let list = [...patternsList];
+            let index = list.findIndex((l) => l.patternId === patternId);
+            list[index] = doc;
+            setPatternsList(list);
+            setPatterns(doc);
+            ref.current.complete(); // linear loader to complete
+          });
         })
         .catch((e) => console.log(e));
     } else {
@@ -290,17 +280,16 @@ const Patterns = (props) => {
             .collection("category")
             .doc(categoryId)
             .collection("patterns")
-            .where("delete", "==", false)
+            .doc(patternId)
             .get()
             .then((data) => {
-              let list = [];
-              data.forEach((doc) => {
-                list.push(doc.data());
-              });
-              ref.current.complete(); // linear loader to complete
+              let doc = data.data();
+              let list = [...patternsList];
+              let index = list.findIndex((l) => l.patternId === patternId);
+              list[index] = doc;
               setPatternsList(list);
-              setPatterns(list.find((l) => l.patternId === patternId));
-              // console.log(list.find((l) => l.categoryId === categoryId));
+              setPatterns(doc);
+              ref.current.complete(); // linear loader to complete
             });
         })
         .catch((e) => console.log(e));
@@ -309,7 +298,7 @@ const Patterns = (props) => {
 
   const changeImageHandler = (patternId, newImage) => {
     ref.current.continuousStart();
-    if (type == "mainProduct") {
+    if (type === "mainProduct") {
       // casual shirt
       // https://firebasestorage.googleapis.com/v0/b/istitch-admin.appspot.com/o/1623937713452.jpg?alt=media&token=14291831-385d-4bdb-ab44-297aa0883fa9
       let bucketName = "Images";
@@ -339,6 +328,15 @@ const Patterns = (props) => {
                 patternImage: imgUrl // post this url first to storage
               })
               .then(() => {
+                console.log(patterns.patternImage);
+                firebase
+                  .storage()
+                  .refFromURL(patterns.patternImage)
+                  .delete()
+                  .then(() =>
+                    console.log("image deleted successfullty, Patterns.js[252]")
+                  )
+                  .catch((e) => console.log(e));
                 console.log("Image Updated");
                 // then set the state again to reload and render it again
                 db.collection("gender")
@@ -352,19 +350,22 @@ const Patterns = (props) => {
                   .collection("styles")
                   .doc(styleId)
                   .collection("patterns")
-                  .where("delete", "==", false)
+                  .doc(patternId)
                   .get()
                   .then((data) => {
                     db.collection("patterns").doc(patterns.patternId).update({
                       patternImage: imgUrl
                     });
-                    let list = [];
-                    data.forEach((doc) => {
-                      list.push(doc.data());
-                    });
-                    ref.current.complete(); // linear loader to complete
+
+                    let doc = data.data();
+                    let list = [...patternsList];
+                    let index = list.findIndex(
+                      (l) => l.patternId === patternId
+                    );
+                    list[index] = doc;
                     setPatternsList(list);
-                    setPatterns(list.find((l) => l.patternId === patternId));
+                    setPatterns(doc);
+                    ref.current.complete(); // linear loader to complete
                   });
               });
           });
@@ -397,6 +398,14 @@ const Patterns = (props) => {
               })
               .then(() => {
                 console.log("Image Updated");
+                firebase
+                  .storage()
+                  .refFromURL(patterns.patternImage)
+                  .delete()
+                  .then(() =>
+                    console.log("image deleted successfullty, Patterns.js[252]")
+                  )
+                  .catch((e) => console.log(e));
                 // then set the state again to reload and render it again
                 db.collection("gender")
                   .doc(genderId)
@@ -405,16 +414,18 @@ const Patterns = (props) => {
                   .collection("category")
                   .doc(categoryId)
                   .collection("patterns")
-                  .where("delete", "==", false)
+                  .doc(patternId)
                   .get()
                   .then((data) => {
-                    let list = [];
-                    data.forEach((doc) => {
-                      list.push(doc.data());
-                    });
-                    ref.current.complete(); // linear loader to complete
+                    let doc = data.data();
+                    let list = [...patternsList];
+                    let index = list.findIndex(
+                      (l) => l.patternId === patternId
+                    );
+                    list[index] = doc;
                     setPatternsList(list);
-                    setPatterns(list.find((l) => l.patternId === patternId));
+                    setPatterns(doc);
+                    ref.current.complete(); // linear loader to complete
                   });
               });
           });
@@ -868,7 +879,7 @@ const Patterns = (props) => {
   const hideHandler = (e) => {
     console.log(e.target.checked);
     ref.current.continuousStart();
-    if (type == "mainProduct") {
+    if (type === "mainProduct") {
       // console.log(document.getElementById("toggle").checked);
       let patternRef = db
         .collection("gender")
@@ -896,18 +907,19 @@ const Patterns = (props) => {
               hide: true
             });
             // console.log("hide-false");
-            list = [];
             patternRef
-              .where("delete", "==", false)
-              .orderBy("timestamp", "desc")
+              .doc(patterns.patternId)
               .get()
               .then((data) => {
-                data.forEach((doc) => {
-                  list.push(doc.data());
-                });
-                ref.current.complete(); // linear loader to complete
+                let doc = data.data();
+                let list = [...patternsList];
+                let index = list.findIndex(
+                  (l) => l.patternId === patterns.patternId
+                );
+                list[index] = doc;
                 setPatternsList(list);
-                setPatterns(list[0]);
+                setPatterns(doc);
+                ref.current.complete(); // linear loader to complete
               });
           })
           .catch((e) => console.log(e));
@@ -925,18 +937,19 @@ const Patterns = (props) => {
             db.collection("patterns").doc(patterns.patternId).update({
               hide: false
             });
-            list = [];
             patternRef
-              .where("delete", "==", false)
-              .orderBy("timestamp", "desc")
+              .doc(patterns.patternId)
               .get()
               .then((data) => {
-                data.forEach((doc) => {
-                  list.push(doc.data());
-                });
-                ref.current.complete(); // linear loader to complete
+                let doc = data.data();
+                let list = [...patternsList];
+                let index = list.findIndex(
+                  (l) => l.patternId === patterns.patternId
+                );
+                list[index] = doc;
                 setPatternsList(list);
-                setPatterns(list[0]);
+                setPatterns(doc);
+                ref.current.complete(); // linear loader to comple
               });
           })
           .catch((e) => console.log(e));
@@ -950,28 +963,27 @@ const Patterns = (props) => {
         .collection("category")
         .doc(categoryId)
         .collection("patterns");
-      let list = [];
       if (e.target.checked) {
         // true - show or hide(false)
-
         patternRef
           .doc(patterns.patternId)
           .update({
             hide: true
           })
           .then(() => {
-            list = [];
             patternRef
-              .where("delete", "==", false)
-              .orderBy("timestamp", "desc")
+              .doc(patterns.patternId)
               .get()
               .then((data) => {
-                data.forEach((doc) => {
-                  list.push(doc.data());
-                });
-                ref.current.complete(); // linear loader to complete
+                let doc = data.data();
+                let list = [...patternsList];
+                let index = list.findIndex(
+                  (l) => l.patternId === patterns.patternId
+                );
+                list[index] = doc;
                 setPatternsList(list);
-                setPatterns(list[0]);
+                setPatterns(doc);
+                ref.current.complete(); // linear loader to comple
               });
           })
           .catch((e) => console.log(e));
@@ -986,19 +998,19 @@ const Patterns = (props) => {
           })
           .then(() => {
             // console.log("hide-true");
-
-            list = [];
             patternRef
-              .where("delete", "==", false)
-              .orderBy("timestamp", "desc")
+              .doc(patterns.patternId)
               .get()
               .then((data) => {
-                data.forEach((doc) => {
-                  list.push(doc.data());
-                });
-                ref.current.complete(); // linear loader to complete
+                let doc = data.data();
+                let list = [...patternsList];
+                let index = list.findIndex(
+                  (l) => l.patternId === patterns.patternId
+                );
+                list[index] = doc;
                 setPatternsList(list);
-                setPatterns(list[0]);
+                setPatterns(doc);
+                ref.current.complete(); // linear loader to comple
               });
           })
           .catch((e) => console.log(e));
