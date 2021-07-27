@@ -79,7 +79,24 @@ const SuggestionsUpdate = (props) => {
 
   const onSelectHandler = (style) => {
     let list = [...selectedStyles];
+    // console.log(
+    //   "check ref",
+    //   list[0].ref.get().then((doc) => console.log(doc.data()))
+    // );
+    let dbRef = db
+      .collection("gender")
+      .doc(style.genderId)
+      .collection(props.type)
+      .doc("categories")
+      .collection("category")
+      .doc(style.categoryId)
+      .collection("subcategory")
+      .doc(style.subcategoryId)
+      .collection("styles")
+      .doc(style.styleId);
+    // console.log("DBREF", dbRef);-
     let sty = {
+      ref: dbRef,
       genderId: style.genderId,
       categoryId: style.categoryId,
       subcategoryId: style.subcategoryId,

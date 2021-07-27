@@ -71,7 +71,19 @@ const Suggestion = (props) => {
 
   const onSelectHandler = (style) => {
     let list = [...selectedStyles];
+    let dbRef = db
+      .collection("gender")
+      .doc(style.genderId)
+      .collection(props.type)
+      .doc("categories")
+      .collection("category")
+      .doc(style.categoryId)
+      .collection("subcategory")
+      .doc(style.subcategoryId)
+      .collection("styles")
+      .doc(style.styleId);
     let sty = {
+      ref: dbRef,
       genderId: style.genderId,
       categoryId: style.categoryId,
       subcategoryId: style.subcategoryId,

@@ -4,13 +4,16 @@ const CheckBox = (props) => {
   const [checked, setChekced] = useState(false);
   useEffect(() => {
     // console.log("checkbox");
-    let index = props.relations.findIndex(
-      (r) => r.styleId === props.style.styleId
-    );
-    if (index !== -1) {
-      setChekced(true);
-    } else {
-      setChekced(false);
+    // console.log("props.realtions", props.relations);
+    if (props.relations !== undefined) {
+      let index = props.relations.findIndex(
+        (r) => r.styleId === props.style.styleId
+      );
+      if (index !== -1) {
+        setChekced(true);
+      } else {
+        setChekced(false);
+      }
     }
   }, [props.relations]);
 
