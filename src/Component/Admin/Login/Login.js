@@ -45,8 +45,9 @@ const Login = (props) => {
         // Signed in
         let userId = userCredential.user.uid;
         console.log(userId);
-        // localStorage.setItem("userId", userId);F
-        // localStorage.setItem("userId", userId);F
+
+        // localStorage.setItem("userId", userId);
+        // localStorage.setItem("userId", userId);
         // props.history.replace(`/home?userId=${userId}`);
         props.history.push("/home");
       })

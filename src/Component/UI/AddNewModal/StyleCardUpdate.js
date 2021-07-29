@@ -25,7 +25,7 @@ const StyleCardUpdate = (props) => {
       .collection("styles")
       .where("delete", "==", false)
       .orderBy("styleName", "asc")
-      .limit(5)
+      // .limit(5)
       .get()
       .then((docs) => {
         let list = [];

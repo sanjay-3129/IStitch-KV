@@ -131,8 +131,8 @@ const Signup = (props) => {
             label="Name"
             id="name"
             name="name"
-            onChange={changeHandler}
             placeholder="Enter name"
+            onChange={changeHandler}
             Value={userDetails.name}
           />
           <Input

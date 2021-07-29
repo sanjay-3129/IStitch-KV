@@ -629,6 +629,7 @@ const SubCategory = (props) => {
             delete: false,
             hide: true,
             noOfPatterns: 0,
+            relations: [],
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
           })
           .then(() => {
