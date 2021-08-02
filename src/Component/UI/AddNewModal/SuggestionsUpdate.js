@@ -15,12 +15,13 @@ import StyleCardUpdate from "../AddNewModal/StyleCardUpdate";
 const SuggestionsUpdate = (props) => {
   const db = firebase.firestore();
   const [subcategoryList, setSubcategoryList] = useState([]);
-  const [selectedStyles, setSelectedStyles] = useState([]);
+  const [oldRelations, setOldRelations] = useState([]); // old
+  const [newRelations, setNewRelations] = useState([]); // new
+  const [deleteRelations, setDeleteRelations] = useState([]); // to be delted in db
 
   useEffect(() => {
     // console.log("genderId", props.style.genderId);
     // props.action
-
     console.log("update", props.style.relations);
 
     // console.log("sugUpdate", props.style);
@@ -47,7 +48,7 @@ const SuggestionsUpdate = (props) => {
           }
         });
         setSubcategoryList(list);
-        setSelectedStyles(props.style.relations);
+        setOldRelations(props.style.relations);
         // already relations availabel
       })
       .catch((e) => console.log(e));
@@ -78,11 +79,9 @@ const SuggestionsUpdate = (props) => {
   };
 
   const onSelectHandler = (style) => {
-    let list = [...selectedStyles];
-    // console.log(
-    //   "check ref",
-    //   list[0].ref.get().then((doc) => console.log(doc.data()))
-    // );
+    let oldList = [...oldRelations];
+    let newList = [...newRelations];
+    let deleteList = [...deleteRelations];
     let dbRef = db
       .collection("gender")
       .doc(style.genderId)
@@ -94,31 +93,91 @@ const SuggestionsUpdate = (props) => {
       .doc(style.subcategoryId)
       .collection("styles")
       .doc(style.styleId);
-    // console.log("DBREF", dbRef);-
+
     let sty = {
       ref: dbRef,
       genderId: style.genderId,
       categoryId: style.categoryId,
       subcategoryId: style.subcategoryId,
       styleId: style.styleId,
-      type: props.type
-      // checked: true
+      type: props.type,
+      delete: false
     };
     // console.log(style, i);
     // initally set data, if again same data, delete it
-    let index = list.findIndex((s) => sty.styleId === s.styleId);
-    if (index !== -1) {
+    let oldIndex = oldList.findIndex((s) => sty.styleId === s.styleId);
+    if (oldIndex !== -1) {
       // checked: false
       // list[index].checked = false;
-      list.splice(index, 1);
+      let deletedItem = oldList.splice(oldIndex, 1);
+      deleteList.push(deletedItem[0]);
+      // newList.sp
     } else {
-      // checked: true
-      // sty.checked = true;
-      list.push(sty);
-      // list[index].checked = true;
+      let deletedIndex = deleteList.findIndex((s) => sty.styleId === s.styleId);
+      if (deletedIndex !== -1) {
+        let deletedItem = deleteList.splice(deletedIndex, 1);
+        oldList.push(deletedItem[0]);
+      } else {
+        // newList.push(sty);
+        let newIndex = newList.findIndex((s) => sty.styleId === s.styleId);
+        if (newIndex !== -1) {
+          // checked: false
+          // list[index].checked = false;
+          newList.splice(newIndex, 1);
+        } else {
+          // checked: true
+          // sty.checked = true;
+          newList.push(sty);
+          // list[index].checked = true;
+        }
+      }
     }
-    setSelectedStyles(list);
+    setNewRelations(newList);
+    setOldRelations(oldList);
+    setDeleteRelations(deleteList);
   };
+  // const onSelectHandler = (style) => {
+  //   let list = [...oldRelations];
+  //   // console.log(
+  //   //   "check ref",
+  //   //   list[0].ref.get().then((doc) => console.log(doc.data()))
+  //   // );
+  //   let dbRef = db
+  //     .collection("gender")
+  //     .doc(style.genderId)
+  //     .collection(props.type)
+  //     .doc("categories")
+  //     .collection("category")
+  //     .doc(style.categoryId)
+  //     .collection("subcategory")
+  //     .doc(style.subcategoryId)
+  //     .collection("styles")
+  //     .doc(style.styleId);
+  //   // console.log("DBREF", dbRef);-
+  //   let sty = {
+  //     ref: dbRef,
+  //     genderId: style.genderId,
+  //     categoryId: style.categoryId,
+  //     subcategoryId: style.subcategoryId,
+  //     styleId: style.styleId,
+  //     type: props.type
+  //     // checked: true
+  //   };
+  //   // console.log(style, i);
+  //   // initally set data, if again same data, delete it
+  //   let index = list.findIndex((s) => sty.styleId === s.styleId);
+  //   if (index !== -1) {
+  //     // checked: false
+  //     // list[index].checked = false;
+  //     list.splice(index, 1);
+  //   } else {
+  //     // checked: true
+  //     // sty.checked = true;
+  //     list.push(sty);
+  //     // list[index].checked = true;
+  //   }
+  //   setOldRelations(list);
+  // };
 
   let relations = null;
   if (subcategoryList === null) {
@@ -134,7 +193,7 @@ const SuggestionsUpdate = (props) => {
           <p>{item.subcategoryName}</p>
           <StyleCardUpdate
             data={item}
-            relations={selectedStyles}
+            relations={[...oldRelations, ...newRelations]}
             style={props.style}
             type={props.type}
             onSelect={onSelectHandler}
@@ -191,7 +250,9 @@ const SuggestionsUpdate = (props) => {
         <button
           type="button"
           class="draft m-3"
-          onClick={() => props.saveAsDraft(selectedStyles)}
+          onClick={() =>
+            props.saveAsDraft(oldRelations, newRelations, deleteRelations)
+          }
         >
           Update Relations
         </button>

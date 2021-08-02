@@ -6,7 +6,7 @@ import firebase from "../../../../../Services/firebase/firebase";
 import Spinner from "../../../../UI/Spinner/Spinner";
 import qs from "qs";
 import ChangeModal from "../../../../UI/AddNewModal/ChangeModal.js";
-import NewStyleModal from "../../../../UI/AddNewModal/NewStyleModal.js";
+// import NewStyleModal from "../../../../UI/AddNewModal/NewStyleModal.js";
 import LoadingBar from "react-top-loading-bar";
 import AddNewStyle from "../../../../UI/AddNewModal/AddNewStyle";
 import Suggestion from "../../../../UI/AddNewModal/Suggestions";
@@ -42,9 +42,12 @@ const Styles = (props) => {
     genderId: "",
     categoryId: "",
     subCategoryId: "",
-    noOfPatterns: 0
+    noOfPatterns: 0,
+    relations: []
   }); // change to id
   const [addNewItem, setAddNewItem] = useState(null);
+  const [length, setLength] = useState(0);
+  const [lastDoc, setLastDoc] = useState(null);
 
   const closeModalHandler = () => {
     setAddNewItem(null);
@@ -87,6 +90,7 @@ const Styles = (props) => {
         .collection("styles")
         .where("delete", "==", false)
         .orderBy("timestamp", "desc")
+        .limit(16)
         .get()
         .then((sub) => {
           if (sub.docs.length > 0) {
@@ -393,8 +397,33 @@ const Styles = (props) => {
     }
   };
 
-  const updateHandler = (relations) => {
-    console.log("style updating...", relations);
+  const updateHandler = (oldRelations, newRelations, deleteRelations) => {
+    // console.log(
+    //   "old",
+    //   oldRelations,
+    //   "new",
+    //   newRelations,
+    //   "delete",
+    //   deleteRelations
+    // );
+    // try with arrayRemove, it worked well for objects in MyBin.js
+    // deleting current style from the other relations
+    deleteRelations.forEach((rel) => {
+      let relList = [];
+      rel.ref.get().then((doc) => {
+        relList = doc.data().relations;
+        // console.log("relList", relList);
+        let filteredList = relList.filter((s) => s.styleId !== styles.styleId); // current style will be removed
+        // console.log("filteredList", filteredList);
+        rel.ref
+          .update({
+            relations: filteredList
+          })
+          .then(() => console.log("successfullty update"))
+          .catch((e) => console.log("delteRelations", e));
+      });
+    });
+
     let styleRef = db
       .collection("gender")
       .doc(genderId)
@@ -407,15 +436,34 @@ const Styles = (props) => {
       .collection("styles")
       .doc(styles.styleId);
 
+    let sty = {
+      genderId: genderId,
+      categoryId: categoryId,
+      subcategoryId: subcategoryId,
+      styleId: styles.styleId,
+      type: "mainProduct",
+      ref: styleRef,
+      delete: false
+    };
+    // current style add updated relations
     styleRef
       .update({
-        relations: [...relations]
+        relations: [...oldRelations, ...newRelations]
       })
       .then(() => {
         console.log("successfully updated!!!");
-        closeModalHandler();
-        styleRef.get().then((doc) => setStyles(doc.data()));
+        newRelations.forEach((rel) => {
+          // adding current style to the relation style's as a relation
+          rel.ref.update({
+            relations: firebase.firestore.FieldValue.arrayUnion(sty)
+          });
+          // .then(() => console.log("success in styles..."));
+        });
       });
+    closeModalHandler();
+    styleRef.get().then((doc) => {
+      setStyles(doc.data());
+    });
   };
 
   const draftHandler = (relations) => {
@@ -453,6 +501,7 @@ const Styles = (props) => {
     let storageRef = firebase.storage().ref();
     // console.log("draft handler in styles", newData);
     // console.log("draft handler in styles", relations);
+    let relList = [...relations];
 
     let styleTimestamp = null;
     if (newData.name !== "" && newData.img !== null) {
@@ -473,9 +522,21 @@ const Styles = (props) => {
               hide: true,
               noOfPatterns: 0,
               timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-              relations: [...relations] // copy totally and put into type
+              relations: [...relList] // copy totally and put into type
             })
             .then(() => {
+              closeModalHandler();
+              // relations
+              let sty = {
+                genderId: genderId,
+                categoryId: categoryId,
+                subcategoryId: subcategoryId,
+                styleId: styleId,
+                type: "mainProduct",
+                ref: styleRef,
+                delete: false
+              };
+
               // gender - no_of_subcategories increment
               genderRef.update({
                 noOfStyles: firebase.firestore.FieldValue.increment(1)
@@ -484,9 +545,18 @@ const Styles = (props) => {
               categoryRef.update({
                 noOfStyles: firebase.firestore.FieldValue.increment(1)
               });
-              subcategoryRef.update({
-                noOfStyles: firebase.firestore.FieldValue.increment(1)
-              });
+              subcategoryRef
+                .update({
+                  noOfStyles: firebase.firestore.FieldValue.increment(1)
+                })
+                .then(() => {
+                  relList.forEach((rel) => {
+                    rel.ref.update({
+                      relations: firebase.firestore.FieldValue.arrayUnion(sty)
+                    });
+                    // .then(() => console.log("success in styles..."));
+                  });
+                });
               let list = [];
               subcategoryRef
                 .collection("styles")
@@ -498,7 +568,7 @@ const Styles = (props) => {
                     list.push(doc.data());
                   });
                   ref.current.complete(); // linear loader to complete
-                  closeModalHandler();
+
                   setStylesList(list);
                   setStyles(list[0]);
                 });
@@ -715,6 +785,48 @@ const Styles = (props) => {
       });
   };
 
+  const onScrollHandler = () => {
+    console.log("onScrollHandler", length);
+    if (length > 0) {
+      ref.current.continuousStart();
+      db.collection("gender")
+        .doc(genderId)
+        .collection(type)
+        .doc("categories")
+        .collection("category")
+        .doc(categoryId)
+        .collection("subcategory")
+        .doc(subcategoryId)
+        .collection("styles")
+        .where("delete", "==", false)
+        .orderBy("timestamp", "desc")
+        .startAfter(lastDoc) // cursor for pagination
+        .limit(8)
+        .get()
+        .then((sub) => {
+          let lastVisible = sub.docs[sub.docs.length - 1];
+          setLastDoc(lastVisible);
+
+          let list = [...stylesList];
+          sub.forEach((doc) => {
+            list.push(doc.data());
+          });
+          ref.current.complete(); // linear loader to complete
+
+          // append data to bottom page
+          // $("#content").append(`<p>hi</p>`);
+          // $("#content").animate({ scrollTop: $("#content").height() }, 1000);
+          setStylesList(list);
+          setStyles(list[0]);
+          setLength(sub.size);
+        });
+      // $("#content").append(`<p>hi</p>`);
+      // $("#content").animate({ scrollTop: $("#content").height() }, 1000);
+    } else {
+      console.log("no data to append");
+    }
+  };
+
   let style = null;
   if (stylesList === null) {
     style = <Spinner />;
@@ -778,6 +890,8 @@ const Styles = (props) => {
             selectedStyles={selectedStylesHandler}
             selectedType={selectedType}
             type={type}
+            onScroll={onScrollHandler}
+            length={length}
           />
           <InfoBox
             title="Styles"

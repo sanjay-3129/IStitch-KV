@@ -88,8 +88,8 @@ const Suggestion = (props) => {
       categoryId: style.categoryId,
       subcategoryId: style.subcategoryId,
       styleId: style.styleId,
-      type: props.type
-      // checked: true
+      type: props.type,
+      delete: false
     };
     // console.log(style, i);
     // initally set data, if again same data, delete it

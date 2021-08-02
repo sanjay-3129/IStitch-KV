@@ -45,6 +45,8 @@ const Patterns = (props) => {
     name: "",
     img: null
   });
+  const [length, setLength] = useState(0);
+  const [lastDoc, setLastDoc] = useState(null);
 
   const goBackHandler = () => {
     props.history.goBack();
@@ -131,6 +133,7 @@ const Patterns = (props) => {
           .doc(styleId)
           .collection("patterns")
           .where("delete", "==", false)
+          .limit(16)
           .get()
           .then((sub) => {
             if (sub.docs.length > 0) {
@@ -1047,6 +1050,49 @@ const Patterns = (props) => {
         }
       });
   };
+  const onScrollHandler = () => {
+    console.log("onScrollHandler", length);
+    if (length > 0) {
+      ref.current.continuousStart();
+      db.collection("gender")
+        .doc(genderId)
+        .collection(type)
+        .doc("categories")
+        .collection("category")
+        .doc(categoryId)
+        .collection("subcategory")
+        .doc(subcategoryId)
+        .collection("styles")
+        .doc(styleId)
+        .collection("patterns")
+        .where("delete", "==", false)
+        .orderBy("timestamp", "desc")
+        .startAfter(lastDoc) // cursor for pagination
+        .limit(8)
+        .get()
+        .then((sub) => {
+          let lastVisible = sub.docs[sub.docs.length - 1];
+          setLastDoc(lastVisible);
+
+          let list = [...patternsList];
+          sub.forEach((doc) => {
+            list.push(doc.data());
+          });
+          ref.current.complete(); // linear loader to complete
+
+          // append data to bottom page
+          // $("#content").append(`<p>hi</p>`);
+          // $("#content").animate({ scrollTop: $("#content").height() }, 1000);
+          setPatternsList(list);
+          setPatterns(list[0]);
+          setLength(sub.size);
+        });
+      // $("#content").append(`<p>hi</p>`);
+      // $("#content").animate({ scrollTop: $("#content").height() }, 1000);
+    } else {
+      console.log("no data to append");
+    }
+  };
 
   let pattern = null;
   if (patternsList === null) {
@@ -1140,6 +1186,8 @@ const Patterns = (props) => {
           selectedPatterns={selectedPatternsHandler}
           selectedType={selectedType}
           type={type}
+          onScroll={onScrollHandler}
+          length={length}
         />
         <InfoBox
           title="Patterns"
@@ -1155,6 +1203,7 @@ const Patterns = (props) => {
           saveAsDraft={draftPatternHandler}
           addNewPatterns={() => setNewModal("Patterns")}
           hide={hideHandler}
+          type={type}
         />
       </>
     );

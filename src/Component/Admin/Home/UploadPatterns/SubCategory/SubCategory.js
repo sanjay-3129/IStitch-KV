@@ -759,6 +759,8 @@ const SubCategory = (props) => {
         .collection(type)
         .doc("categories")
         .collection("category")
+        .doc(categoryId)
+        .collection("subcategory")
         .where("delete", "==", false)
         .orderBy("timestamp", "desc")
         .startAfter(lastDoc) // cursor for pagination
