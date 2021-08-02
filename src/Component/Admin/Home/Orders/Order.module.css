@@ -1,0 +1,6 @@
+.activeLink {
+  color: #fff !important;
+  background-color: #a6c8cc;
+  border: 2px solid #a6c8cc;
+  transform: scale(1) !important;
+}

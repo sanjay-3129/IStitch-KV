@@ -6,7 +6,7 @@ import IdleTimerContainer from "./IdleTimerContainer.js";
 import SideBar from "./Sidebar/Sidebar.js";
 import NavBar from "./Navbar/Navbar";
 import MyProfile from "./MyProfile/MyProfile";
-import MyUploads from "./MyUploads/MyUploads";
+import Orders from "./Orders/Orders";
 import MyBin from "./MyBin/MyBin";
 import Saved from "./Saved/Saved";
 import UploadPatterns from "./UploadPatterns/UploadPatterns";
@@ -126,8 +126,8 @@ const Home = (props) => {
                 <Route path={`${props.match.url}/myProfile`}>
                   <MyProfile {...props} />
                 </Route>
-                <Route path={`${props.match.url}/myUploads`}>
-                  <MyUploads {...props} />
+                <Route path={`${props.match.url}/orders`}>
+                  <Orders {...props} />
                 </Route>
                 <Route path={`${props.match.url}/saved`}>
                   <Saved {...props} />
