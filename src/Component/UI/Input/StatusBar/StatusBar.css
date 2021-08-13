@@ -1,0 +1,74 @@
+.progress-bar {
+  width: 100%;
+  display: grid !important;
+  background-color: transparent !important;
+  grid-template-columns: repeat(auto-fit, minmax(20px, 1fr));
+}
+.progress-step {
+  text-align: center;
+  position: relative;
+}
+.progress-step:before,
+.progress-step:after {
+  background-color: ;
+  content: "";
+  height: 2px;
+  position: absolute;
+  z-index: -1;
+  top: 20px;
+}
+.progress-step:after {
+  left: 50%;
+  width: 100%;
+}
+.progress-step:last-of-type.is-active:after {
+  background-color: #005b7f;
+}
+@media screen and (min-width: 640px) {
+  .progress-step:first-of-type:before {
+    right: 50%;
+    width: 50%;
+  }
+}
+@media screen and (max-width: 640px) {
+  .progress-step:first-of-type:before,
+  .progress-step:last-of-type:after {
+    background-color: white !important;
+  }
+}
+.progress-step:last-of-type:after {
+  left: 50%;
+  width: 50%;
+}
+.progress-step .step-count {
+  background-color: #c0a359;
+  height: 30px;
+  width: 30px;
+  margin: 0 auto;
+  border-radius: 50%;
+  color: black;
+  line-height: 30px;
+  z-index: 100;
+  border: 7px solid white;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+.progress-step .step-count:before {
+  counter-increment: step-count;
+  content: counter(step-count);
+}
+.progress-step.is-active .step-description {
+  font-weight: 500;
+}
+.progress-step.is-active:after {
+  background-color: #005b7f;
+}
+.progress-step.is-active ~ .progress-step .step-count {
+  background-color: #005b7f;
+}
+.progress-step.is-active ~ .progress-step:after {
+  background-color: #005b7f;
+}
+.step-description {
+  font-size: 0.8rem;
+}

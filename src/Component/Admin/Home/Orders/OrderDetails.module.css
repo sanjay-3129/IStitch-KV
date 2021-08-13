@@ -1,0 +1,169 @@
+.orderdetail {
+  padding: 10px;
+  position: relative;
+}
+.status {
+  width: 100%;
+  padding: 10px;
+}
+.summary {
+  border: 1px solid #a6c8cc;
+}
+.no {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  width: 40px;
+  height: 40px;
+  padding: 7px;
+  border-radius: 50%;
+  text-align: center;
+  box-shadow: 1px 1px 5px 2px rgb(0 0 0 / 18%);
+}
+.back {
+  position: absolute;
+  left: 15px;
+  top: 10px;
+  width: 40px;
+  height: 40px;
+  padding: 7px;
+  border-radius: 50%;
+  text-align: center;
+  border: none;
+  box-shadow: 1px 1px 5px 2px rgb(0 0 0 / 18%);
+}
+
+.heading {
+  text-align: center;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+.row1 {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: space-between;
+  margin: 10px 0 0;
+}
+
+.col61 {
+  width: 65%;
+  padding: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.col6 {
+  width: 35%;
+  padding: 5px;
+}
+
+.title {
+  padding: 8px 5px;
+  border-bottom: 1px solid;
+  margin: 0 10px;
+}
+
+.userd {
+  display: flex;
+  margin: 0 0 10px;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 35%;
+  box-shadow: 1px 1px 5px 2px rgb(0 0 0 / 18%);
+}
+
+.priced {
+  display: flex;
+  margin: 0 0 10px;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 26%;
+  box-shadow: 1px 1px 5px 2px rgb(0 0 0 / 18%);
+}
+
+.descrb {
+  width: 35%;
+  margin: 0 0 10px;
+  box-shadow: 1px 1px 5px 2px rgb(0 0 0 / 18%);
+}
+
+.tailord {
+  display: flex;
+  margin: 0 0 10px;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 49%;
+  box-shadow: 1px 1px 5px 2px rgb(0 0 0 / 18%);
+}
+
+.deld {
+  display: flex;
+  margin: 0 0 10px;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 49%;
+  box-shadow: 1px 1px 5px 2px rgb(0 0 0 / 18%);
+}
+
+.altd {
+  display: flex;
+  margin: 0 0 10px;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 49%;
+  box-shadow: 1px 1px 5px 2px rgb(0 0 0 / 18%);
+}
+
+.mesd {
+  display: flex;
+  margin: 0 0 10px;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 32%;
+  box-shadow: 1px 1px 5px 2px rgb(0 0 0 / 18%);
+}
+.mescloth {
+  display: flex;
+  margin: 0 0 10px;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 32%;
+  box-shadow: 1px 1px 5px 2px rgb(0 0 0 / 18%);
+}
+.scloth {
+  display: flex;
+  margin: 0 0 10px;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 32%;
+  box-shadow: 1px 1px 5px 2px rgb(0 0 0 / 18%);
+}
+
+/* .umi {
+  width: 49%;
+  margin: 0 0 10px;
+  box-shadow: 1px 1px 5px 2px rgb(0 0 0 / 18%);
+}
+
+.uai {
+  width: 49%;
+  margin: 0 0 10px;
+  box-shadow: 1px 1px 5px 2px rgb(0 0 0 / 18%);
+} */
+
+.para {
+  margin: 0;
+  padding: 5px 15px;
+}
+
+.span {
+  width: 75%;
+  display: inline-block;
+  padding: 0 5px 5px;
+}

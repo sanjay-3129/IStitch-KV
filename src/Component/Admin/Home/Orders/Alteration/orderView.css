@@ -2,55 +2,36 @@
   display: flex;
   margin: 0 0 10px;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: center;
 }
 
-.rflex div {
-  width: 120px;
-  padding: 5px;
+button {
+  font-size: 18px;
+  padding: 5px 10px;
+  color: #000;
+  border: 5px solid #efefef;
+  width: 150px;
   text-align: center;
 }
 
-.rflex div input[type="checkbox"] {
-  font-size: 16px;
-  padding: 0;
-  margin: 0;
-  margin-right: 10px;
-  cursor: pointer;
+.active {
+  color: #fff;
+  background-color: #005b7f;
+  border: 5px solid #efefef;
 }
-
-.rflex div label {
-  margin: 0;
-  cursor: pointer;
-}
-
-.rflex div #id0 {
-  color: blue;
-}
-
-.rflex div #id1 {
-  color: red;
-}
-
-.rflex div #id2 {
-  color: yellowgreen;
-}
-
 /* Order View */
-details {
-  margin: 0 0 5px;
-}
-summary {
+
+.summary {
   display: flex;
   flex-wrap: wrap;
-  padding: 0 0 0 10px;
+  padding: 0;
   margin: 0 0 5px;
   border: 1px solid #a6c8cc;
   border-radius: 5px;
   cursor: default;
 }
 
-summary p {
+.summary p {
   font-size: 18px;
   display: inline-block;
   padding: 10px 5px;
@@ -58,32 +39,46 @@ summary p {
   border-right: 1px solid #a6c8cc;
 }
 
-summary p.cname {
-  width: 20%;
+.summary p.ono {
+  width: 4%;
+  text-align: center;
+}
+
+.summary p.cname {
+  width: 18%;
   text-align: left;
 }
 
-summary p.cno {
+.summary p.cno {
   width: 15%;
   text-align: center;
 }
 
-summary p.cat {
-  width: 30%;
+.summary p.cat {
+  width: 25%;
 }
 
-summary p.date {
+.summary a {
+  width: 5%;
+}
+
+.summary a i.far {
+  font-size: 30px;
+  padding: 8px;
+}
+
+.summary p.date {
   width: 10%;
   text-align: center;
 }
 
-summary p.select {
+.summary p.select {
   width: 15%;
   padding: 5px;
   text-align: center;
 }
 
-summary p.select select {
+.summary p.select select {
   font-size: 16px;
   border: none;
   width: 100%;
@@ -92,22 +87,22 @@ summary p.select select {
   cursor: pointer;
 }
 
-summary p.accept,
-summary p.reject {
+.summary p.accept,
+.summary p.reject {
   width: 4%;
   text-align: center;
   cursor: pointer;
 }
 
-summary p.accept {
+.summary p.accept {
   color: green;
 }
 
-summary p.reject {
+.summary p.reject {
   color: red;
 }
 
-summary > p:last-child {
+.summary > p:last-child {
   border-right: none;
   cursor: pointer;
 }

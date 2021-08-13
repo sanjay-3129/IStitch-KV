@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import "./orderView.css";
-import { Link, Switch, Route } from "react-router-dom";
+import { NavLink, Switch, Route } from "react-router-dom";
 import OrdersContext from "../../Contexts/OrderContext";
 const OrderView = (props) => {
   const ctx = useContext(OrdersContext);
@@ -17,20 +17,7 @@ const OrderView = (props) => {
         <p className="cname">{props.item.userDetails.userName}</p>
         <p className="cno">{props.item.userDetails.userPhno}</p>
         <p className="cat">{props.item.categoryName}</p>
-        <p className="date">BookedDate</p>
-        <p className="select">
-          <select>
-            <option>No Action</option>
-            <option>Verified</option>
-            <option>No Response</option>
-          </select>
-        </p>
-        <p className="accept">
-          <i class="fas fa-check"></i>
-        </p>
-        <p className="reject">
-          <i class="fas fa-times"></i>
-        </p>
+        {/* <p>alter title(fit)</p> */}
         <div onClick={() => orderUpdate(props.item)} className="anchor">
           <i class="far fa-list-alt"></i>
         </div>

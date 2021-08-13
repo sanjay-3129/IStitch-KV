@@ -17,6 +17,8 @@ import * as sewing from "../../../../public/lotties/62905-sewing.json";
 
 import firebase from "../../../Services/firebase/firebase";
 import style from "./Home.module.css";
+import OrderDetials from "./Orders/OrderDetials";
+import { OrdersContextProvider } from "./Contexts/OrderContext";
 
 const Home = (props) => {
   // const userId = qs.parse(props.location.search, { ignoreQueryPrefix: true })
@@ -122,26 +124,44 @@ const Home = (props) => {
               {/* instead of mainContent - put routes here and 
       route to
       each component like myprofile, uploadCOntent etc */}
-              <Switch>
-                <Route path={`${props.match.url}/myProfile`}>
-                  <MyProfile {...props} />
-                </Route>
-                <Route path={`${props.match.url}/orders`}>
-                  <Orders {...props} />
-                </Route>
-                <Route path={`${props.match.url}/saved`}>
-                  <Saved {...props} />
-                </Route>
-                <Route path={`${props.match.url}/createNewPattern`}>
-                  <UploadPatterns {...props} />
-                </Route>
-                <Route path={`${props.match.url}/myBin`}>
-                  <MyBin {...props} />
-                </Route>
-                <Route path={`${props.match.url}/settings`}>
-                  <Settings {...props} />
-                </Route>
-              </Switch>
+              <OrdersContextProvider>
+                <Switch>
+                  <Route path={`${props.match.url}/myProfile`}>
+                    <MyProfile {...props} />
+                  </Route>
+                  <Route path={`${props.match.url}/orders/preorders/:orderId`}>
+                    <OrderDetials {...props} />
+                  </Route>
+                  <Route
+                    path={`${props.match.url}/orders/processingorders/:orderId`}
+                  >
+                    <OrderDetials {...props} />
+                  </Route>
+                  <Route
+                    path={`${props.match.url}/orders/completedorders/:orderId`}
+                  >
+                    <OrderDetials {...props} />
+                  </Route>
+                  <Route path={`${props.match.url}/orders/alteration/:orderId`}>
+                    <OrderDetials {...props} />
+                  </Route>
+                  <Route path={`${props.match.url}/orders`}>
+                    <Orders {...props} />
+                  </Route>
+                  <Route path={`${props.match.url}/saved`}>
+                    <Saved {...props} />
+                  </Route>
+                  <Route path={`${props.match.url}/createNewPattern`}>
+                    <UploadPatterns {...props} />
+                  </Route>
+                  <Route path={`${props.match.url}/myBin`}>
+                    <MyBin {...props} />
+                  </Route>
+                  <Route path={`${props.match.url}/settings`}>
+                    <Settings {...props} />
+                  </Route>
+                </Switch>
+              </OrdersContextProvider>
             </div>
           </div>
         </div>
