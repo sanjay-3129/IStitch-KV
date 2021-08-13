@@ -15,7 +15,7 @@ const CheckBox = (props) => {
         setChekced(false);
       }
     }
-  }, [props.relations]);
+  }, [props.relations, props.style.styleId]);
 
   const selectHandler = () => {
     // console.log("checkbox-selecter");

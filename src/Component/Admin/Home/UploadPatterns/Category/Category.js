@@ -12,7 +12,7 @@ import AddNewModal from "../../../../UI/AddNewModal/AddNewModal";
 import AddNewStyle from "../../../../UI/AddNewModal/AddNewStyle";
 import generateId from "../../../../../Helpers/generateId";
 import DeleteConfirmModal from "../../../../UI/DeleteConfirmModal/DeleteConfirmModal";
-import $ from "jquery";
+// import $ from "jquery";
 
 let genderId = undefined;
 let genderName = undefined;
@@ -47,7 +47,7 @@ const Category = (props) => {
   });
   const [addNewItem, setAddNewItem] = useState("");
   const [newModal, setNewModal] = useState("");
-  const [newPatternModal, setNewPatternModal] = useState("");
+  // const [newPatternModal, setNewPatternModal] = useState("");
   const [length, setLength] = useState(0);
   const [lastDoc, setLastDoc] = useState(null);
 
@@ -138,14 +138,18 @@ const Category = (props) => {
 
   const viewHandler = (categoryId, categoryName, categoryImg) => {
     if (type === "mainProduct") {
-      console.log("viewing subcategory", props.location.search);
+      console.log("viewing subcategory Main products", props.location.search);
       props.history.push(
         `${props.match.url}/createNewPattern/subCategory?type=${type}&genderId=${genderId}&genderName=${genderName}&genderImg=${genderImg}&categoryId=${categoryId}&categoryName=${categoryName}&categoryImg=${categoryImg}`
       );
     } else {
-      console.log("viewing subcategory", props.location.search);
+      console.log("addddddddd", categoryName);
+      console.log("viewing subcategory addons", props.location.search);
       props.history.push(
-        `${props.match.url}/createNewPattern/patterns?type=${type}&genderId=${genderId}&genderName=${genderName}&genderImg=${genderImg}&categoryId=${categoryId}&categoryName=${categoryName}&categoryImg=${categoryImg}`
+        `${props.match.url}/createNewPattern/subCategory?type=addOns&genderId=${genderId}&genderName=${genderName}&genderImg=${genderImg}&categoryId=${category.categoryId}&categoryName=${category.categoryName}&categoryImg=${category.categoryImg}`
+        //`${props.match.url}/createNewPattern/subCategory?type=${type}&genderId=${genderId}&genderName=${genderName}&genderImg=${genderImg}&categoryId=${category.categoryId}&categoryName=${category.categoryName}&categoryImg=${category.categoryImg}`
+
+        // `${props.match.url}/createNewPattern/subCategory?type=${type}&genderId=${genderId}&genderName=${genderName}&genderImg=${genderImg}&categoryId=${categoryId}&categoryName=${categoryName}&categoryImg=${categoryImg}`
       );
     }
   };
@@ -751,56 +755,59 @@ const Category = (props) => {
       });
   };
 
-  const addOnsNewPatternHandler = (newData) => {
-    console.log("00000000", newData);
-    ref.current.continuousStart();
-    let patternId = generateId("patterns");
-    let bucketName = "Images";
-    let storageRef = firebase.storage().ref();
-    // let genderRef = db.collection("gender").doc(genderId);
-    let patternRef = db
-      .collection("gender")
-      .doc(genderId)
-      .collection("addOns")
-      .doc("categories")
-      .collection("category")
-      .doc(category.categoryId)
-      .collection("patterns")
-      .doc(patternId);
-    let patternTimestamp = +new Date().getTime() + "-" + newData.img.name;
-    let patternImgRef = storageRef.child(`${bucketName}/${patternTimestamp}`);
-    patternImgRef.put(newData.img).then(() => {
-      patternImgRef.getDownloadURL().then((patternImg) => {
-        patternRef
-          .set({
-            genderId: genderId,
-            categoryId: category.categoryId,
-            patternId: patternId, // genderate new category id
-            patternName: newData.name,
-            patternImage: patternImg,
-            delete: false,
-            hide: true,
-            noOfPatterns: 0,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-          })
-          .then(() => {
-            // gender - no_of_categories increment
-            // genderRef.update({
-            //   noOfPatterns: firebase.firestore.FieldValue.increment(1)
-            // });
-            // // category - no_of_subcategories - increment
-            // categoryRef.update({
-            //   noOfPatterns: firebase.firestore.FieldValue.increment(1)
-            // });
-            ref.current.complete();
-            setNewModal(false);
-            props.history.push(
-              `${props.match.url}/createNewPattern/patterns?type="addOns"&genderId=${genderId}&genderName=${genderName}&categoryId=${category.categoryId}&categoryName=${category.categoryName}`
-            );
-          });
-      });
-    });
-  };
+  // const addOnsNewSubcategoryHandler = (newData) => {
+  //   console.log("00000000", newData);
+  //   ref.current.continuousStart();
+  //   let subcategoryId = generateId("subcategory");
+  //   let bucketName = "Images";
+  //   let storageRef = firebase.storage().ref();
+  //   // let genderRef = db.collection("gender").doc(genderId);
+  //   let subcategoryRef = db
+  //     .collection("gender")
+  //     .doc(genderId)
+  //     .collection("addOns")
+  //     .doc("categories")
+  //     .collection("category")
+  //     .doc(category.categoryId)
+  //     .collection("subcategory")
+  //     .doc(subcategoryId);
+  //   let subcategoryTimestamp = +new Date().getTime() + "-" + newData.img.name;
+  //   let subcategoryImgRef = storageRef.child(
+  //     `${bucketName}/${subcategoryTimestamp}`
+  //   );
+  //   subcategoryImgRef.put(newData.img).then(() => {
+  //     subcategoryImgRef.getDownloadURL().then((subcategoryImg) => {
+  //       subcategoryRef
+  //         .set({
+  //           genderId: genderId,
+  //           categoryId: category.categoryId,
+  //           subcategoryId: subcategoryId, // genderate new category id
+  //           subcategoryName: newData.name,
+  //           subcategoryImage: subcategoryImg,
+  //           delete: false,
+  //           hide: true,
+  //           noOfPatterns: 0,
+  //           timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  //         })
+  //         .then(() => {
+  //           // gender - no_of_categories increment
+  //           // genderRef.update({
+  //           //   noOfPatterns: firebase.firestore.FieldValue.increment(1)
+  //           // });
+  //           // // category - no_of_subcategories - increment
+  //           // categoryRef.update({
+  //           //   noOfPatterns: firebase.firestore.FieldValue.increment(1)
+  //           // });
+  //           ref.current.complete();
+  //           setNewModal(false);
+  //           props.history.push(
+  //             //`${props.match.url}/createNewPattern/subCategory?type=${type}&genderId=${genderId}&genderName=${genderName}&genderImg=${genderImg}&categoryId=${category.categoryId}&categoryName=${category.categoryName}&categoryImg=${category.categoryImg}`
+  //             `${props.match.url}/createNewPattern/patterns?type="addOns"&genderId=${genderId}&genderName=${genderName}&categoryId=${category.categoryId}&categoryName=${category.categoryName}`
+  //           );
+  //         });
+  //     });
+  //   });
+  // };
 
   const onScrollHandler = () => {
     console.log("onScrollHandler", length);
@@ -908,8 +915,8 @@ const Category = (props) => {
           categoryDetails={category}
           view={viewHandler}
           addNew={addNewHandler}
-          // addNewPattern={addOnsNewPatternHandler}
-          addNewPattern={() => setNewPatternModal("Patterns")}
+          // addNewPattern={addOnsNewSubcategoryHandler}
+          // addNewPattern={() => setNewPatternModal("Patterns")}
           addNewSub={() => setNewModal("Subcategory")}
           changeName={() => setIsChange("name")}
           changeImage={() => setIsChange("image")}
@@ -946,16 +953,6 @@ const Category = (props) => {
           closeModal={() => setNewModal(false)}
           onChange={onChangeHandler}
           saveAsDraft={draftSubcategoryHandler}
-        />
-      )}
-      {/* // addons pattern */}
-      {newPatternModal && (
-        <AddNewStyle
-          title={newModal}
-          newData={newData}
-          closeModal={() => setNewPatternModal(false)}
-          onChange={onChangeHandler}
-          saveAsDraft={addOnsNewPatternHandler}
         />
       )}
 

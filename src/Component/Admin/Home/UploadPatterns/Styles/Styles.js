@@ -442,8 +442,8 @@ const Styles = (props) => {
       subcategoryId: subcategoryId,
       styleId: styles.styleId,
       type: "mainProduct",
-      ref: styleRef,
-      delete: false
+      ref: styleRef
+      // delete: false
     };
     // current style add updated relations
     styleRef
@@ -533,8 +533,8 @@ const Styles = (props) => {
                 subcategoryId: subcategoryId,
                 styleId: styleId,
                 type: "mainProduct",
-                ref: styleRef,
-                delete: false
+                ref: styleRef
+                // delete: false
               };
 
               // gender - no_of_subcategories increment
@@ -580,6 +580,7 @@ const Styles = (props) => {
 
   const draftPatternHandler = (newData) => {
     // console.log(newData);
+    // console.log(categoryId, subcategoryId, styles.styleId);
     ref.current.continuousStart();
     let patternId = generateId("patterns");
     let bucketName = "Images";
@@ -662,7 +663,6 @@ const Styles = (props) => {
               price: 450, // get input and make it as dynamic
               timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
-
             // gender - no_of_categories increment
             genderRef.update({
               noOfPatterns: firebase.firestore.FieldValue.increment(1)
@@ -678,7 +678,6 @@ const Styles = (props) => {
               noOfPatterns: firebase.firestore.FieldValue.increment(1)
             });
             ref.current.complete();
-
             setNewModal(false);
             props.history.push(
               `${props.match.url}/createNewPattern/patterns?genderId=${genderId}&genderName=${genderName}&categoryId=${categoryId}&categoryName=${categoryName}&subcategoryId=${subcategoryId}&subcategoryName=${subcategoryName}&styleId=${styles.styleId}&styleName=${styles.styleName}`

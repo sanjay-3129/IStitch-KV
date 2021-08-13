@@ -12,7 +12,6 @@ import AddNewModal from "../../../../UI/AddNewModal/AddNewModal";
 import generateId from "../../../../../Helpers/generateId";
 import DeleteConfirmModal from "../../../../UI/DeleteConfirmModal/DeleteConfirmModal";
 
-let type = undefined;
 let genderId = undefined;
 let genderName = undefined;
 let genderImg = undefined;
@@ -28,7 +27,7 @@ const SubCategory = (props) => {
   const [subCategoryList, setSubCategoryList] = useState(null);
   const [isChange, setIsChange] = useState(null); // for modal
   const [isDelete, setIsDelete] = useState(null);
-  // const [type, setType] = useState("mainProduct"); // mainProduct or addOns
+  const [type, setType] = useState("mainProduct"); // mainProduct or addOns
   const [newData, setNewData] = useState({
     name: "",
     img: null
@@ -46,15 +45,22 @@ const SubCategory = (props) => {
   });
   const [addNewItem, setAddNewItem] = useState("");
   const [newModal, setNewModal] = useState("");
+  const [newPatternModal, setNewPatternModal] = useState("");
   const [genderList, setGenderList] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
   const [length, setLength] = useState(0);
   const [lastDoc, setLastDoc] = useState(null);
 
   useEffect(() => {
-    type = qs.parse(props.location.search, {
+    let types = qs.parse(props.location.search, {
       ignoreQueryPrefix: true
     }).type;
+    console.log("xxxxxxx", types);
+    if (types !== undefined) {
+      console.log("xxxxxxxyyyyyyy", types);
+      setType(types);
+    }
+
     genderId = qs.parse(props.location.search, {
       ignoreQueryPrefix: true
     }).genderId;
@@ -78,10 +84,11 @@ const SubCategory = (props) => {
     // console.log("Subcategory.js", genderId);
 
     if (genderId !== undefined) {
+      console.log("insidideif", type, categoryId);
       // get only categories specific to gender
       db.collection("gender")
         .doc(genderId)
-        .collection(type)
+        .collection(types)
         .doc("categories")
         .collection("category")
         .doc(categoryId)
@@ -91,7 +98,9 @@ const SubCategory = (props) => {
         .limit(16)
         .get()
         .then((sub) => {
+          console.log("insidethen-------- id", sub.docs.length);
           if (sub.docs.length > 0) {
+            console.log("insidethen id", sub.docs.length);
             // subcollection exists
             let list = [];
             sub.forEach((subDoc) => {
@@ -108,7 +117,7 @@ const SubCategory = (props) => {
     } else {
       console.log("cliked directly");
       db.collection("gender")
-        .where("delete", "==", false)
+        // .where("delete", "==", false)
         .get()
         .then((sub) => {
           if (sub.docs.length > 0) {
@@ -132,10 +141,18 @@ const SubCategory = (props) => {
   }, []);
 
   const viewHandler = (subcategoryId, subcategoryName) => {
-    console.log("viewing subcategory");
-    props.history.push(
-      `${props.match.url}/createNewPattern/styles?genderId=${genderId}&genderName=${genderName}&categoryId=${categoryId}&categoryName=${categoryName}&subcategoryId=${subcategoryId}&subcategoryName=${subcategoryName}`
-    );
+    console.log("---->", subcategoryId, subcategoryName);
+    if (type === "mainProduct") {
+      console.log("viewing styles", props.location.search);
+      props.history.push(
+        `${props.match.url}/createNewPattern/styles?genderId=${genderId}&genderName=${genderName}&categoryId=${categoryId}&categoryName=${categoryName}&subcategoryId=${subcategoryId}&subcategoryName=${subcategoryName}`
+      );
+    } else {
+      console.log("viewing patterns", categoryId, props.location.search);
+      props.history.push(
+        `${props.match.url}/createNewPattern/patterns?type=${type}&genderId=${genderId}&genderName=${genderName}&genderImg=${genderImg}&categoryId=${categoryId}&categoryName=${categoryName}&categoryImg=${categoryImg}&subcategoryId=${subcategoryId}&subcategoryName=${subcategoryName}`
+      );
+    }
   };
 
   const addNewHandler = (value) => {
@@ -307,6 +324,7 @@ const SubCategory = (props) => {
 
   const draftHandler = (newData) => {
     setAddNewItem(false);
+    //let type = document.getElementById("subcategorytype").value;
     // hide = true;
     // let genderId = generateId("gender");
     // let categoryId = generateId("category");
@@ -394,6 +412,7 @@ const SubCategory = (props) => {
                   closeModalHandler();
                   setSubCategoryList(list);
                   setSubcategory(list[0]);
+                  setType(type);
                 });
             });
         });
@@ -739,8 +758,8 @@ const SubCategory = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
-        // ref.current.complete(); // linear loader to complete
-        // setType(type);
+        ref.current.complete(); // linear loader to complete
+        setType(type);
         if (list.length === 0) {
           setSubCategoryList("subcollection_empty");
         } else {
@@ -788,6 +807,60 @@ const SubCategory = (props) => {
     } else {
       console.log("no data to append");
     }
+  };
+  const addOnsNewPatternHandler = (newData) => {
+    console.log("00000000", newData);
+    ref.current.continuousStart();
+    let patternId = generateId("patterns");
+    let bucketName = "Images";
+    let storageRef = firebase.storage().ref();
+    // let genderRef = db.collection("gender").doc(genderId);
+    let patternRef = db
+      .collection("gender")
+      .doc(genderId)
+      .collection("addOns")
+      .doc("categories")
+      .collection("category")
+      .doc(categoryId)
+      .collection("subcategory")
+      .doc(subcategory.subcategoryId)
+      .collection("patterns")
+      .doc(patternId);
+    let patternTimestamp = +new Date().getTime() + "-" + newData.img.name;
+    let patternImgRef = storageRef.child(`${bucketName}/${patternTimestamp}`);
+    patternImgRef.put(newData.img).then(() => {
+      patternImgRef.getDownloadURL().then((patternImg) => {
+        patternRef
+          .set({
+            genderId: genderId,
+            categoryId: categoryId,
+            subcategoryId: subcategory.subcategoryId,
+            patternId: patternId, // genderate new category id
+            patternName: newData.name,
+            patternImage: patternImg,
+            delete: false,
+            hide: true,
+            noOfPatterns: 0,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          })
+          .then(() => {
+            // gender - no_of_categories increment
+            // genderRef.update({
+            //   noOfPatterns: firebase.firestore.FieldValue.increment(1)
+            // });
+            // // category - no_of_subcategories - increment
+            // categoryRef.update({
+            //   noOfPatterns: firebase.firestore.FieldValue.increment(1)
+            // });
+            ref.current.complete();
+            setNewModal(false);
+            console.log("//////", subcategory.subcategoryId);
+            props.history.push(
+              `${props.match.url}/createNewPattern/patterns?type=${type}&genderId=${genderId}&genderName=${genderName}&categoryId=${categoryId}&categoryName=${categoryName}&subcategoryId=${subcategory.subcategoryId}&subcategoryName=${subcategory.subcategoryName}`
+            );
+          });
+      });
+    });
   };
 
   let subCategories = null;
@@ -873,12 +946,15 @@ const SubCategory = (props) => {
           subCategoryDetails={subcategory}
           view={viewHandler}
           addNew={addNewHandler}
+          addNewPattern={() => setNewPatternModal("Patterns")}
           addNewStyles={() => setNewModal("Styles")}
           changeName={() => setIsChange("name")}
           changeImage={() => setIsChange("image")}
           goBack={goBackHandler}
           deleteHandler={(id) => setIsDelete(id)}
           hide={hideHandler}
+          //addNewPattern={addOnsNewPatternHandler}
+          type={type}
         />
       </>
     );
@@ -926,6 +1002,16 @@ const SubCategory = (props) => {
               img: null
             });
           }}
+        />
+      )}
+      {/* // addons pattern */}
+      {newPatternModal && (
+        <AddNewStyle
+          title={newModal}
+          newData={newData}
+          closeModal={() => setNewPatternModal(false)}
+          onChange={onChangeHandler}
+          saveAsDraft={addOnsNewPatternHandler}
         />
       )}
       {isDelete && (

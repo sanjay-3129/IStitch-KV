@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
+// import ReactDOM from "react-dom";
 // import { Link } from "react-router-dom";
 // import { Button } from "react-bootstrap";
 // import Card from "../Card/Card";
@@ -100,8 +100,7 @@ const SuggestionsUpdate = (props) => {
       categoryId: style.categoryId,
       subcategoryId: style.subcategoryId,
       styleId: style.styleId,
-      type: props.type,
-      delete: false
+      type: props.type
     };
     // console.log(style, i);
     // initally set data, if again same data, delete it

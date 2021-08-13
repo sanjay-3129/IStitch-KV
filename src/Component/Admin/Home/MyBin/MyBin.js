@@ -6,7 +6,7 @@ import firebase from "../../../../Services/firebase/firebase";
 import LoadingBar from "react-top-loading-bar";
 import Skeleton from "react-loading-skeleton";
 import DeleteCard from "../../../UI/Card/DeleteCard";
-import qs from "qs";
+// import qs from "qs";
 
 const MyBin = (props) => {
   const ref = useRef(null); // top-loader
@@ -440,41 +440,111 @@ const MyBin = (props) => {
         return deleteItemDetail.subcategoryId !== delId.subcategoryId;
       });
       // subcategory
-      db.collection("gender")
+      let subcategoryRef = db
+        .collection("gender")
         .doc(deleteItemDetail.genderId)
         .collection("mainProduct")
         .doc("categories")
         .collection("category")
         .doc(deleteItemDetail.categoryId)
         .collection("subcategory")
-        .doc(deleteItemDetail.subcategoryId)
-        .delete()
-        .then(() => {
-          ref.current.complete();
-          // delete that from the deleteItems
-          console.log("Your subcollections also deleted!!!");
-          db.collection("deleteItems")
-            .doc("deletedItems")
-            .update({
-              items: filtered
-            })
-            .then(() => {
-              getAllDeletedItems();
-              storageRef
-                .refFromURL(deleteItemDetail.subcategoryImg)
-                .delete()
-                .then(() =>
-                  console.log("image deleted successfullty, MyBin.js[313]")
-                );
+        .doc(deleteItemDetail.subcategoryId);
+
+      // get all the styles below this subcategory, s1,s2,s3
+      // loop:
+      // from that s1, get the deleteRelations
+      // loop in deleteRelations:
+      // get that relations[r1] as a style and relations from this style and filter s1
+      // set that filteredItems to the deleteRelations[r1]
+      // should get the style and relation details before the subcategory is deleted, else there will be no data, bcs it is deleted from the subcategory
+
+      subcategoryRef
+        .collection("styles")
+        .get()
+        .then((docs) => {
+          // getting all styles
+          let style = null;
+          // styles loop
+          docs.forEach((doc) => {
+            style = doc.data();
+            console.log("styleId", style.styleId);
+            let deleteRelations = style.relations;
+            // myAsyncLoopFunction(deleteRelations, style);
+
+            let relPromises = [];
+            deleteRelations.forEach((rel) => {
+              // let relList = [];
+
+              relPromises.push(rel.ref.get());
+              // rel.ref.get().then((doc) => {
+              //   relList = doc.data().relations;
+              //   console.log("relList", relList);
+              //   let filteredList = relList.filter(
+              //     (s) => s.styleId !== style.styleId
+              //   ); // current style will be removed
+              //   console.log("filteredList", style.styleId, filteredList);
+              // });
+              // rel.ref
+              //     .update({
+              //       relations: filteredList
+              //     })
+              //     .then(() => console.log("successfullty update"))
+              //     .catch((e) => console.log("deleteRelations", e));
             });
-        })
-        .catch((e) => console.log(e));
+            Promise.all(relPromises).then((promiseValues) => {
+              promiseValues.forEach((doc) => {
+                let relList = doc.data().relations;
+                console.log("relList", relList);
+                let filteredList = relList.filter(
+                  (s) => s.styleId !== style.styleId
+                ); // current style will be removed
+                console.log("filteredList", style.styleId, filteredList);
+                // });
+                // rel.ref
+                //   .update({
+                //     relations: filteredList
+                //   })
+                //   .then(() => console.log("successfullty update"))
+                //   .catch((e) => console.log("deleteRelations", e));
+              });
+            });
+          }); // end of deleteRelations loop
+        }); // end of docs.forEach
+      // console.log("endOfForeach-styles");
+      // });
+      // console.log("outOfThen-deleteSubcategory");
+
+      // delete subcategory
+      // subcategoryRef
+      //   .delete()
+      //   .then(() => {
+      //     ref.current.complete();
+      //     // delete that from the deleteItems
+      //     console.log("Your subcollections also deleted!!!");
+      //     db.collection("deleteItems")
+      //       .doc("deletedItems")
+      //       .update({
+      //         items: filtered
+      //       })
+      //       .then(() => {
+      //         getAllDeletedItems();
+      //         storageRef
+      //           .refFromURL(deleteItemDetail.subcategoryImg)
+      //           .delete()
+      //           .then(() =>
+      //             console.log("image deleted successfullty, MyBin.js[313]")
+      //           );
+      //       });
+      //   })
+      //   .catch((e) => console.log(e));
     } else if (mainItem.item === "style") {
       let filtered = deletedItemsList.filter((delId) => {
         return deleteItemDetail.styleId !== delId.styleId;
       });
+
       // style
-      db.collection("gender")
+      let styleRef = db
+        .collection("gender")
         .doc(deleteItemDetail.genderId)
         .collection("mainProduct")
         .doc("categories")
@@ -483,26 +553,61 @@ const MyBin = (props) => {
         .collection("subcategory")
         .doc(deleteItemDetail.subcategoryId)
         .collection("styles")
-        .doc(deleteItemDetail.styleId)
-        .delete()
-        .then(() => {
-          ref.current.complete();
-          console.log("Your subcollections also deleted!!!");
-          // delete that from the deleteItems
-          db.collection("deleteItems")
-            .doc("deletedItems")
-            .update({
-              items: filtered
-            })
-            .then(() => {
-              getAllDeletedItems();
-              storageRef
-                .refFromURL(deleteItemDetail.styleImg)
-                .delete()
-                .then(() =>
-                  console.log("image deleted successfullty, MyBin.js[344]")
-                );
+        .doc(deleteItemDetail.styleId);
+
+      // get the relations and delete this particular style from that relations
+      let deleteRelations = [];
+      // 1 read
+      styleRef
+        .get()
+        .then((doc) => {
+          deleteRelations = doc.data().relations;
+          // console.log("538", deleteRelations, doc.data());
+          // atlast
+          // now go into each relation and delete that particular data
+          // n(deleteRelations) -> nReads + nWrites  [eg: 5 -> 5reads + 5writes = 10]
+          deleteRelations.forEach((rel) => {
+            let relList = [];
+            rel.ref.get().then((doc) => {
+              relList = doc.data().relations;
+              console.log("relList", relList);
+              let filteredList = relList.filter(
+                (s) => s.styleId !== deleteItemDetail.styleId
+              ); // current style will be removed
+              console.log("filteredList", filteredList);
+
+              rel.ref
+                .update({
+                  relations: filteredList
+                })
+                .then(() => console.log("successfullty update"))
+                .catch((e) => console.log("deleteRelations", e));
             });
+          }); // end
+          // after clearing the style from those relations delete this particular style
+          styleRef
+            .delete() // 1 write - delete
+            .then(() => {
+              ref.current.complete();
+              console.log("Your subcollections also deleted!!!");
+              // delete that from the deleteItems
+              db.collection("deleteItems")
+                .doc("deletedItems")
+                .update({
+                  // 1 write - update
+                  items: filtered
+                })
+                .then(() => {
+                  getAllDeletedItems();
+                  storageRef
+                    .refFromURL(deleteItemDetail.styleImg)
+                    .delete()
+                    .then(() =>
+                      console.log("image deleted successfullty, MyBin.js[344]")
+                    );
+                });
+            })
+            .catch((e) => console.log(e));
         })
         .catch((e) => console.log(e));
     } else {
@@ -552,6 +657,41 @@ const MyBin = (props) => {
         .catch((e) => console.log(e));
     }
   };
+
+  // const subcategoryDeleteHelper = async (rel, relList, style, func) => {
+  //   await rel.ref.get().then((doc) => {
+  //     relList = doc.data().relations;
+  //     console.log("relList", relList);
+  //     let filteredList = relList.filter((s) => s.styleId !== style.styleId); // current style will be removed
+  //     console.log("filteredList", style.styleId, filteredList);
+  //     // return filteredList;
+  //     func(filteredList);
+  //   });
+  // };
+  // const subcategoryDeleteHelper = async (rel, style) => {
+  //   return new Promise((resolve, reject) => {
+  //     rel.ref.get().then((doc) => {
+  //       let relList = doc.data().relations;
+  //       console.log("relList", relList);
+  //       let filteredList = relList.filter((s) => s.styleId !== style.styleId); // current style will be removed
+  //       console.log("filteredList", style.styleId, filteredList);
+  //       // return filteredList;
+  //       // rel.ref
+  //       //   .update({
+  //       //     relations: filteredList
+  //       //   })
+  //       //   .then(() => console.log("successfullty update"))
+  //       //   .catch((e) => console.log("deleteRelations", e));
+  //     });
+  //   });
+  // };
+  // const myAsyncLoopFunction = async (deleteRelations, style) => {
+  //   const promises = deleteRelations.map((rel) =>
+  //     subcategoryDeleteHelper(rel, style)
+  //   );
+  //   await Promise.all(promises);
+  //   console.log(`All async tasks complete!`);
+  // };
 
   let Bin = null;
   if (deletedItemsList === null) {

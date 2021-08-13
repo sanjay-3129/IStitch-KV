@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+ import React, { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 import "./Patterns.css";
 import $ from "jquery";
@@ -12,6 +12,7 @@ import LoadingBar from "react-top-loading-bar";
 import generateId from "../../../../../Helpers/generateId";
 import firebase from "../../../../../Services/firebase/firebase";
 import qs from "qs";
+import Category from "../Category/Category";
 
 let genderId = undefined;
 let genderName = undefined;
@@ -84,6 +85,7 @@ const Patterns = (props) => {
     categoryId = qs.parse(props.location.search, {
       ignoreQueryPrefix: true
     }).categoryId;
+    console.log("searchLoacation", props.location.search);
     categoryName = qs.parse(props.location.search, {
       ignoreQueryPrefix: true
     }).categoryName;
@@ -106,9 +108,11 @@ const Patterns = (props) => {
     console.log(
       "--------------",
       genderName,
-      categoryName,
+      categoryId[0],
+      categoryName[0],
       subcategoryName,
-      styleName
+      styleName,
+      types
     );
     if (genderId !== undefined) {
       // if(genderId -> styleId)
@@ -121,6 +125,8 @@ const Patterns = (props) => {
       ) {
         // get only categories specific to gender
         // console.log("inside if");
+        console.log("---patterns.js useEffect", types);
+        console.log(genderId, categoryId); // for mainProduct, categoryId is normal
         db.collection("gender")
           .doc(genderId)
           .collection("mainProduct")
@@ -157,15 +163,17 @@ const Patterns = (props) => {
         categoryId !== undefined &&
         types !== undefined
       ) {
-        console.log();
-        // if(genderId, categoryId)
         setType("addOns");
+        console.log("pattypes", categoryId, subcategoryId, type, types);
+        // if(genderId, categoryId)
         db.collection("gender")
           .doc(genderId)
           .collection("addOns")
           .doc("categories")
           .collection("category")
-          .doc(categoryId)
+          .doc(categoryId[0])
+          .collection("subcategory")
+          .doc(subcategoryId)
           .collection("patterns")
           .where("delete", "==", false)
           .get()
@@ -268,7 +276,7 @@ const Patterns = (props) => {
         .collection("addOns")
         .doc("categories")
         .collection("category")
-        .doc(categoryId)
+        .doc(categoryId[0])
         .collection("patterns")
         .doc(patternId)
         .update({
@@ -281,7 +289,7 @@ const Patterns = (props) => {
             .collection("addOns")
             .doc("categories")
             .collection("category")
-            .doc(categoryId)
+            .doc(categoryId[0])
             .collection("patterns")
             .doc(patternId)
             .get()
@@ -393,7 +401,7 @@ const Patterns = (props) => {
               .collection("addOns")
               .doc("categories")
               .collection("category")
-              .doc(categoryId)
+              .doc(categoryId[0])
               .collection("patterns")
               .doc(patternId)
               .update({
@@ -415,7 +423,7 @@ const Patterns = (props) => {
                   .collection("addOns")
                   .doc("categories")
                   .collection("category")
-                  .doc(categoryId)
+                  .doc(categoryId[0])
                   .collection("patterns")
                   .doc(patternId)
                   .get()
@@ -468,14 +476,14 @@ const Patterns = (props) => {
         .collection(type)
         .doc("categories")
         .collection("category")
-        .doc(categoryId);
+        .doc(categoryId[0]);
       let subcategoryRef = db
         .collection("gender")
         .doc(genderId)
         .collection(type)
         .doc("categories")
         .collection("category")
-        .doc(categoryId)
+        .doc(categoryId[0])
         .collection("subcategory")
         .doc(subcategoryId);
       let styleRef = db
@@ -484,7 +492,7 @@ const Patterns = (props) => {
         .collection(type)
         .doc("categories")
         .collection("category")
-        .doc(categoryId)
+        .doc(categoryId[0])
         .collection("subcategory")
         .doc(subcategoryId)
         .collection("styles")
@@ -510,7 +518,7 @@ const Patterns = (props) => {
             genderId: genderId,
             genderName: genderName,
             genderImg: "",
-            categoryId: categoryId,
+            categoryId: categoryId[0],
             categoryName: categoryName,
             categoryImg: "",
             subcategoryId: subcategoryId,
@@ -548,7 +556,7 @@ const Patterns = (props) => {
                 .collection(type)
                 .doc("categories")
                 .collection("category")
-                .doc(categoryId)
+                .doc(categoryId[0])
                 .collection("subcategory")
                 .doc(subcategoryId)
                 .collection("styles")
@@ -586,7 +594,7 @@ const Patterns = (props) => {
         .collection("addOns")
         .doc("categories")
         .collection("category")
-        .doc(categoryId)
+        .doc(categoryId[0])
         .collection("patterns")
         .doc(patternId)
         .update({
@@ -602,7 +610,7 @@ const Patterns = (props) => {
             genderId: genderId,
             genderName: genderName,
             genderImg: "",
-            categoryId: categoryId,
+            categoryId: categoryId[0],
             categoryName: categoryName,
             categoryImg: "",
             patternId: patternDet.patternId,
@@ -625,7 +633,7 @@ const Patterns = (props) => {
                 .collection("addOns")
                 .doc("categories")
                 .collection("category")
-                .doc(categoryId)
+                .doc(categoryId[0])
                 .collection("patterns")
                 .where("delete", "==", false)
                 .get()
@@ -658,6 +666,7 @@ const Patterns = (props) => {
 
   const draftPatternHandler = (newData) => {
     // console.log(newData);
+    console.log("drftpathdler", categoryId);
     let patternId = generateId("patterns");
     let patternRef = db
       .collection("gender")
@@ -825,7 +834,9 @@ const Patterns = (props) => {
         .collection("addOns")
         .doc("categories")
         .collection("category")
-        .doc(categoryId)
+        .doc(categoryId[0])
+        .collection("subcategory")
+        .doc(subcategoryId)
         .collection("patterns");
       let patternTimestamp = +new Date().getTime() + "-" + newData.img.name;
       let patternImgRef = storageRef.child(`${bucketName}/${patternTimestamp}`);
@@ -835,7 +846,7 @@ const Patterns = (props) => {
             .doc(patternId)
             .set({
               genderId: genderId,
-              categoryId: categoryId,
+              categoryId: categoryId[0],
               patternId: patternId, // genderate new category id
               patternName: newData.name,
               patternImage: patternImg,
@@ -964,7 +975,7 @@ const Patterns = (props) => {
         .collection("addOns")
         .doc("categories")
         .collection("category")
-        .doc(categoryId)
+        .doc(categoryId[0])
         .collection("patterns");
       if (e.target.checked) {
         // true - show or hide(false)
@@ -1029,7 +1040,7 @@ const Patterns = (props) => {
       .collection(type)
       .doc("categories")
       .collection("category")
-      .doc(categoryId)
+      .doc(categoryId[0])
       .collection("subcategory")
       .doc(subcategoryId)
       .collection("styles")
@@ -1059,7 +1070,7 @@ const Patterns = (props) => {
         .collection(type)
         .doc("categories")
         .collection("category")
-        .doc(categoryId)
+        .doc(categoryId[0])
         .collection("subcategory")
         .doc(subcategoryId)
         .collection("styles")
@@ -1152,12 +1163,8 @@ const Patterns = (props) => {
           </button>
           <br />
           <br />
-          <button
-            type="submit"
-            className="publish"
-            onClick={() => alert("need to add func")}
-          >
-            Publish
+          <button type="button" className="publish" onClick={goBackHandler}>
+            Go Back
           </button>
         </div>
         <div className="selected">

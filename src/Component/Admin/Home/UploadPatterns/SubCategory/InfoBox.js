@@ -1,6 +1,7 @@
 import "./InfoBox.css";
 
 const InfoBox = (props) => {
+  // console.log(props.subCategoryDetails);
   return (
     <div className="info_box">
       <h1 className="heading">{props.subCategoryDetails.subcategoryName}</h1>
@@ -78,52 +79,103 @@ const InfoBox = (props) => {
             </div> */}
           </div>
         </div>
-        <div className="count">
-          <p>
-            Gender
-            <span className="category-count">{props.genderName}</span>{" "}
-          </p>
-          <p>
-            Category
-            <span className="category-count">{props.categoryName}</span>{" "}
-          </p>
-          <p>
-            No of Styles
-            <span className="category-count">
-              {props.subCategoryDetails.noOfStyles}
-            </span>{" "}
-          </p>
-          <p>
-            No of Patterns
-            <span className="category-count">
-              {props.subCategoryDetails.noOfPatterns}
-            </span>{" "}
-          </p>
-        </div>
-        <div class="view-all">
-          <button
-            type="button"
-            className="delete-gender"
-            onClick={() => props.addNew("subcategory")}
-          >
-            Add New Sub-Category
-          </button>
-          <button className="category-new" onClick={props.addNewStyles}>
-            Add New Styles
-          </button>
-          <button
-            className="category-link"
-            onClick={() =>
-              props.view(
-                props.subCategoryDetails.subcategoryId,
-                props.subCategoryDetails.subcategoryName
-              )
-            }
-          >
-            View All Styles
-          </button>
-          {/* <button onClick={props.goBack}>GO BACK</button> */}
-        </div>
+
+        {props.type === "mainProduct" ? (
+          <>
+            <div className="count">
+              <p>
+                Gender
+                <span className="category-count">{props.genderName}</span>{" "}
+              </p>
+              <p>
+                Category
+                <span className="category-count">
+                  {props.categoryName}
+                </span>{" "}
+              </p>
+              <p>
+                No of Styles
+                <span className="category-count">
+                  {props.subCategoryDetails.noOfStyles}
+                </span>{" "}
+              </p>
+              <p>
+                No of Patterns
+                <span className="category-count">
+                  {props.subCategoryDetails.noOfPatterns}
+                </span>{" "}
+              </p>
+            </div>
+            <div class="view-all">
+              <button
+                type="button"
+                className="delete-gender"
+                onClick={() => props.addNew("subcategory")}
+              >
+                Add New Sub-Category
+              </button>
+              <button className="category-new" onClick={props.addNewStyles}>
+                Add New Styles
+              </button>
+              <button
+                className="category-link"
+                onClick={() =>
+                  props.view(
+                    props.subCategoryDetails.subcategoryId,
+                    props.subCategoryDetails.subcategoryName
+                  )
+                }
+              >
+                View All Styles
+              </button>
+              {/* <button onClick={props.goBack}>GO BACK</button> */}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="count">
+              <p>
+                Gender
+                <span className="category-count">{props.genderName}</span>{" "}
+              </p>
+              <p>
+                Category
+                <span className="category-count">
+                  {props.categoryName}
+                </span>{" "}
+              </p>
+              <p>
+                No of Patterns
+                <span className="category-count">
+                  {props.subCategoryDetails.noOfPatterns}
+                </span>{" "}
+              </p>
+            </div>
+            <div className="view-all">
+              <button
+                type="button"
+                className="new-cat"
+                onClick={() => props.addNew("subcategory")}
+              >
+                Add New SubCategory
+              </button>
+              <button className="category-new" onClick={props.addNewPattern}>
+                Add New Pattern
+              </button>
+              <button
+                className="category-link"
+                onClick={() =>
+                  props.view(
+                    props.subCategoryDetails.subcategoryId,
+                    props.subCategoryDetails.subcategoryName
+                  )
+                }
+              >
+                View All Patterns
+              </button>
+            </div>
+          </>
+        )}
       </article>
       <button class="goback" onClick={props.goBack}>
         <i class="fas fa-arrow-left" aria-hidden="true"></i>
