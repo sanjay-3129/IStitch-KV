@@ -61,7 +61,7 @@ const ImageCarousel = () => {
               class="hover-shadow cursor"
               alt="l"
             />
-            <p className="name">patterName</p>
+            <p className="name">patterName- 450/-</p>
           </div>
         </div>
         <div class="column">
@@ -73,7 +73,7 @@ const ImageCarousel = () => {
               class="hover-shadow cursor"
               alt="l"
             />
-            <p className="name">patterName</p>
+            <p className="name">patterName- 450/-</p>
           </div>
         </div>
         <div class="column">
@@ -85,7 +85,7 @@ const ImageCarousel = () => {
               class="hover-shadow cursor"
               alt="l"
             />
-            <p className="name">patterName</p>
+            <p className="name">patterName- 450/-</p>
           </div>
         </div>
         <div class="column">
@@ -97,7 +97,7 @@ const ImageCarousel = () => {
               class="hover-shadow cursor"
               alt="l"
             />
-            <p className="name">patterName</p>
+            <p className="name">patterName- 450/-</p>
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
- import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 import "./Patterns.css";
 import $ from "jquery";
@@ -105,15 +105,16 @@ const Patterns = (props) => {
       ignoreQueryPrefix: true
     }).type;
     // get category & subcateogry from query param
-    console.log(
-      "--------------",
-      genderName,
-      categoryId[0],
-      categoryName[0],
-      subcategoryName,
-      styleName,
-      types
-    );
+    // console.log(
+    //   "--------------",
+    //   genderName,
+    //   categoryId[0],
+    //   categoryName[0],
+    //   subcategoryName,
+    //   styleName,
+
+    //   types
+    // );
     if (genderId !== undefined) {
       // if(genderId -> styleId)
       if (

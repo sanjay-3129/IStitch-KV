@@ -26,8 +26,14 @@ const Gender = (props) => {
   const [isDelete, setIsDelete] = useState(null); // this will contain the
   const [newData, setNewData] = useState({
     name: "",
-    img: null
+    img: null,
+    categorytype: null,
+    mainCategoryId: "",
+    mcategory: ""
   });
+  // mcategory - state
+  const [mcategoryList, setmCategoryList] = useState([]);
+  const [mcategory, setmcategory] = useState([]);
   const [genderList, setGenderList] = useState(null);
   const [gender, setGender] = useState({
     genderId: "",
@@ -184,6 +190,8 @@ const Gender = (props) => {
   };
 
   const onChangeHandler = (event) => {
+    // if (event.target.name === "mcategory") {
+    // }
     // console.log(event.target.name);
     let value = null;
     if (event.target.name === "img") {
@@ -199,9 +207,59 @@ const Gender = (props) => {
     });
   };
 
+  // const onMCategoryChangeHandler = (mcategory) => {
+  //   console.log("idddddddd", mcategory);
+
+  //   setmcategory(mcategory);
+  //   // html -> value -> mcategory.categoryName
+  //   // onchange -> this function(macteogory)
+
+  //   // categoryList - db
+  //   // datalist - categoryList -> mcategory.categoryName
+  // };
+
+  const getCategoryList = () => {
+    console.log("///>>>");
+
+    if (gender !== undefined) {
+      db.collection("gender")
+        .doc(gender.genderId)
+        .collection("mainProduct")
+        .doc("categories")
+        .collection("category")
+        .where("delete", "==", false)
+        .orderBy("timestamp", "desc")
+        .get()
+        .then((sub) => {
+          console.log("......", sub);
+
+          if (sub.docs.length > 0) {
+            // subcollection exists
+            let list = [];
+            sub.forEach((subDoc) => {
+              list.push(subDoc.data());
+            });
+            // genderName = genderNam;
+            setmCategoryList(list);
+            console.log("mcatlist", list);
+          } else {
+            // subcollection not exists
+            setmCategoryList([
+              {
+                categoryId: 1,
+                categoryName: "Empty, pls select another gender"
+              }
+            ]);
+          }
+        })
+        .catch((e) => console.log(e));
+    }
+  };
+
   const draftHandler = (newData) => {
     setAddNewItem(false);
     let type = document.getElementById("categorytype").value;
+
     // console.log(type);
     let genderId = generateId("gender");
     let categoryId = generateId("category");
@@ -253,6 +311,7 @@ const Gender = (props) => {
               noOfPatterns: 0,
               delete: false,
               hide: true,
+
               timestamp: firebase.firestore.FieldValue.serverTimestamp()
             })
             .then(() => {
@@ -487,6 +546,14 @@ const Gender = (props) => {
   };
 
   const draftCategoryHandler = (newData) => {
+    console.log("qqqqqq", newData);
+    let category = mcategoryList.find((cat) => {
+      console.log("cattt", cat);
+      console.log("mcategory.categoryName", mcategory.categoryName);
+
+      return newData.mcategory === cat.categoryName;
+    });
+
     setNewModal(null);
     let type = document.getElementById("categorytype").value;
     // console.log(newData);
@@ -515,6 +582,7 @@ const Gender = (props) => {
             noOfPatterns: 0,
             delete: false,
             hide: true,
+            mainCategoryId: category.categoryId,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
           })
           .then(() => {
@@ -743,11 +811,16 @@ const Gender = (props) => {
                 setNewModal(null);
                 setNewData({
                   name: "",
-                  img: null
+                  img: null,
+                  categorytype: null,
+                  mainCategoryId: ""
                 });
               }}
               onChange={onChangeHandler}
+              // onmChange={onMCategoryChangeHandler(mcategory)}
               saveAsDraft={draftCategoryHandler}
+              getCategoryList={getCategoryList}
+              mcategoryList={mcategoryList}
             />
           )}
           {isDelete && (

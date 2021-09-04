@@ -29,7 +29,8 @@ const Category = (props) => {
   const [type, setType] = useState("mainProduct"); // mainProduct or addOns
   const [newData, setNewData] = useState({
     name: "",
-    img: null
+    img: null,
+    mainCategoryId: ""
   });
   // let list = [];
   const [genderList, setgenderList] = useState([]);

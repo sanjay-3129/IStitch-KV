@@ -106,11 +106,11 @@ button {
   border-right: none;
   cursor: pointer;
 }
-
+/* 
 .odetails {
   padding: 5px !important;
   margin: 0 0 10px !important;
-  /* height: 271px; */
+  height: 271px;
   border: 1px solid #005b7f;
 }
 
@@ -159,4 +159,4 @@ button {
   overflow-y: auto;
   border: 1px solid #a6c8cc;
   border-radius: 5px;
-}
+} */

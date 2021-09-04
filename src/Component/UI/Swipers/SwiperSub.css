@@ -10,7 +10,7 @@
   --light-gray: #ddd5d6;
 }
 .single-view-content {
-  background: var(--light-red);
+  background: var(--light-teal);
   width: 30%;
   /* overflow-y: auto; */
   position: relative;
@@ -29,6 +29,8 @@
 }
 .team-info .team-info-item.active {
   display: block;
+  background: transparent;
+  border: none;
 }
 
 @keyframes team-info-item {
@@ -279,7 +281,7 @@ h1.heading {
   input[type="checkbox"]:checked
   ~ label
   .can-toggle__switch:after {
-  transform: translate3d(55px, 0, 0);
+  transform: translate3d(64px, 0, 0);
 }
 .can-toggle
   input[type="checkbox"]:checked:focus
@@ -387,7 +389,7 @@ h1.heading {
   input[type="checkbox"]:checked
   ~ label
   .can-toggle__switch:after {
-  transform: translate3d(55px, 0, 0);
+  transform: translate3d(94%, 0, 0);
 }
 .can-toggle
   input[type="checkbox"]:checked:focus
@@ -399,16 +401,13 @@ h1.heading {
   .can-toggle__switch:after {
   box-shadow: 0 3px 3px rgba(0, 0, 0, 0.4);
 }
-.can-toggle label {
-  font-size: 14px;
-}
 .can-toggle label .can-toggle__switch {
   height: 36px;
   flex: 1;
   border-radius: 4px;
 }
 .can-toggle label .can-toggle__switch:before {
-  left: 57px;
+  right: 0;
   font-size: 12px;
   line-height: 36px;
   width: 50%;

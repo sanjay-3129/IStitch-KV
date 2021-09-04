@@ -14,7 +14,7 @@ button {
   text-align: center;
 }
 
-.active {
+.rflex button.active {
   color: #fff;
   background-color: #005b7f;
   border: 5px solid #efefef;
@@ -83,7 +83,7 @@ button {
 
 .summary p.select {
   width: 15%;
-  padding: 5px;
+  padding: 10px 5px;
   text-align: center;
 }
 

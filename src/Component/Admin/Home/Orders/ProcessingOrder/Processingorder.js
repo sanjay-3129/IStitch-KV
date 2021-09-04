@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import OrderView from "../ProcessingOrder/OrderView";
 import firebase from "../../../../../Services/firebase/firebase";
 import Spinner from "../../../../UI/Spinner/Spinner";
+import $ from "jquery";
 
 const db = firebase.firestore();
 let list = null;
@@ -49,7 +50,14 @@ const ProcessingOrder = (props) => {
 
   return (
     <div className="ordercontent">
-      <div className="rflex"></div>
+      <div className="rflex">
+        <button>Received</button>
+        {/* Received */}
+        <button>Re-Pick</button>
+        {/* Re-Pick */}
+        <button>Confirmed</button>
+        {/* Confirmed */}
+      </div>
       {processorders}
     </div>
   );
