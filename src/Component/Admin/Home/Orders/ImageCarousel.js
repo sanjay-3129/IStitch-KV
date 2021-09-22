@@ -1,8 +1,9 @@
 import React from "react";
 import "./Image.css";
 import $ from "jquery";
+import { propTypes } from "react-bootstrap/esm/Image";
 
-const ImageCarousel = () => {
+const ImageCarousel = (props) => {
   $(document).ready(function () {
     console.log("hello");
     $("#navigation ul li").css("display", "inline-block");
@@ -48,47 +49,31 @@ const ImageCarousel = () => {
   //   dots[slideIndex - 1].className += " active";
   //   captionText.innerHTML = dots[slideIndex - 1].alt;
   // }
+  console.log("[[[[]]]]]]", props.images);
 
   return (
     <>
       <div class="row">
-        <div class="column">
-          <div className="thumb">
-            <img
-              src="/images/frnsto.png"
-              style={{ width: "100%" }}
-              onclick={openModal()}
-              class="hover-shadow cursor"
-              alt="l"
-            />
-            <p className="name">patterName- 450/-</p>
-          </div>
-        </div>
-        <div class="column">
-          <div className="thumb">
-            <img
-              src="/images/backdg.png"
-              style={{ width: "100%" }}
-              onclick={openModal()}
-              class="hover-shadow cursor"
-              alt="l"
-            />
-            <p className="name">patterName- 450/-</p>
-          </div>
-        </div>
-        <div class="column">
-          <div className="thumb">
-            <img
-              src="/images/slv.png"
-              style={{ width: "100%" }}
-              onclick={openModal()}
-              class="hover-shadow cursor"
-              alt="l"
-            />
-            <p className="name">patterName- 450/-</p>
-          </div>
-        </div>
-        <div class="column">
+        {props.images.map((img) => {
+          return (
+            <div class="column" key={img.patternImg}>
+              <div className="thumb">
+                <img
+                  src={img.patternImg}
+                  style={{ width: "100%" }}
+                  // onclick={openModal()}
+                  class="hover-shadow cursor"
+                  alt={img.patternName}
+                />
+                <p className="name">
+                  {img.patternName}- {img.patternPrice}/-
+                </p>
+              </div>
+            </div>
+          );
+        })}
+
+        {/* <div class="column">
           <div className="thumb">
             <img
               src="/images/cvb.png"
@@ -99,9 +84,9 @@ const ImageCarousel = () => {
             />
             <p className="name">patterName- 450/-</p>
           </div>
-        </div>
+        </div> */}
       </div>
-      <div id="myModal" class="modal">
+      {/* <div id="myModal" class="modal">
         <span class="close cursor" onclick={closeModal()}>
           &times;
         </span>
@@ -135,7 +120,7 @@ const ImageCarousel = () => {
           </a>
           <a class="next" onclick={plusSlides(1)}>
             &#10095;
-          </a> */}
+          </a> 
 
           <div class="caption-container">
             <p id="caption"></p>
@@ -178,7 +163,7 @@ const ImageCarousel = () => {
             />
           </div>
         </div>
-      </div>
+      </div> */}
     </>
   );
 };

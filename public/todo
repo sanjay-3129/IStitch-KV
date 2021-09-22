@@ -1,0 +1,6 @@
+// add collection - deleteItems and
+add doc - deletedItems, when signup
+bcs when this collection is deleted directly in db,
+and we try to delete, it shows error, its bcs, we directly give
+update api code, so this searches for the doc, but it is 
+not there.

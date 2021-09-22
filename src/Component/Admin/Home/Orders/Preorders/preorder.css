@@ -3,3 +3,200 @@
   background-color: #005b7f;
   border: 5px solid #efefef;
 }
+
+/* Order View */
+
+.rflex {
+  display: flex;
+  margin: 0 0 10px;
+  /* flex-wrap: wrap; */
+  justify-content: center;
+}
+
+button {
+  position: relative;
+  font-size: 18px;
+  padding: 5px 10px;
+  color: #000;
+  border: 5px solid #efefef;
+  width: 150px;
+  text-align: center;
+}
+
+.rflex button .new-count {
+  position: absolute;
+  color: #000;
+  background: #fff;
+  top: -10px;
+  right: 7px;
+  width: 30px;
+  height: 30px;
+  padding: 1px;
+  border-radius: 50%;
+  text-align: center;
+  box-shadow: 1px 1px 5px 2px rgb(0 0 0 / 50%);
+}
+
+.rflex button.active {
+  color: #fff;
+  background-color: #005b7f;
+  border: 5px solid #efefef;
+}
+/* Order View */
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0 0 5px;
+  border: 1px solid #a6c8cc;
+  border-radius: 5px;
+  cursor: default;
+}
+
+.summary p {
+  font-size: 18px;
+  font-weight: normal;
+  display: inline-block;
+  padding: 10px 5px;
+  margin: 0;
+  border-right: 1px solid #a6c8cc;
+  overflow: hidden;
+}
+
+.summary p.ono {
+  width: 6%;
+  text-align: center;
+}
+
+.summary > p:last-child {
+  border-right: none;
+  cursor: pointer;
+}
+
+.summary .anchor {
+  font-size: 18px;
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+  width: 5%;
+  text-align: center;
+}
+
+.summary .anchor i.far {
+  font-size: 30px;
+  color: #005b7f;
+  padding: 8px;
+  cursor: pointer;
+}
+
+/* booked */
+.booked p.cat {
+  width: 25%;
+}
+
+.booked p.cname {
+  width: 25%;
+  text-align: left;
+}
+
+.booked p.cno {
+  width: 19%;
+  text-align: center;
+}
+
+.booked p.date {
+  width: 10%;
+  text-align: center;
+}
+
+.booked p.accept,
+.booked p.reject {
+  width: 5%;
+  text-align: center;
+  cursor: pointer;
+}
+
+.booked p.accept {
+  color: green;
+}
+
+.booked p.accept:hover i,
+.booked p.reject:hover i {
+  box-shadow: 0 1px 4px #000;
+  padding: 4px 5px;
+}
+
+.booked p.reject {
+  color: red;
+}
+
+/* verified */
+
+.verified p.cat {
+  width: 25%;
+}
+
+.verified p.date {
+  width: 22%;
+  text-align: center;
+}
+
+.verified p.ddate {
+  width: 22%;
+  text-align: center;
+}
+
+.verified p.price {
+  width: 20%;
+  text-align: center;
+}
+
+/* accepted */
+
+.accepted p.cat {
+  width: 24%;
+}
+
+.accepted p.date {
+  width: 20%;
+  text-align: center;
+}
+
+.accepted p.ddate {
+  width: 20%;
+  text-align: center;
+}
+
+.accepted p.price {
+  width: 20%;
+  text-align: center;
+}
+
+.accepted p.assign {
+  width: 5%;
+  text-align: center;
+  cursor: pointer;
+  color: #005b7f;
+}
+
+/* assigned */
+
+.assigned p.cat {
+  width: 25%;
+}
+
+.assigned p.tname {
+  width: 25%;
+  text-align: center;
+}
+
+.assigned p.tno {
+  width: 19%;
+  text-align: center;
+}
+
+.assigned p.ddate {
+  width: 20%;
+  text-align: center;
+}

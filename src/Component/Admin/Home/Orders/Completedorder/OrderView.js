@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import "./orderView.css";
+import "./completedorder.css";
 import { NavLink, Switch, Route } from "react-router-dom";
 import OrdersContext from "../../Contexts/OrderContext";
 const OrderView = (props) => {
@@ -12,13 +12,15 @@ const OrderView = (props) => {
   };
   return (
     <>
-      <div className="summary">
-        <p className="ono">{props.item.orderNo}</p>
+      <div className="summary completed">
+        {/* {props.item.orderNo} */}
+        <p className="ono">0001</p>
+        <p className="cat">{props.item.categoryName}</p>
+
         <p className="cname">{props.item.userDetails.userName}</p>
         <p className="cno">{props.item.userDetails.userPhno}</p>
-        <p className="cat">{props.item.categoryName}</p>
-        {/* <p className="date">26/06/99</p> */}
-        <p className="select">Rating****</p>
+        <p className="tname">{props.item.tailorDetails.tailorName}</p>
+        <p className="tno">{props.item.tailorDetails.tailorPhno}</p>
 
         <div onClick={() => orderUpdate(props.item)} className="anchor">
           <i class="far fa-list-alt"></i>

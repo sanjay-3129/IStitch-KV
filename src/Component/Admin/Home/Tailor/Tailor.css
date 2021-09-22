@@ -1,0 +1,353 @@
+.tailor {
+  padding: 10px;
+}
+
+.tailor .nullify {
+  color: #000;
+  background: none;
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+
+.tailor .nav-tabs .nav-item {
+  margin: 0 0 10px;
+}
+
+.tailor .nav-tabs .nav-item .nav-link {
+  font-size: 28px;
+  font-weight: 600;
+  color: #0a0a0a;
+  background: #fff;
+  padding: 8px 15px;
+  border: none !important;
+}
+
+.tailor .nav-tabs .nav-item .active {
+  background: #a6c8cc;
+}
+
+.tailor .approval {
+  padding: 10px 0;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
+.tailor .approval .card {
+  display: flex;
+  position: relative;
+  padding: 10px;
+  margin-right: 8px;
+  height: fit-content;
+  flex-wrap: wrap;
+  flex-direction: column;
+  width: 24%;
+  box-shadow: 0 3px 3px rgb(0 0 0 / 40%);
+  border-bottom: 2px solid #a6c8cc;
+  border-radius: 5px;
+}
+
+.tailor .approval .card .image {
+  position: absolute;
+  background: #000;
+  width: 50px;
+  height: 50px;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+.tailor .approval .card .hovereffect {
+  position: absolute;
+  margin: 5px;
+  background: #000;
+  width: 50%;
+  height: -webkit-fill-available;
+  overflow: hidden;
+  top: 0;
+  right: 0;
+  transition: all linear 0.3s;
+  transform: scale(0);
+  cursor: pointer;
+  z-index: 10;
+}
+
+.tailor .approval .card .image:hover {
+  cursor: pointer;
+  transform: scale(0);
+}
+
+.tailor .approval .card .image:hover + .hovereffect {
+  transform: scale(1);
+}
+
+.tailor .approval .card .row {
+  margin: 0;
+  width: 100%;
+}
+
+.tailor .approval .card > .row:last-child {
+  justify-content: space-between;
+  padding: 10px 0 0;
+  border-top: 1px solid #ccc;
+}
+
+.tailor .approval .card .row p {
+  padding: 0;
+  margin: 0 0 5px;
+  width: initial;
+}
+
+.tailor .approval .card .row > p:first-child {
+  padding-right: 10px;
+}
+
+.tailor .approval .card .row p.add {
+  display: inline-block;
+  width: 60%;
+}
+
+.tailor .approval .card .row button {
+  font-size: 16px;
+  padding: 5px 7px;
+  width: 49%;
+  background: none;
+  transition: all ease 0.3s;
+}
+
+.tailor .approval .card .row .approval-btn {
+  border: 1px solid green;
+}
+
+.tailor .approval .card .row .approval-btn i.fas {
+  color: green;
+}
+
+.tailor .approval .card .row .approval-btn:hover {
+  color: #fff;
+  background: green;
+}
+
+.tailor .approval .card .row .approval-btn:hover i.fas {
+  color: #fff;
+}
+
+.tailor .approval .card .row .reject-btn {
+  border: 1px solid red;
+}
+
+.tailor .approval .card .row .reject-btn i.fas {
+  color: red;
+}
+
+.tailor .approval .card .row .reject-btn:hover {
+  color: #fff;
+  background: red;
+}
+
+.tailor .approval .card .row .reject-btn:hover i.fas {
+  color: #fff;
+}
+
+/* =================== */
+
+.tailor-details {
+  margin: 0 0 10px;
+}
+
+.tailor .list .box {
+  display: flex;
+  margin: 0 0 10px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  border: 1px solid #a6c8cc;
+  border-top: none;
+}
+
+.tailor .list .head {
+  border: 1px solid #005b7f;
+  margin: 0 0 10px;
+}
+
+.tailor .list .head p {
+  font-size: 16px;
+  padding: 7px;
+  margin: 0;
+  text-align: center;
+  border-right: 1px solid #005b7f;
+}
+
+.tailor .list .head p.id {
+  width: 15%;
+}
+
+.tailor .list .head p.tname {
+  width: 25%;
+}
+
+.tailor .list .head p.no {
+  width: 15%;
+}
+
+.tailor .list .head p.spec {
+  width: 20%;
+}
+
+.tailor .list .head p.add {
+  width: 25%;
+}
+
+/* .tailor .list .box p.timg {
+  width: 30%;
+} */
+
+.tailor .list .box .col-left {
+  width: 70%;
+}
+
+.tailor .list .box .col-right {
+  padding: 10px;
+  width: 30%;
+  border-left: 1px solid #a6c8cc;
+}
+.tailor .list .box .col-right .tailorimg {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  background: #ccc;
+}
+
+.tailor .list .inner-box1 {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  list-style-type: none;
+  border: 1px solid #a6c8cc;
+  border: 1px solid #a6c8cc;
+}
+
+.inner-box1::-webkit-details-marker {
+  display: none;
+}
+
+.tailor .list .inner-box1 p {
+  font-size: 16px;
+  font-weight: 500;
+  padding: 7px 12px;
+  margin: 0;
+  text-align: center;
+  border-right: 1px solid #a6c8cc;
+}
+
+.tailor .list .inner-box1 > p:last-child {
+  border: none;
+}
+
+.tailor .list .inner-box1 p.tid {
+  width: 15%;
+}
+
+.tailor .list .inner-box1 p.tname {
+  width: 25%;
+  text-align: left;
+}
+
+.tailor .list .inner-box1 p.tno {
+  width: 15%;
+}
+
+.tailor .list .inner-box1 p.tspec {
+  width: 20%;
+}
+
+.tailor .list .inner-box1 p.add {
+  width: 25%;
+  text-align: left;
+}
+
+.tailor .list .box .inner-box2 {
+  display: flex;
+  padding: 15px 10px;
+  flex-wrap: wrap;
+  flex-direction: row;
+  overflow: hidden;
+}
+
+.tailor .list .box .inner-box2 p {
+  font-size: 16px;
+  color: #0a0a0a;
+  padding: 0;
+  margin: 0 0 10px;
+}
+
+.tailor .list .box .inner-box2 > div {
+  padding: 5px;
+}
+
+/* .tailor .list .box .inner-box2 .col-sm-4::after {
+  position: absolute;
+  content: "";
+  top: -15%;
+  height: 500px;
+  padding: 0.5px;
+  background: #a6c8cc;
+  right: 8.5%;
+} */
+
+.tailor .list .box .inner-box2 .flex {
+  display: flex;
+  padding: 0;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
+.tailor .list .box .inner-box2 p.bank-details {
+  font-size: 18px;
+  font-weight: 400;
+  padding: 0;
+  margin: 0;
+  padding-right: 15px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.tailor .list .box .inner-box2 p.details {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0 0 8px;
+}
+
+.tailor .list .box .inner-box2 .pay-field {
+  font-size: 16px;
+  padding: 7px 12px;
+  margin: 0;
+  margin-right: 10px;
+  width: 50%;
+  outline: none;
+}
+
+.tailor .list .box .inner-box2 input::-webkit-outer-spin-button,
+.tailor .list .box .inner-box2 input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.tailor .list .box .inner-box2 input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.tailor .list .box .inner-box2 .pay-btn {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  background: #7e7e7e;
+  border: none;
+  letter-spacing: 1px;
+}
+
+.tailor .list .box .inner-box2 .pay-btn:hover {
+  color: #0a0a0a;
+  background: #ccc;
+}

@@ -8,7 +8,7 @@ import NavBar from "./Navbar/Navbar";
 import MyProfile from "./MyProfile/MyProfile";
 import Orders from "./Orders/Orders";
 import MyBin from "./MyBin/MyBin";
-import Saved from "./Saved/Saved";
+import Tailor from "./Tailor/Tailor";
 import UploadPatterns from "./UploadPatterns/UploadPatterns";
 import Settings from "./Settings/Settings";
 import IdleTimeoutModal from "../../UI/IdleTimeoutModal/IdleTimeoutModal";
@@ -148,8 +148,8 @@ const Home = (props) => {
                   <Route path={`${props.match.url}/orders`}>
                     <Orders {...props} />
                   </Route>
-                  <Route path={`${props.match.url}/saved`}>
-                    <Saved {...props} />
+                  <Route path={`${props.match.url}/tailor`}>
+                    <Tailor {...props} />
                   </Route>
                   <Route path={`${props.match.url}/createNewPattern`}>
                     <UploadPatterns {...props} />

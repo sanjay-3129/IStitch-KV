@@ -32,12 +32,13 @@ const OrderDetials = (props) => {
   //   } else {
   //   }
   // }, []);
+  console.log(".......>>>>", ctx.order);
 
   const goBackHandler = () => {
     props.history.goBack();
   };
 
-  let orderDetails;
+  let orderDetails = null;
   let orderBooked = (
     <>
       <div className={styles.userd}>
@@ -64,13 +65,11 @@ const OrderDetials = (props) => {
 
       <div className={styles.descrb}>
         {/* pri d */}
-        <h4 className={styles.title}>User Description</h4>
+        <h4 className={styles.title}>Order Description</h4>
         <p className={styles.para}>
           Description:
           <span style={{ display: "flex", textAlign: "justify" }}>
-            &emsp;&emsp; Lorem Ipsum is simply dummy text of the printing and
-            typesetting industry. Lorem Ipsum has been the industry's standard
-            dummy text ever
+            &emsp;&emsp; {ctx.order.description}
             {/* {ctx.order.alterationDetails.description} */}
           </span>
         </p>
@@ -78,44 +77,48 @@ const OrderDetials = (props) => {
 
       <div className={styles.col6}>
         {/* Measurement Details */}
-        <div className={styles.mesd}>
-          {/* pri d */}
-          <details>
-            <summary className={styles.summary}>
-              <h4 className={styles.title1}>Measurement Details</h4>
-            </summary>
-            <p className={styles.para}>
-              back neck:5 <br />
-              arm round:4
-              {/* {ctx.order.measurementDetails} */}
-            </p>
-          </details>
-        </div>
-        {/* Sample Measurement Cloth */}
-        <div className={styles.mescloth}>
-          {/* pri d */}
-          <details>
-            <summary className={styles.summary}>
-              <h4 className={styles.title1}>Sample Measurement Cloth</h4>
-            </summary>
-            <p className={styles.para}>
-              <div className="thumb1">
-                <img
-                  src="/images/frnsto.png"
-                  style={{ width: "100%" }}
-                  // class="hover-shadow cursor"
-                  alt="l"
-                />
-                {/* <p
-                className={styles.para}
-                style={{ textAlign: "center", textTransform: "uppercase" }}
-              >
-                patternName
-              </p> */}
+        {ctx.order.measurementProvident === true ? (
+          <div className={styles.mesd}>
+            <details>
+              <summary className={styles.summary}>
+                <h4 className={styles.title1}>Measurement Details</h4>
+              </summary>
+              <div className={styles.para}>
+                {Object.entries(ctx.order.measurementDetails).map((meas) => {
+                  return (
+                    <p>
+                      {meas[0]} - {meas[1]}
+                    </p>
+                  );
+                })}
+
+                {/* {ctx.order.measurementDetails} */}
               </div>
-            </p>
-          </details>
-        </div>
+            </details>
+          </div>
+        ) : (
+          <div className={styles.mescloth}>
+            {/* pri d */}
+            <details>
+              <summary className={styles.summary}>
+                <h4 className={styles.title1}>Sample Measurement Cloth</h4>
+              </summary>
+              <p className={styles.para}>
+                <div className="thumb1">
+                  <img
+                    src={ctx.order.uploadMeasurementCloth}
+                    style={{ width: "100%" }}
+                    // class="hover-shadow cursor"
+                    alt="l"
+                  />
+                </div>
+              </p>
+            </details>
+          </div>
+        )}
+
+        {/* Sample Measurement Cloth */}
+
         {/* Stitching Cloth */}
         <div className={styles.scloth}>
           {/* pri d */}
@@ -126,7 +129,7 @@ const OrderDetials = (props) => {
             <p className={styles.para}>
               <div className="thumb1">
                 <img
-                  src="/images/frnsto.png"
+                  src={ctx.order.uploadStitchCloth}
                   style={{ width: "100%" }}
                   // class="hover-shadow cursor"
                   alt="l"
@@ -145,44 +148,64 @@ const OrderDetials = (props) => {
             <summary className={styles.summary}>
               <h4 className={styles.title1}>Others</h4>
             </summary>
-            <p className={styles.para}>&emsp;&emsp;half inch extra</p>
+            <div className={styles.para}>
+              {/* console.log("=====",Object.entries(others)); */}
+              &emsp;&emsp;
+              {Object.entries(ctx.order.others).map((other) => {
+                return (
+                  <p>
+                    {other[0]} - {other[1]}
+                  </p>
+                );
+              })}
+            </div>
           </details>
         </div>
         {/* Main Pattern Images */}
-        <div className={styles.mpi}>
-          <details>
-            <summary className={styles.summary}>
-              <h4 className={styles.title1}>Main-Pattern Images</h4>
-            </summary>
-            <ImageCarousel />
-          </details>
-        </div>
+        {ctx.order.mainPatternProvider === true ? (
+          <div className={styles.mpi}>
+            <details>
+              <summary className={styles.summary}>
+                <h4 className={styles.title1}>Main-Pattern Images</h4>
+              </summary>
+              <ImageCarousel images={ctx.order.mainPatterns} />
+            </details>
+          </div>
+        ) : (
+          <div className={styles.umi}>
+            <details>
+              <summary className={styles.summary}>
+                <h4 className={styles.title1}>
+                  User Upload MainPattern Images
+                </h4>
+              </summary>
+              <ImageCarousel images={ctx.order.uploadmainPatterns} />
+            </details>
+          </div>
+        )}
+
         {/* Addon Pattern Images */}
-        <div className={styles.api}>
-          <details>
-            <summary className={styles.summary}>
-              <h4 className={styles.title1}>Add-On Images</h4>
-            </summary>
-            <ImageCarousel />
-          </details>
-        </div>
+        {ctx.order.addonPatternProvider === true ? (
+          <div className={styles.api}>
+            <details>
+              <summary className={styles.summary}>
+                <h4 className={styles.title1}>Add-On Images</h4>
+              </summary>
+              <ImageCarousel images={ctx.order.addonPatterns} />
+            </details>
+          </div>
+        ) : (
+          <div className={styles.uai}>
+            <details>
+              <summary className={styles.summary}>
+                <h4 className={styles.title1}>User Upload Add-On </h4>
+              </summary>
+              <ImageCarousel images={ctx.order.uploadaddonPatterns} />
+            </details>
+          </div>
+        )}
+
         {/* User Upload Main Pattern Images */}
-        <div className={styles.umi}>
-          <details>
-            <summary className={styles.summary}>
-              <h4 className={styles.title1}>User Upload MainPattern Images</h4>
-            </summary>
-            <ImageCarousel />
-          </details>
-        </div>
-        <div className={styles.uai}>
-          <details>
-            <summary className={styles.summary}>
-              <h4 className={styles.title1}>User Upload Add-On </h4>
-            </summary>
-            <ImageCarousel />
-          </details>
-        </div>
       </div>
     </>
   );
@@ -191,10 +214,7 @@ const OrderDetials = (props) => {
       <div className={styles.priced}>
         {/* pri d */}
         <h4 className={styles.title}>Order Price</h4>
-        <p className={styles.para}>
-          Estimated:
-          <span style={{ marginLeft: "5px" }}>{ctx.order.esteemDate}</span>
-        </p>
+
         <p className={styles.para}>
           Due Date:
           <span style={{ marginLeft: "5px" }}>{ctx.order.dueDate}</span>
@@ -203,26 +223,34 @@ const OrderDetials = (props) => {
           Price:
           <span style={{ marginLeft: "5px" }}>{ctx.order.orderPrice}</span>
         </p>
+        <p className={styles.para}>
+          TailorPrice:
+          <span style={{ marginLeft: "5px" }}>{ctx.order.tailorCharge}</span>
+        </p>
       </div>
     </>
   );
-  let orderPicked = (
+  let orderAssigned = (
     <>
       <div className={styles.tailord}>
         <h4 className={styles.title}>Tailor Details</h4>
         {/* pri d */}
         <p className={styles.para}>
           TailorName:
-          <span style={{ marginLeft: "5px" }}>Jonny</span>
+          <span style={{ marginLeft: "5px" }}>
+            {ctx.order.tailorDetails.tailorName}
+          </span>
         </p>
         <p className={styles.para}>
           TailorPhNo:
-          <span style={{ marginLeft: "5px" }}>1234567890</span>
+          <span style={{ marginLeft: "5px" }}>
+            {ctx.order.tailorDetails.tailorPhno}
+          </span>
         </p>
         <p className={styles.para} style={{ display: "flex" }}>
           TailorAddress:
           <span className={styles.span}>
-            No: x/y, zth street, English Nagar, Alphabet, Pincode- 111 222
+            {ctx.order.tailorDetails.tailorAddress}
           </span>
         </p>
       </div>
@@ -242,6 +270,7 @@ const OrderDetials = (props) => {
     </>
   );
   let orderProcessing = <></>;
+  let orderFinished = <></>;
   let orderCompleted = <></>;
   let orderDelivered;
   let orderAlterartion = (
@@ -265,15 +294,15 @@ const OrderDetials = (props) => {
     orderDetails = [orderBooked];
   } else if (ctx.order.orderStatus === "Verified") {
     orderDetails = [orderBooked, orderVerified];
-  } else if (ctx.order.orderStatus === "Picked") {
-    orderDetails = [orderBooked, orderVerified, orderPicked];
+  } else if (ctx.order.orderStatus === "Assigned") {
+    orderDetails = [orderBooked, orderVerified, orderAssigned];
   } else if (ctx.order.orderStatus === "Processing") {
-    orderDetails = [orderBooked, orderVerified, orderPicked, orderProcessing];
+    orderDetails = [orderBooked, orderVerified, orderAssigned, orderProcessing];
   } else if (ctx.order.orderStatus === "Completed") {
     orderDetails = [
       orderBooked,
       orderVerified,
-      orderPicked,
+      orderAssigned,
       orderProcessing,
       orderCompleted
     ];
@@ -281,7 +310,7 @@ const OrderDetials = (props) => {
     orderDetails = [
       orderBooked,
       orderVerified,
-      orderPicked,
+      orderAssigned,
       orderProcessing,
       orderCompleted,
       orderDelivered
@@ -290,7 +319,7 @@ const OrderDetials = (props) => {
     orderDetails = [
       orderBooked,
       orderVerified,
-      orderPicked,
+      orderAssigned,
       orderProcessing,
       orderCompleted,
       orderDelivered,
@@ -310,22 +339,6 @@ const OrderDetials = (props) => {
         <div className={styles.row}>
           {/* <div className={styles.col61}> */}
           {orderDetails}
-          {/* userd-booked */}
-          {/* priced-verified */}
-          {/* descrb-booked */}
-
-          {/* Measurement */}
-          {/* Custom Measurement */}
-
-          {/* mescloth-booked */}
-          {/* scloth-booked */}
-          {/* Stitching cloth  */}
-
-          {/* tailord-Processing */}
-          {/* taildet */}
-          {/* deld-delivered */}
-          {/* altd-Alterartion */}
-          {/* </div> */}
         </div>
       </div>
     </>

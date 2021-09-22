@@ -1,0 +1,86 @@
+.rflex {
+  display: flex;
+  margin: 0 0 10px;
+  /* flex-wrap: wrap; */
+  justify-content: center;
+}
+
+button {
+  font-size: 18px;
+  padding: 5px 10px;
+  color: #000;
+  border: 5px solid #efefef;
+  width: 150px;
+  text-align: center;
+}
+
+.active {
+  color: #fff;
+  background-color: #005b7f;
+  border: 5px solid #efefef;
+}
+/* Order View */
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0 0 5px;
+  border: 1px solid #a6c8cc;
+  border-radius: 5px;
+  cursor: default;
+}
+
+.summary p {
+  font-size: 18px;
+  display: inline-block;
+  padding: 10px 5px;
+  margin: 0;
+  border-right: 1px solid #a6c8cc;
+}
+
+.summary p.ono {
+  width: 6%;
+  text-align: center;
+}
+
+.summary > p:last-child {
+  border-right: none;
+  cursor: pointer;
+}
+
+.summary .anchor {
+  font-size: 18px;
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+  width: 5%;
+  text-align: center;
+}
+
+.summary .anchor i.far {
+  font-size: 30px;
+  color: #005b7f;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.completed p.cat {
+  width: 19%;
+}
+
+.completed p.cname {
+  width: 20%;
+}
+
+.completed p.cno {
+  width: 15%;
+}
+
+.completed p.tname {
+  width: 20%;
+}
+
+.completed p.tno {
+  width: 15%;
+}

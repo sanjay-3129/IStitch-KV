@@ -1,45 +1,28 @@
 import React, { useContext } from "react";
-import "./orderView.css";
+import "./preorder.css";
 import { Link, Switch, Route } from "react-router-dom";
 import OrdersContext from "../../Contexts/OrderContext";
 const OrderView = (props) => {
   const ctx = useContext(OrdersContext);
+  console.log("////////////??????????", ctx.order);
 
   const orderUpdate = (order) => {
     console.log("order", order);
     ctx.setOrder(order);
     props.history.push(`${props.match.url}/orders/preorders/${order.orderId}`);
   };
-
-  // let orderView;
-  // let orderBooked = <></>;
-  // let orderVerified = <></>;
-  // let orderPicked = <></>;
-
-  // if (ctx.order.orderStatus === "Booked") {
-  //   orderView = [orderBooked];
-  // } else if (ctx.order.orderStatus === "Verified") {
-  //   orderView = [orderBooked, orderVerified];
-  // } else if (ctx.order.orderStatus === "Picked") {
-  //   orderView = [orderBooked, orderVerified, orderPicked];
-  // }
-
-  return (
+  console.log("////////////??????????", props.item);
+  let orderView;
+  let orderBooked = (
     <>
-      <div className="summary">
-        <p className="ono">{props.item.orderNo}</p>
+      <div className="summary booked">
+        {/* {props.item.orderNo} */}
+        <p className="ono">0001</p>
+        <p className="cat">{props.item.categoryName}</p>
         <p className="cname">{props.item.userDetails.userName}</p>
         <p className="cno">{props.item.userDetails.userPhno}</p>
-        <p className="cat">{props.item.categoryName}</p>
-        <p className="date">17-08-2021</p>
-        <p className="select">
-          {props.item.orderStatus}
-          {/* <select>
-            <option>No Action</option>
-            <option>Verified</option>
-            <option>No Response</option>
-          </select> */}
-        </p>
+
+        <p className="date">{props.item.orderBookedDate}</p>
         <p className="accept" onClick={() => props.addQuote(props.item)}>
           <i class="fas fa-check"></i>
         </p>
@@ -52,6 +35,74 @@ const OrderView = (props) => {
       </div>
     </>
   );
+  let orderVerified = (
+    <>
+      <div className="summary verified">
+        {/* {props.item.orderNo} */}
+        <p className="ono">0001</p>
+        <p className="cat">{props.item.categoryName}</p>
+        <p className="date">{props.item.orderBookedDate}</p>
+        <p className="ddate">{props.item.dueDate}</p>
+
+        <p className="price">Rs.{props.item.orderPrice}</p>
+
+        <div onClick={() => orderUpdate(props.item)} className="anchor">
+          <i class="far fa-list-alt"></i>
+        </div>
+      </div>
+    </>
+  );
+
+  let orderAccepted = (
+    <>
+      <div className="summary accepted">
+        {/* {props.item.orderNo} */}
+        <p className="ono">0001</p>
+        <p className="cat">{props.item.categoryName}</p>
+        <p className="date">{props.item.orderBookedDate}</p>
+        <p className="ddate">{props.item.duedate}</p>
+
+        <p className="price">Rs.{props.item.orderPrice}</p>
+        {/* tailorassign */}
+        <p className="assign" onClick={() => props.tailorAssign(props.item)}>
+          <i class="fas fa-user-plus"></i>
+        </p>
+
+        <div onClick={() => orderUpdate(props.item)} className="anchor">
+          <i class="far fa-list-alt"></i>
+        </div>
+      </div>
+    </>
+  );
+  let orderAssigned = (
+    <>
+      <div className="summary assigned">
+        {/* {props.item.orderNo} */}
+        <p className="ono">0001</p>
+        <p className="cat">{props.item.categoryName}</p>
+        <p className="tname">{props.item.tailorDetails.tailorName}</p>
+        <p className="tno">{props.item.tailorDetails.tailorPhno}</p>
+
+        <p className="ddate">{props.item.duedate}</p>
+
+        <div onClick={() => orderUpdate(props.item)} className="anchor">
+          <i class="far fa-list-alt"></i>
+        </div>
+      </div>
+    </>
+  );
+
+  if (props.item.orderStatus === "Booked") {
+    orderView = [orderBooked];
+  } else if (props.item.orderStatus === "Verified") {
+    orderView = [orderVerified];
+  } else if (props.item.orderStatus === "Accepted") {
+    orderView = [orderAccepted];
+  } else if (props.item.orderStatus === "Assigned") {
+    orderView = [orderAssigned];
+  }
+
+  return <>{orderView}</>;
 };
 
 export default OrderView;

@@ -88,7 +88,11 @@ const MyProfile = (props) => {
   return (
     <div className="ordercontent">
       <div className="rflex">
-        <button type="button" onClick={() => completedOrderHandler()}>
+        <button
+          className="selected"
+          type="button"
+          onClick={() => completedOrderHandler()}
+        >
           Completed
         </button>
         {/* Completed Orders */}

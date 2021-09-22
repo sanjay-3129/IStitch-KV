@@ -1,23 +1,35 @@
 import React, { useRef, useState, useEffect } from "react";
+import ReactDOM from "react-dom";
 import OrderView from "../Preorders/OrderView";
 import firebase from "../../../../../Services/firebase/firebase";
 import Spinner from "../../../../UI/Spinner/Spinner";
 import VerifiedModal from "../../../../UI/AddNewModal/VerifyModal";
+import TailorAssign from "../../../../UI/AddNewModal/TailorAssign";
 import $ from "jquery";
-
+import LoadingBar from "react-top-loading-bar";
 import "./preorder.css";
 
 const db = firebase.firestore();
 let list = null;
 const Preorders = (props) => {
+  const ref = useRef(null);
   const [preorderList, setPreorderList] = useState(null);
   const [newModal, setNewModal] = useState(false);
+  const [assignModal, setAssignModal] = useState(false);
   const [addNewItem, setAddNewItem] = useState(null);
   const [newData, setNewData] = useState({
     orderPrice: 0,
     tailorCharge: 0,
     dueDate: ""
   });
+  // const [newTailor, setNewTailor] = useState({
+  //   tailorId: "",
+  //   tailorName: "",
+  //   tailorPhno: "",
+  //   tailorAddress: ""
+  // });
+
+  const [tailorDetails, setTailorDetails] = useState(null);
 
   $("button").on("click", function () {
     $("button").removeClass("selected");
@@ -84,7 +96,7 @@ const Preorders = (props) => {
     console.log("acceptedorder");
     let list = [];
     db.collection("orders")
-      .where("orderStatus", "==", "Accpeted")
+      .where("orderStatus", "==", "Accepted")
       .get()
       .then((data) => {
         console.log("data", data);
@@ -100,7 +112,7 @@ const Preorders = (props) => {
     console.log("pickednvf");
     let list = [];
     db.collection("orders")
-      .where("orderStatus", "==", "Picked")
+      .where("orderStatus", "==", "Assigned")
       .get()
       .then((data) => {
         console.log("data", data);
@@ -116,16 +128,32 @@ const Preorders = (props) => {
   const onChangeHandler = (event) => {
     let value = null;
     value = event.target.value;
+    let name = event.target.name;
+    if (name === "tailorCharge" || name === "orderPrice") {
+      value = parseInt(value);
+    }
     setNewData((prevState) => {
       return {
         ...prevState,
-        [event.target.name]: value
+        [name]: value
       };
     });
   };
+  // const onChangeTailorHandler = (event) => {
+  //   let value = null;
+  //   value = event.target.value;
+  //   let name = event.target.name;
+  //   setNewTailor((prevState) => {
+  //     return {
+  //       ...prevState,
+  //       [name]: value
+  //     };
+  //   });
+  // };
 
   const draftQuotationHandler = (newData) => {
-    console.log(newModal);
+    console.log("qqqqqqqqqq", newData);
+    console.log("wwwwwwwwwww", newModal);
 
     // setNewModal(null);
     db.collection("orders")
@@ -138,8 +166,70 @@ const Preorders = (props) => {
       })
       .then(() => {
         setNewModal(null);
+
+        let data = [...preorderList];
+
+        let filterdata = data.filter((d) => d.orderId !== newModal.orderId);
+        setPreorderList(filterdata);
       });
   };
+
+  const tailorAssign = () => {
+    console.log("tailorassign", assignModal);
+
+    let list = [];
+    db.collection("TailorDetails")
+      .get()
+      .then((data) => {
+        console.log("data", data);
+        data.forEach((doc) => {
+          list.push(doc.data());
+        });
+        setTailorDetails(list);
+        console.log("tailorlist", list);
+      })
+      .catch((e) => console.log("sdasd", e));
+  };
+
+  const singletailorAssign = (newTailor) => {
+    console.log("qqqqqqqqqq", assignModal);
+    console.log("wwwwwwwwwww", newTailor);
+    db.collection("orders")
+      .doc(assignModal.orderId.trim())
+      .update({
+        tailorDetails: {
+          tailorId: newTailor.userId,
+          tailorName: newTailor.name,
+          tailorPhno: newTailor.phno,
+          tailorAddress: newTailor.address
+        },
+        orderStatus: "Assigned"
+      })
+      .then(() => {
+        setAssignModal(false);
+        console.log("single tailor assigned success");
+
+        //filter
+      })
+      .catch((e) => console.log(e));
+  };
+  // setAssignModal();
+  // setAssignModal(null);
+  // db.collection("orders").doc(assignModal.orderId.trim()).update({
+  //   tailorId: newTailor.tailorId,
+  //   tailorName: newTailor.tailorName,
+  //   tailorPhno: newTailor.tailorPhno,
+  //   tailorAddress: newTailor.tailorAddress,
+
+  //   orderStatus: "Assigned"
+  // });
+
+  let BookedCount = 0;
+  console.log("counttt");
+
+  // if (preorderList.orderStatus == "Booked") {
+  //   BookedCount = BookedCount + 1;
+  // }
 
   let preorders = null;
   if (preorderList === null) {
@@ -153,6 +243,11 @@ const Preorders = (props) => {
           item={preorder}
           {...props}
           addQuote={(item) => setNewModal(item)}
+          tailorAssign={(item) => {
+            console.log("ttttt");
+            setAssignModal(item);
+          }}
+          singletailor={singletailorAssign}
           // processorderList={processorderList}
         />
       );
@@ -161,21 +256,35 @@ const Preorders = (props) => {
 
   return (
     <div className="ordercontent">
+      {ReactDOM.createPortal(
+        <LoadingBar color="#FF0000" ref={ref} />,
+        document.getElementById("linear-loader")
+      )}
       <div className="rflex">
-        <button type="button" onClick={() => newOrderHandler()}>
-          New-orders
+        <button
+          className="selected"
+          type="button"
+          onClick={() => newOrderHandler()}
+        >
+          Booked<span className="new-count">{BookedCount}</span>
         </button>
         {/* booked */}
         <button type="button" onClick={() => verifiedOrderHandler()}>
-          Verified orders
+          Verified
         </button>
         {/* verifed,paid,assigned */}
-        <button type="button" onClick={() => acceptedOrderHandler()}>
+        <button
+          type="button"
+          onClick={() => {
+            acceptedOrderHandler();
+            tailorAssign();
+          }}
+        >
           Accepted
         </button>
         {/* Accepted by Client */}
         <button type="button" onClick={() => pickedOrderHandler()}>
-          Picked Orders
+          Assigned
         </button>
         {/* intializing pick,oder picked,delivered to tail */}
       </div>
@@ -189,6 +298,17 @@ const Preorders = (props) => {
           closeModal={() => setNewModal(false)}
           onChange={onChangeHandler}
           saveAsDraft={draftQuotationHandler}
+        />
+      )}
+      {assignModal && (
+        <TailorAssign
+          title={assignModal}
+          // newData={newTailor}
+          closeModal={() => setAssignModal(false)}
+          // onChange={onChangeTailorHandler}
+          tailorAssign={tailorAssign}
+          singletailor={singletailorAssign}
+          tailors={tailorDetails}
         />
       )}
     </div>

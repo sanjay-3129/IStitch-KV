@@ -1,0 +1,127 @@
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.modal {
+  position: fixed;
+  margin: auto;
+  top: 20vh;
+  left: 0;
+  right: 0;
+  width: 60%;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.scroll {
+  max-height: 350px;
+  padding: 15px;
+  margin: 0;
+  overflow-y: auto;
+}
+
+.box {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  border: 1px solid #a6c8cc;
+  border-bottom: 0px;
+}
+
+.title {
+  font-size: 32px;
+  padding: 5px 15px;
+  margin: 0;
+  text-align: left;
+}
+
+.box:last-child {
+  border-bottom: 1px solid #a6c8cc;
+}
+
+.tid {
+  font-size: 16px;
+  font-weight: 500;
+  color: #0a0a0a;
+  width: 5%;
+  padding: 5px 7px;
+  margin: 0;
+  text-align: center;
+  border-right: 1px solid #a6c8cc;
+}
+
+.tname {
+  font-size: 16px;
+  font-weight: 500;
+  color: #0a0a0a;
+  width: 25%;
+  padding: 5px 7px;
+  margin: 0;
+  text-align: left;
+  letter-spacing: 1px;
+  border-right: 1px solid #a6c8cc;
+}
+
+.tno {
+  font-size: 16px;
+  color: #0a0a0a;
+  width: 20%;
+  padding: 5px 7px;
+  margin: 0;
+  text-align: center;
+  border-right: 1px solid #a6c8cc;
+}
+
+.tadd {
+  font-size: 16px;
+  color: #0a0a0a;
+  width: 25%;
+  padding: 5px 7px;
+  margin: 0;
+  text-align: left;
+  border-right: 1px solid #a6c8cc;
+}
+
+.oo {
+  font-size: 16px;
+  font-weight: 500;
+  color: #0a0a0a;
+  width: 5%;
+  padding: 5px 7px;
+  margin: 0;
+  text-align: center;
+  border-right: 1px solid #a6c8cc;
+}
+
+.assign {
+  font-size: 16px;
+  width: 20%;
+  padding: 5px 7px;
+  margin: 0;
+  text-align: center;
+  border-right: 0px solid #a6c8cc;
+}
+
+.btn {
+  font-size: 16px;
+  font-weight: 500;
+  width: 100%;
+  color: #000;
+  background: #ccc;
+  padding: 7px 12px;
+  margin: 0;
+  border: none;
+  outline: none;
+  transition: all ease 0.3s;
+}
+
+.btn:hover {
+  color: #fff;
+  background: #005b7f;
+}
