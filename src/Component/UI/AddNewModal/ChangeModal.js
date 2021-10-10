@@ -50,6 +50,19 @@ const ModalOverlay = (props) => {
         />
       </>
     );
+  } else if (props.title === "price") {
+    change = (
+      <>
+        <label htmlFor="price">Enter New {props.title}</label>
+        <input
+          type="number"
+          id="price"
+          name="price"
+          onChange={props.onChange}
+          value={props.newPrice}
+        />
+      </>
+    );
   } else {
     change = (
       <>
@@ -77,7 +90,11 @@ const ModalOverlay = (props) => {
         <form name="form">
           <div>
             {change}
-            <button type="button" className="draft" onClick={() => props.submit()}>
+            <button
+              type="button"
+              className="draft"
+              onClick={() => props.submit()}
+            >
               Change
             </button>
             <button
@@ -108,6 +125,7 @@ const ChangeModal = (props) => {
           onChange={props.onChange}
           change={() => props.change(props.title)}
           newName={props.newName}
+          // newPrice={props.newPrice}
           submit={props.submit}
           // category={props.category}
         />,

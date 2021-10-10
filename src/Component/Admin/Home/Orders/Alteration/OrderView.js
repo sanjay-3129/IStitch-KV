@@ -16,7 +16,7 @@ const OrderView = (props) => {
     <>
       <div className="summary booked">
         {/* {props.item.orderNo} */}
-        <p className="ono">0001</p>
+        <p className="ono">{props.item.orderNumber}</p>
         <p className="cat">{props.item.categoryName}</p>
         <p className="cname">{props.item.userDetails.userName}</p>
         <p className="cno">{props.item.userDetails.userPhno}</p>
@@ -37,7 +37,7 @@ const OrderView = (props) => {
     <>
       <div className="summary verified">
         {/* {props.item.orderNo} */}
-        <p className="ono">0001</p>
+        <p className="ono">{props.item.orderNumber}</p>
         <p className="cat">{props.item.categoryName}</p>
         <p className="date">{props.item.orderBookedDate}</p>
         <p className="ddate">{props.item.dueDate}</p>
@@ -55,7 +55,7 @@ const OrderView = (props) => {
     <>
       <div className="summary accepted">
         {/* {props.item.orderNo} */}
-        <p className="ono">0001</p>
+        <p className="ono">{props.item.orderNumber}</p>
         <p className="cat">{props.item.categoryName}</p>
         <p className="date">{props.item.orderBookedDate}</p>
         <p className="ddate">{props.item.duedate}</p>
@@ -76,7 +76,7 @@ const OrderView = (props) => {
     <>
       <div className="summary assigned">
         {/* {props.item.orderNo} */}
-        <p className="ono">0001</p>
+        <p className="ono">{props.item.orderNumber}</p>
         <p className="cat">{props.item.categoryName}</p>
         <p className="tname">{props.item.tailorDetails.tailorName}</p>
         <p className="tno">{props.item.tailorDetails.tailorPhno}</p>
@@ -91,7 +91,7 @@ const OrderView = (props) => {
     <>
       <div className="summary received">
         {/* {props.item.orderNo} */}
-        <p className="ono">0001</p>
+        <p className="ono">{props.item.orderNumber}</p>
         <p className="cat">{props.item.categoryName}</p>
         <p className="tname">{props.item.tailorDetails.tailorName}</p>
         <p className="tno">{props.item.tailorDetails.tailorPhno}</p>
@@ -109,7 +109,7 @@ const OrderView = (props) => {
     <>
       <div className="summary repick">
         {/* {props.item.orderNo} */}
-        <p className="ono">0001</p>
+        <p className="ono">{props.item.orderNumber}</p>
         <p className="cat">{props.item.categoryName}</p>
         <p className="tname">{props.item.tailorDetails.tailorName}</p>
         <p className="tno">{props.item.tailorDetails.tailorPhno}</p>
@@ -131,7 +131,7 @@ const OrderView = (props) => {
     <>
       <div className="summary finished">
         {/* {props.item.orderNo} */}
-        <p className="ono">0001</p>
+        <p className="ono">{props.item.orderNumber}</p>
         <p className="cat">{props.item.categoryName}</p>
         <p className="tname">{props.item.tailorDetails.tailorName}</p>
         <p className="tno">{props.item.tailorDetails.tailorPhno}</p>
@@ -156,7 +156,7 @@ const OrderView = (props) => {
     <>
       <div className="summary completed">
         {/* {props.item.orderNo} */}
-        <p className="ono">0001</p>
+        <p className="ono">{props.item.orderNumber}</p>
         <p className="cat">{props.item.categoryName}</p>
 
         <p className="cname">{props.item.userDetails.userName}</p>

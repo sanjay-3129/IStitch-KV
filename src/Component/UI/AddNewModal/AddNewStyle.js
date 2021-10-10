@@ -87,6 +87,7 @@ const ModalOverlay = (props) => {
                     name="mcategory"
                     class="form-control"
                     list="datalistOptions1"
+                    autocomplete="off"
                     id="exampleDataList1"
                     placeholder="Type to search..."
                     // value={props.newData.mainCategoryId}

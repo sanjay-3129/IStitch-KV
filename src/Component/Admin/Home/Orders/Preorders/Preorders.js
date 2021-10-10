@@ -22,12 +22,6 @@ const Preorders = (props) => {
     tailorCharge: 0,
     dueDate: ""
   });
-  // const [newTailor, setNewTailor] = useState({
-  //   tailorId: "",
-  //   tailorName: "",
-  //   tailorPhno: "",
-  //   tailorAddress: ""
-  // });
 
   const [tailorDetails, setTailorDetails] = useState(null);
 
@@ -51,6 +45,7 @@ const Preorders = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
+
         setPreorderList(list);
         console.log("list", list);
       });
@@ -68,6 +63,8 @@ const Preorders = (props) => {
       .get()
       .then((data) => {
         console.log("data", data);
+        console.log("sdasfsdf", data.size);
+
         data.forEach((doc) => {
           list.push(doc.data());
         });
@@ -178,7 +175,8 @@ const Preorders = (props) => {
     console.log("tailorassign", assignModal);
 
     let list = [];
-    db.collection("TailorDetails")
+    db.collection("TailorsDetails")
+      .where("tailorStatus", "==", "Verified")
       .get()
       .then((data) => {
         console.log("data", data);
@@ -224,9 +222,6 @@ const Preorders = (props) => {
   //   orderStatus: "Assigned"
   // });
 
-  let BookedCount = 0;
-  console.log("counttt");
-
   // if (preorderList.orderStatus == "Booked") {
   //   BookedCount = BookedCount + 1;
   // }
@@ -237,6 +232,9 @@ const Preorders = (props) => {
   } else if (preorderList === "empty") {
     preorders = <h1>No Processing Orders</h1>;
   } else {
+    // if(orderStatus==="Booked"){
+
+    // }
     preorders = preorderList.map((preorder) => {
       return (
         <OrderView
@@ -266,7 +264,10 @@ const Preorders = (props) => {
           type="button"
           onClick={() => newOrderHandler()}
         >
-          Booked<span className="new-count">{BookedCount}</span>
+          Booked
+          <span className="new-count">
+            {preorderList !== null && preorderList.length}
+          </span>
         </button>
         {/* booked */}
         <button type="button" onClick={() => verifiedOrderHandler()}>
@@ -289,6 +290,7 @@ const Preorders = (props) => {
         {/* intializing pick,oder picked,delivered to tail */}
       </div>
       <div id="content" className="content">
+        {/* columns name */}
         {preorders}
       </div>
       {newModal && (

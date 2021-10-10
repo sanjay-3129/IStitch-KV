@@ -84,7 +84,7 @@ const SubCategory = (props) => {
     // console.log("Subcategory.js", genderId);
 
     if (genderId !== undefined) {
-      console.log("insidideif", type, categoryId);
+      console.log("insidideif", type, genderId, categoryId);
       // get only categories specific to gender
       db.collection("gender")
         .doc(genderId)
@@ -141,16 +141,18 @@ const SubCategory = (props) => {
   }, []);
 
   const viewHandler = (subcategoryId, subcategoryName) => {
-    console.log("---->", subcategoryId, subcategoryName);
+    console.log("---->", subcategoryId, subcategoryName, subcategory);
     if (type === "mainProduct") {
       console.log("viewing styles", props.location.search);
+      // type to give below?
       props.history.push(
         `${props.match.url}/createNewPattern/styles?genderId=${genderId}&genderName=${genderName}&categoryId=${categoryId}&categoryName=${categoryName}&subcategoryId=${subcategoryId}&subcategoryName=${subcategoryName}`
       );
     } else {
+      console.log("inside addons viewhandler---->", subcategory);
       console.log("viewing patterns", categoryId, props.location.search);
       props.history.push(
-        `${props.match.url}/createNewPattern/patterns?type=${type}&genderId=${genderId}&genderName=${genderName}&genderImg=${genderImg}&categoryId=${categoryId}&categoryName=${categoryName}&categoryImg=${categoryImg}&subcategoryId=${subcategoryId}&subcategoryName=${subcategoryName}`
+        `${props.match.url}/createNewPattern/patterns?type=${type}&genderId=${genderId}&genderName=${genderName}&categoryId=${categoryId}&categoryName=${categoryName}&subcategoryId=${subcategoryId}&subcategoryName=${subcategoryName}`
       );
     }
   };
@@ -239,7 +241,7 @@ const SubCategory = (props) => {
     let subCategoryTimestamp = +new Date().getTime() + "-" + newData.img.name;
     // casual shirt
     // https://firebasestorage.googleapis.com/v0/b/istitch-admin.appspot.com/o/1623937713452.jpg?alt=media&token=14291831-385d-4bdb-ab44-297aa0883fa9
-    let bucketName = "Images";
+    let bucketName = "subcategory";
     let img = newImage;
     let storageRef = firebase.storage().ref();
     let imgRef = storageRef.child(`${bucketName}/${subCategoryTimestamp}`);
@@ -346,7 +348,7 @@ const SubCategory = (props) => {
       .doc(categoryId)
       .collection("subcategory")
       .doc(subcategoryId);
-    let bucketName = "Images";
+    let bucketName = "subcategory";
     let storageRef = firebase.storage().ref();
     console.log("draft handler in gender", newData);
     // let categoryTimestamp = null; // prevgender - category - subcategory;
@@ -420,12 +422,12 @@ const SubCategory = (props) => {
     }
   };
 
-  const getSubcategoryList = (genderName, categoryName) => {
+  const getSubcategoryList = (genName, catName) => {
     let gender = genderList.find((gen) => {
-      return genderName === gen.genderName;
+      return genName === gen.genderName;
     });
     let category = categoryList.find((cat) => {
-      return categoryName === cat.categoryName;
+      return catName === cat.categoryName;
     });
     db.collection("gender")
       .doc(gender.genderId)
@@ -444,6 +446,13 @@ const SubCategory = (props) => {
           sub.forEach((subDoc) => {
             list.push(subDoc.data());
           });
+          // this will make the independant flow work
+          genderId = gender.genderId;
+          genderName = gender.genderName;
+          genderImg = gender.genderImg;
+          categoryId = category.categoryId;
+          categoryName = category.categoryName;
+          categoryImg = category.categoryImg;
           setSubCategoryList(list);
           setSubcategory(list[0]);
         } else {
@@ -603,7 +612,7 @@ const SubCategory = (props) => {
     // console.log(newData);
     ref.current.continuousStart();
     let styleId = generateId("styles");
-    let bucketName = "Images";
+    let bucketName = "styles";
     let storageRef = firebase.storage().ref();
     let genderRef = db.collection("gender").doc(genderId);
     let categoryRef = db
@@ -812,7 +821,7 @@ const SubCategory = (props) => {
     console.log("00000000", newData);
     ref.current.continuousStart();
     let patternId = generateId("patterns");
-    let bucketName = "Images";
+    let bucketName = "patterns";
     let storageRef = firebase.storage().ref();
     // let genderRef = db.collection("gender").doc(genderId);
     let patternRef = db
@@ -879,6 +888,7 @@ const SubCategory = (props) => {
           id="exampleDataList"
           placeholder="Type to search..."
           onChange={getCategoryList}
+          autocomplete="off"
         />
         <datalist id="datalistOptions">
           {genderList.map((gen) => (
@@ -894,6 +904,7 @@ const SubCategory = (props) => {
           list="datalistOptions1"
           id="exampleDataList1"
           placeholder="Type to search..."
+          autocomplete="off"
         />
         <datalist id="datalistOptions1">
           {categoryList.map((cat) => (

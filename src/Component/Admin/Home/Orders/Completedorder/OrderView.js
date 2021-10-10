@@ -14,7 +14,7 @@ const OrderView = (props) => {
     <>
       <div className="summary completed">
         {/* {props.item.orderNo} */}
-        <p className="ono">0001</p>
+        <p className="ono">{props.item.orderNumber}</p>
         <p className="cat">{props.item.categoryName}</p>
 
         <p className="cname">{props.item.userDetails.userName}</p>

@@ -35,7 +35,7 @@ const NavBar = (props) => {
   const [isOverlay, setIsOverlay] = useState(false);
   // console.log(props.userDetails.name, "navbar");
   let user = JSON.parse(localStorage.getItem("userDetail"));
-
+  console.log("user---", user);
   useEffect(() => {
     // user.current = JSON.parse(localStorage.getItem("userDetail"));
     console.log("Navbar", props.userDetail);

@@ -366,10 +366,11 @@ const MyBin = (props) => {
   };
 
   const permanentlyDeleteItem = (deleteItemDetail, mainItem) => {
+    console.log("permentatly delete items");
     let storageRef = firebase.storage();
 
     // gender
-    // ref.current.continuousStart();
+    ref.current.continuousStart();
     if (mainItem.item === "gender") {
       let filtered = deletedItemsList.filter(
         (delId) => deleteItemDetail.genderId !== delId.genderId
@@ -515,28 +516,28 @@ const MyBin = (props) => {
       // console.log("outOfThen-deleteSubcategory");
 
       // delete subcategory
-      // subcategoryRef
-      //   .delete()
-      //   .then(() => {
-      //     ref.current.complete();
-      //     // delete that from the deleteItems
-      //     console.log("Your subcollections also deleted!!!");
-      //     db.collection("deleteItems")
-      //       .doc("deletedItems")
-      //       .update({
-      //         items: filtered
-      //       })
-      //       .then(() => {
-      //         getAllDeletedItems();
-      //         storageRef
-      //           .refFromURL(deleteItemDetail.subcategoryImg)
-      //           .delete()
-      //           .then(() =>
-      //             console.log("image deleted successfullty, MyBin.js[313]")
-      //           );
-      //       });
-      //   })
-      //   .catch((e) => console.log(e));
+      subcategoryRef
+        .delete()
+        .then(() => {
+          ref.current.complete();
+          // delete that from the deleteItems
+          console.log("Your subcollections also deleted!!!");
+          db.collection("deleteItems")
+            .doc("deletedItems")
+            .update({
+              items: filtered
+            })
+            .then(() => {
+              getAllDeletedItems();
+              storageRef
+                .refFromURL(deleteItemDetail.subcategoryImg)
+                .delete()
+                .then(() =>
+                  console.log("image deleted successfullty, MyBin.js[313]")
+                );
+            });
+        })
+        .catch((e) => console.log(e));
     } else if (mainItem.item === "style") {
       let filtered = deletedItemsList.filter((delId) => {
         return deleteItemDetail.styleId !== delId.styleId;

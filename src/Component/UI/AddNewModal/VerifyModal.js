@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 // import { Button } from "react-bootstrap";
 import Card from "../Card/Card";
 
-import classes from "./AddNewModal.module.css";
+import classes from "./VerifyModal.module.css";
 import "./AddNew.css";
 
 import $ from "jquery";

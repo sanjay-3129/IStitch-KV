@@ -41,7 +41,10 @@ const Info = (props) => {
                   src={pattern.patternImage}
                   alt={pattern.patternName}
                 />
-                <p className="name">{pattern.patternName}</p>
+                <div className="bottom-row">
+                  <p className="pname">{pattern.patternName}</p>
+                  <p className="pname">Rs.{pattern.price}</p>
+                </div>
               </div>
             </div>
           );

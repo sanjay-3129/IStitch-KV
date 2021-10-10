@@ -190,7 +190,7 @@ const Styles = (props) => {
       .doc(styleId);
     // casual shirt
     // https://firebasestorage.googleapis.com/v0/b/istitch-admin.appspot.com/o/1623937713452.jpg?alt=media&token=14291831-385d-4bdb-ab44-297aa0883fa9
-    let bucketName = "Images";
+    let bucketName = "styles";
     let img = newImage;
     let storageRef = firebase.storage().ref();
     let styleTimestamp = +new Date().getTime() + "-" + newData.img.name;
@@ -497,7 +497,7 @@ const Styles = (props) => {
       .doc(subcategoryId)
       .collection("styles")
       .doc(styleId);
-    let bucketName = "Images";
+    let bucketName = "styles";
     let storageRef = firebase.storage().ref();
     // console.log("draft handler in styles", newData);
     // console.log("draft handler in styles", relations);
@@ -583,7 +583,7 @@ const Styles = (props) => {
     // console.log(categoryId, subcategoryId, styles.styleId);
     ref.current.continuousStart();
     let patternId = generateId("patterns");
-    let bucketName = "Images";
+    let bucketName = "patterns";
     let storageRef = firebase.storage().ref();
     let genderRef = db.collection("gender").doc(genderId);
     let categoryRef = db

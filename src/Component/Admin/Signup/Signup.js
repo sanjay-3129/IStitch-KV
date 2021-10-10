@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useHistory } from "react";
 import { Alert, Button } from "react-bootstrap";
 import firebase from "../../../Services/firebase/firebase";
 import Input from "../../UI/Input/Input";
@@ -9,6 +9,7 @@ import style from "./Signup.module.css";
 
 const Signup = (props) => {
   let db = firebase.firestore();
+  const history = useHistory();
   const [error, setError] = useState("");
   const [errorModal, setErrorModal] = useState();
   const [userDetails, setUserDetails] = useState({
@@ -78,7 +79,10 @@ const Signup = (props) => {
               password: userDetails.password,
               profile_image: "https://www.w3schools.com/howto/img_avatar.png"
             })
-            .then((docRef) => console.log("successfully updated to firestore."))
+            .then((docRef) => {
+              console.log("successfully updated to firestore.");
+              history.push("/");
+            })
             .catch((e) => console.log(e, "firestore"));
         })
         .catch((e) => console.log(e, "create_authentication"));

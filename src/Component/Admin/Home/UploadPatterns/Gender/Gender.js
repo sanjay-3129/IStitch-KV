@@ -559,7 +559,7 @@ const Gender = (props) => {
     // console.log(newData);
     ref.current.continuousStart();
     let categoryId = generateId("category");
-    let bucketName = "Images";
+    let bucketName = "category";
     let storageRef = firebase.storage().ref();
     let genderRef = db.collection("gender").doc(gender.genderId);
     let categoryTimestamp = +new Date().getTime() + "-" + newData.img.name;
@@ -567,14 +567,22 @@ const Gender = (props) => {
     let categoryImgRef = storageRef.child(`${bucketName}/${categoryTimestamp}`);
     categoryImgRef.put(newData.img).then(() => {
       categoryImgRef.getDownloadURL().then((categoryImg) => {
-        genderRef
-          .collection(type)
-          .doc("categories")
-          .collection("category")
-          .doc(categoryId)
-          .set({
+        let data = {
+          genderId: gender.genderId,
+          categoryId: categoryId, // genderate new category id
+          categoryName: newData.name,
+          categoryImage: categoryImg,
+          noOfSubcategories: 0,
+          noOfStyles: 0,
+          noOfPatterns: 0,
+          delete: false,
+          hide: true,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        if (type === "addOns") {
+          data = {
             genderId: gender.genderId,
-            categoryId: categoryId, // genderate new category id
+            categoryId: categoryId,
             categoryName: newData.name,
             categoryImage: categoryImg,
             noOfSubcategories: 0,
@@ -584,7 +592,14 @@ const Gender = (props) => {
             hide: true,
             mainCategoryId: category.categoryId,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
-          })
+          };
+        }
+        genderRef
+          .collection(type)
+          .doc("categories")
+          .collection("category")
+          .doc(categoryId)
+          .set(data)
           .then(() => {
             // gender - no_of_categories increment
             ref.current.complete();
@@ -665,6 +680,7 @@ const Gender = (props) => {
     let genderDet = genderList.find((g) => {
       return g.genderId === genderId;
     });
+    // console.log("id", genderId, genderDet);
     ref.current.continuousStart();
     db.collection("gender")
       .doc(genderId)

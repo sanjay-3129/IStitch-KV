@@ -65,7 +65,7 @@ const Category = (props) => {
   };
 
   // const selectGenderList = () => {};
-
+  // let myParam;
   useEffect(() => {
     // getting query parameters through Links
     let types = qs.parse(props.location.search, {
@@ -81,9 +81,27 @@ const Category = (props) => {
     genderName = qs.parse(props.location.search, {
       ignoreQueryPrefix: true
     }).genderName;
-    genderImg = props.location.search;
-    let index = genderImg.indexOf("https");
-    genderImg = genderImg.substring(index);
+    // genderImg = qs.parse(props.location.search, {
+    //   ignoreQueryPrefix: true
+    // }).genderImg;
+    // let imgLink = qs.parse(props.location.search, {
+    //   ignoreQueryPrefix: true
+    // }).genderImg;
+    // let token = qs.parse(props.location.search, {
+    //   ignoreQueryPrefix: true
+    // }).token;
+    // genderImg = imgLink + "&token=" + token;
+
+    // const urlParams = new URLSearchParams(window.location.search);
+    // console.log(
+    //   "genderImg",
+    //   urlParams.get("genderImg"),
+    //   urlParams.get("token")
+    // );
+    // when we give this, in adding gender, cat, sub, we can see the images
+    let img = props.location.search;
+    let index = img.indexOf("https");
+    genderImg = img.substring(index);
 
     if (genderId !== undefined) {
       // main - initally
@@ -130,6 +148,7 @@ const Category = (props) => {
             sub.forEach((subDoc) => {
               list.push(subDoc.data());
             });
+            console.log("genderList", list);
             setgenderList(list);
           }
         });
@@ -138,6 +157,7 @@ const Category = (props) => {
   }, []);
 
   const viewHandler = (categoryId, categoryName, categoryImg) => {
+    console.log("viewHandler", categoryId, categoryName, categoryImg);
     if (type === "mainProduct") {
       console.log("viewing subcategory Main products", props.location.search);
       props.history.push(
@@ -233,7 +253,7 @@ const Category = (props) => {
       .doc(categoryId);
     // casual shirt
     // https://firebasestorage.googleapis.com/v0/b/istitch-admin.appspot.com/o/1623937713452.jpg?alt=media&token=14291831-385d-4bdb-ab44-297aa0883fa9
-    let bucketName = "Images";
+    let bucketName = "category";
     let img = newImage;
     let storageRef = firebase.storage().ref();
     let categoryTimestamp = +new Date().getTime() + "-" + newData.img.name;
@@ -321,7 +341,7 @@ const Category = (props) => {
       .doc(categoryId)
       .collection("subcategory")
       .doc(subcategoryId);
-    let bucketName = "Images";
+    let bucketName = "category";
     let storageRef = firebase.storage().ref();
     // console.log("draft handler");
     let categoryTimestamp = null; // prevgender - category - subcategory;
@@ -487,10 +507,20 @@ const Category = (props) => {
   };
 
   const draftSubcategoryHandler = (newData) => {
-    // console.log(newData);
+    console.log(
+      "test---",
+      type,
+      genderId,
+      genderName,
+      genderImg,
+      // myParam,
+      category.categoryId,
+      category.categoryName,
+      category.categoryImage
+    );
     ref.current.continuousStart();
     let subcategoryId = generateId("subcategory");
-    let bucketName = "Images";
+    let bucketName = "subcategory";
     let storageRef = firebase.storage().ref();
     let genderRef = db.collection("gender").doc(genderId);
     let categoryRef = db
@@ -526,6 +556,7 @@ const Category = (props) => {
             noOfPatterns: 0,
             delete: false,
             hide: true,
+
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
           })
           .then(() => {
@@ -537,6 +568,7 @@ const Category = (props) => {
             categoryRef.update({
               noOfSubcategories: firebase.firestore.FieldValue.increment(1)
             });
+            // console.log("Category-sub", newData, category);
             props.history.push(
               `${props.match.url}/createNewPattern/subCategory?type=${type}&genderId=${genderId}&genderName=${genderName}&genderImg=${genderImg}&categoryId=${category.categoryId}&categoryName=${category.categoryName}&categoryImg=${category.categoryImg}`
             );
@@ -565,7 +597,10 @@ const Category = (props) => {
           sub.forEach((subDoc) => {
             list.push(subDoc.data());
           });
-          genderName = genderNam;
+          // this will make the independant flow work
+          genderName = gender.genderName;
+          genderId = gender.genderId;
+          genderImg = gender.genderImg;
           setCategoryList(list);
           setCategory(list[0]);
         } else {
@@ -864,6 +899,7 @@ const Category = (props) => {
           list="datalistOptions"
           id="exampleDataList"
           placeholder="Type to search..."
+          autocomplete="off"
         />
         <datalist id="datalistOptions">
           {genderList.map((gen) => (

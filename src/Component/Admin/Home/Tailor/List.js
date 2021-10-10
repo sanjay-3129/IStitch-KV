@@ -1,7 +1,7 @@
 import React from "react";
 import TailorList from "./TailorList";
 
-const List = () => {
+const List = (props) => {
   return (
     <div class="list">
       <div class="box head">
@@ -12,9 +12,7 @@ const List = () => {
         <p class="add">Address</p>
         {/* <p class="timg">Tailor Image</p> */}
       </div>
-      <TailorList />
-      <TailorList />
-      <TailorList />
+      <TailorList tailor={props.tailor} />
     </div>
   );
 };

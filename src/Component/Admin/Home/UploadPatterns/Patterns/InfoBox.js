@@ -38,6 +38,14 @@ const InfoBox = (props) => {
             </button>
             <button
               type="button"
+              className="change-price"
+              onClick={props.changePrice}
+              // onClick={() => console.log("Change Name")}
+            >
+              Change Price
+            </button>
+            <button
+              type="button"
               className="delete-gender"
               onClick={() =>
                 props.deleteHandler(props.patternsDetails.patternId)

@@ -21,9 +21,6 @@ import OrderDetials from "./Orders/OrderDetials";
 import { OrdersContextProvider } from "./Contexts/OrderContext";
 
 const Home = (props) => {
-  // const userId = qs.parse(props.location.search, { ignoreQueryPrefix: true })
-  //   .userId;
-  // console.log(userId, "ujserId");
   const [loading, setloading] = useState(undefined);
   const [userDetail, setUserDetail] = useState(null);
   const [showTimeoutModal, setShowTimeoutModal] = useState(false);

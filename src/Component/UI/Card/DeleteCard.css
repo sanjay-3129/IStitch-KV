@@ -45,6 +45,7 @@
 .delete .content .hovereffect {
   position: absolute;
   width: 242.03px;
+  background: #fff;
   height: 172px;
   overflow: hidden;
   transform: scale(0);

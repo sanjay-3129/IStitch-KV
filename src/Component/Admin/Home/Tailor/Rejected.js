@@ -1,6 +1,6 @@
 import React from "react";
 
-const Rejected = () => {
+const Rejected = (props) => {
   return (
     <div class="approval">
       <div class="card">
@@ -8,31 +8,31 @@ const Rejected = () => {
           <img class="img-fluid" src="" alt="profile" />
         </div>
         <div class="hovereffect">
-          <img class="img-fluid" src="" alt="profile" />
+          <img class="img-fluid" src={props.tailor.name} alt="profile" />
         </div>
         <div class="row">
           <p class="para">
             <b>Name:</b>
           </p>
-          <p class="para">Ishwarya</p>
+          <p class="para">{props.tailor.name}</p>
         </div>
         <div class="row">
           <p class="para">
             <b>Mobile No:</b>
           </p>
-          <p class="para">90000 80000</p>
+          <p class="para">{props.tailor.phone}</p>
         </div>
         <div class="row">
           <p class="para">
             <b>Specalization:</b>
           </p>
-          <p class="para">All</p>
+          <p class="para">{props.tailor.specialization}</p>
         </div>
         <div class="row">
           <p class="para">
             <b>Address:</b>
           </p>
-          <p class="para add">xxx yyy zzz</p>
+          <p class="para add">{props.tailor.address}</p>
         </div>
         <div class="row">
           <button type="submit" class="approval-btn">

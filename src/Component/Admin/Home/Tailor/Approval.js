@@ -1,7 +1,11 @@
-const Approval = () => {
+import React, { useEffect, useState } from "react";
+import { propTypes } from "react-bootstrap/esm/Image";
+import firebase from "../../../../Services/firebase/firebase";
+const db = firebase.firestore();
+
+const Approval = (props) => {
   return (
     <>
-      <h3>New Approval</h3>
       <div class="approval">
         <div class="card">
           <div class="image">
@@ -14,25 +18,25 @@ const Approval = () => {
             <p class="para">
               <b>Name:</b>
             </p>
-            <p class="para">Ishwarya</p>
+            <p class="para">{props.tailor.name}</p>
           </div>
           <div class="row">
             <p class="para">
               <b>Mobile No:</b>
             </p>
-            <p class="para">90000 80000</p>
+            <p class="para">{props.tailor.phone}</p>
           </div>
           <div class="row">
             <p class="para">
               <b>Specalization:</b>
             </p>
-            <p class="para">All</p>
+            <p class="para">{props.tailor.specialization}</p>
           </div>
           <div class="row">
             <p class="para">
               <b>Address:</b>
             </p>
-            <p class="para add">xxx yyy zzz</p>
+            <p class="para add">{props.tailor.address}</p>
           </div>
           <div class="row">
             <button type="submit" class="approval-btn">
