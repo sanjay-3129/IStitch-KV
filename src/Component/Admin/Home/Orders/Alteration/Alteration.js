@@ -32,6 +32,10 @@ const Alteration = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
+        // descending
+        list.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setAlterationList(list);
         console.log("list", list);
       });
@@ -48,6 +52,10 @@ const Alteration = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
+        // descending
+        list.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setAlterationList(list);
         console.log("list", list);
       });
@@ -64,6 +72,10 @@ const Alteration = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
+        // descending
+        list.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setAlterationList(list);
         console.log("list", list);
       });
@@ -80,6 +92,10 @@ const Alteration = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
+        // descending
+        list.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setAlterationList(list);
         console.log("list", list);
       });
@@ -96,6 +112,10 @@ const Alteration = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
+        // descending
+        list.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setAlterationList(list);
         console.log("list", list);
       });
@@ -118,8 +138,8 @@ const Alteration = (props) => {
   };
 
   const draftQuotationHandler = (newData) => {
-    console.log("qqqqqqqqqq", newData);
-    console.log("wwwwwwwwwww", newModal);
+    console.log("qqqqqqqqqq");
+    console.log("wwwwwwwwwww", newData);
 
     // setNewModal(null);
     db.collection("orders")
@@ -135,9 +155,33 @@ const Alteration = (props) => {
         let data = [...alterationList];
 
         let filterdata = data.filter((d) => d.orderId !== newModal.orderId);
+        // descending
+        filterdata.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setAlterationList(filterdata);
       });
   };
+
+  // const directAssign = () => {
+  //   db.collection("orders")
+  //     .doc(newModal.orderId.trim())
+  //     .update({
+  //       dueDate: newData.dueDate,
+  //       orderStatus: "Alteration"
+  //     })
+  //     .then(() => {
+  //       setNewModal(null);
+  //       let data = [...alterationList];
+
+  //       let filterdata = data.filter((d) => d.orderId !== newModal.orderId);
+  //       // descending
+  //       filterdata.sort((a, b) =>
+  //         a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+  //       );
+  //       setAlterationList(filterdata);
+  //     });
+  // };
 
   const ReceivedHandler = () => {
     console.log("Received");
@@ -150,6 +194,10 @@ const Alteration = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
+        // descending
+        list.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setAlterationList(list);
         console.log("list", list);
       });
@@ -166,6 +214,10 @@ const Alteration = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
+        // descending
+        list.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setAlterationList(list);
         console.log("list", list);
       });
@@ -181,6 +233,10 @@ const Alteration = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
+        // descending
+        list.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setAlterationList(list);
         console.log("list", list);
       });
@@ -196,6 +252,10 @@ const Alteration = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
+        // descending
+        list.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setAlterationList(list);
         console.log("list", list);
       });
@@ -213,6 +273,10 @@ const Alteration = (props) => {
         let data = [...alterationList];
 
         let filterdata = data.filter((d) => d.orderId !== newData.orderId);
+        // descending
+        filterdata.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setAlterationList(filterdata);
         // ref.current.complete();
       });
@@ -230,6 +294,10 @@ const Alteration = (props) => {
         let data = [...alterationList];
 
         let filterdata = data.filter((d) => d.orderId !== newData.orderId);
+        // descending
+        filterdata.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setAlterationList(filterdata);
         // ref.current.complete();
       });
@@ -246,6 +314,10 @@ const Alteration = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
+        // descending
+        list.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setAlterationList(list);
         console.log("list", list);
       });
@@ -262,6 +334,10 @@ const Alteration = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
+        // descending
+        list.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setAlterationList(list);
         console.log("list", list);
       });
@@ -314,7 +390,8 @@ const Alteration = (props) => {
     <div className="ordercontent">
       <div className="rflex">
         <button className="selected" onClick={() => requestOrderHandler()}>
-          Requested<span className="new-count">2</span>
+          Requested
+          {/* <span className="new-count">2</span> */}
         </button>
         {/* booked */}
         <button onClick={() => verifiedOrderHandler()}>Verified</button>
@@ -351,9 +428,10 @@ const Alteration = (props) => {
           closeModal={() => setNewModal(false)}
           onChange={onChangeHandler}
           saveAsDraft={draftQuotationHandler}
+          // directAssign={directAssign}
         />
       )}
-      {newModal && (
+      {/* {newModal && (
         <TailorAssign
           title={newModal}
           newData={newData}
@@ -361,7 +439,7 @@ const Alteration = (props) => {
           onChange={onChangeHandler}
           tailorAssign={tailorAssign}
         />
-      )}
+      )} */}
     </div>
   );
 };

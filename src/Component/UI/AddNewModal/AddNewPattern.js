@@ -42,7 +42,7 @@ const ModalOverlay = (props) => {
       <div className="addnew">
         <h2>Add New {props.title}</h2>
         <form method="post" name="form" className={classes.form}>
-          <label htmlFor="styleName">Enter {props.title} pgcfhvh</label>
+          <label htmlFor="styleName">Enter {props.title}</label>
           <input
             type="text"
             id="name"
@@ -52,7 +52,7 @@ const ModalOverlay = (props) => {
           />
           <label htmlFor="styleName">Enter {props.title} Price</label>
           <input
-            type="text"
+            type="number"
             id="price"
             name="price"
             value={props.newData.price}

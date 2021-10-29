@@ -49,6 +49,7 @@ const ModalOverlay = (props) => {
             name="name"
             value={props.newData.name}
             onChange={props.onChange}
+            required
           />
           <label>Upload Image</label>
           <div class="upload-img">
@@ -59,6 +60,7 @@ const ModalOverlay = (props) => {
               accept=".gif, .jpg, .png"
               // value={newData.img} // it may cause error
               onChange={props.onChange}
+              required
             />
             <label onClick={getFile} htmlFor="img" id="uploadButton">
               <span>+</span>

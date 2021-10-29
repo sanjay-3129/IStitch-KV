@@ -36,9 +36,17 @@ const Rejected = (props) => {
         </div>
         <div class="row">
           <button type="submit" class="approval-btn">
-            Accept&ensp;<i class="fas fa-check"></i>
+            Accept&ensp;
+            <i
+              class="fas fa-check"
+              onClick={() => props.acceptTailor(props.tailor)}
+            ></i>
           </button>
-          <button type="submit" class="reject-btn">
+          <button
+            type="submit"
+            class="reject-btn"
+            onClick={() => props.deleteTailor(props.tailor)}
+          >
             Reject&ensp;<i class="fas fa-times"></i>
           </button>
         </div>

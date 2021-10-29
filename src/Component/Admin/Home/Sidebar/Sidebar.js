@@ -13,7 +13,7 @@ const SideBar = (props) => {
         <div className={style.content}>
           <h4>Dashboard</h4>
           <ul className={style.list}>
-            <li className={style.list_item}>
+            {/* <li className={style.list_item}>
               <NavLink
                 activeClassName={style.activeLink}
                 className={style.list_link}
@@ -21,7 +21,7 @@ const SideBar = (props) => {
               >
                 <i className={`${style.fas} fas fa-user-shield`}></i>My Profile
               </NavLink>
-            </li>
+            </li> */}
             <li className={style.list_item}>
               <NavLink
                 activeClassName={style.activeLink}
@@ -62,7 +62,7 @@ const SideBar = (props) => {
           </ul>
           <h4>Account</h4>
           <ul className={style.list}>
-            <li className={style.list_item}>
+            {/* <li className={style.list_item}>
               <NavLink
                 activeClassName={style.activeLink}
                 className={style.list_link}
@@ -70,7 +70,7 @@ const SideBar = (props) => {
               >
                 <i className={`${style.fas} fas fa-user-cog`}></i>Settings
               </NavLink>
-            </li>
+            </li> */}
             <li className={style.list_item}>
               <a className={style.list_link} href="#l" onClick={props.logout}>
                 <i className={`${style.fas} fas fa-sign-out-alt`}></i>Logout

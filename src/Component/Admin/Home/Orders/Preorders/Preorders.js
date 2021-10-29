@@ -14,6 +14,10 @@ let list = null;
 const Preorders = (props) => {
   const ref = useRef(null);
   const [preorderList, setPreorderList] = useState(null);
+  const [bookedCount, setBookedcount] = useState({
+    orderStatus: "",
+    count: 0
+  });
   const [newModal, setNewModal] = useState(false);
   const [assignModal, setAssignModal] = useState(false);
   const [addNewItem, setAddNewItem] = useState(null);
@@ -46,10 +50,30 @@ const Preorders = (props) => {
           list.push(doc.data());
         });
 
+        // ascending
+        list.sort((a, b) =>
+          a.timestamp > b.timestamp ? 1 : b.timestamp > a.timestamp ? -1 : 0
+        );
+
         setPreorderList(list);
+        setBookedcount({
+          orderStatus: "Booked",
+          count: 0
+        });
         console.log("list", list);
       });
   }, []);
+
+  useEffect(() => {
+    if (preorderList !== null) {
+      if (bookedCount.orderStatus === "Booked") {
+        setBookedcount({
+          orderStatus: "Booked",
+          count: preorderList.length
+        });
+      }
+    }
+  }, [preorderList, bookedCount.orderStatus]);
 
   // let bookedList;
   const newOrderHandler = () => {
@@ -68,7 +92,12 @@ const Preorders = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
+        // ascending
+        list.sort((a, b) =>
+          a.timestamp > b.timestamp ? 1 : b.timestamp > a.timestamp ? -1 : 0
+        );
         setPreorderList(list);
+
         console.log("list", list);
       });
   };
@@ -84,7 +113,17 @@ const Preorders = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
+        // descending
+        list.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setPreorderList(list);
+        setBookedcount((prevState) => {
+          return {
+            ...prevState,
+            orderStatus: "Verified"
+          };
+        });
         console.log("list", list);
       });
   };
@@ -100,7 +139,17 @@ const Preorders = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
+        // descending
+        list.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setPreorderList(list);
+        setBookedcount((prevState) => {
+          return {
+            ...prevState,
+            orderStatus: "Accepted"
+          };
+        });
         console.log("list", list);
       });
   };
@@ -116,7 +165,18 @@ const Preorders = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
+        // descending
+        list.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setPreorderList(list);
+
+        setBookedcount((prevState) => {
+          return {
+            ...prevState,
+            orderStatus: "Assigned"
+          };
+        });
         console.log("list", list);
       });
     // .finally(() => {});
@@ -126,6 +186,8 @@ const Preorders = (props) => {
     let value = null;
     value = event.target.value;
     let name = event.target.name;
+    console.log("valueeeeee", value);
+    console.log("sdfgsdvsd", name);
     if (name === "tailorCharge" || name === "orderPrice") {
       value = parseInt(value);
     }
@@ -151,7 +213,13 @@ const Preorders = (props) => {
   const draftQuotationHandler = (newData) => {
     console.log("qqqqqqqqqq", newData);
     console.log("wwwwwwwwwww", newModal);
-
+    // if (
+    //   newData.orderPrice === 0 &&
+    //   newData.tailorCharge === 0 &&
+    //   newData.dueDate === ""
+    // ) {
+    //   alert("Enter Price,tailor charge and due date ");
+    // } else {
     // setNewModal(null);
     db.collection("orders")
       .doc(newModal.orderId.trim())
@@ -167,9 +235,51 @@ const Preorders = (props) => {
         let data = [...preorderList];
 
         let filterdata = data.filter((d) => d.orderId !== newModal.orderId);
+        // descending
+        filterdata.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setPreorderList(filterdata);
       });
   };
+  const draftDeleteHandler = (newData) => {
+    console.log("====", newData);
+    let value = window.confirm("Do you want reject");
+    if (value) {
+      db.collection("orders")
+        .doc(newData.orderId)
+        .update({
+          orderStatus: "Deleted"
+        })
+        .then(() => {
+          let data = [...preorderList];
+
+          let filterdata = data.filter((d) => d.orderId !== newData.orderId);
+          setPreorderList(filterdata);
+          // ref.current.complete();
+        });
+    } else {
+      console.log("Not deleted!!!");
+    }
+  };
+  // const draftDeleteHandler = (newData) => {
+  //   console.log("qqqqqqqqqq", newData);
+  //   console.log("wwwwwwwwwww", newModal);
+  //   console.log("delted sucessfull");
+
+  //   // setNewModal(null);
+  //   db.collection("orders")
+  //     .doc(newData.orderId)
+  //     .delete()
+  //     .then(() => {
+  //       let data = [...preorderList];
+
+  //       let filterdata = data.filter((d) => d.orderId !== newData.orderId);
+  //       setPreorderList(filterdata);
+  //       console.log("filterdata", filterdata);
+  //     })
+  //     .catch((e) => console.log(e));
+  // };
 
   const tailorAssign = () => {
     console.log("tailorassign", assignModal);
@@ -184,6 +294,7 @@ const Preorders = (props) => {
           list.push(doc.data());
         });
         setTailorDetails(list);
+
         console.log("tailorlist", list);
       })
       .catch((e) => console.log("sdasd", e));
@@ -198,7 +309,7 @@ const Preorders = (props) => {
         tailorDetails: {
           tailorId: newTailor.userId,
           tailorName: newTailor.name,
-          tailorPhno: newTailor.phno,
+          tailorPhno: newTailor.phone,
           tailorAddress: newTailor.address
         },
         orderStatus: "Assigned"
@@ -208,6 +319,10 @@ const Preorders = (props) => {
         console.log("single tailor assigned success");
 
         //filter
+        let data = [...preorderList];
+
+        let filterdata = data.filter((d) => d.orderId !== assignModal.orderId);
+        setPreorderList(filterdata);
       })
       .catch((e) => console.log(e));
   };
@@ -246,6 +361,7 @@ const Preorders = (props) => {
             setAssignModal(item);
           }}
           singletailor={singletailorAssign}
+          draftDeleteHandler={draftDeleteHandler}
           // processorderList={processorderList}
         />
       );
@@ -265,9 +381,7 @@ const Preorders = (props) => {
           onClick={() => newOrderHandler()}
         >
           Booked
-          <span className="new-count">
-            {preorderList !== null && preorderList.length}
-          </span>
+          <span className="new-count">{bookedCount.count}</span>
         </button>
         {/* booked */}
         <button type="button" onClick={() => verifiedOrderHandler()}>

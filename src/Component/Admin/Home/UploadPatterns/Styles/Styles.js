@@ -14,6 +14,7 @@ import SuggestionsUpdate from "../../../../UI/AddNewModal/SuggestionsUpdate";
 // import NewStyleModal from "../../../../UI/AddNewModal/NewStyleModal";
 import DeleteConfirmModal from "../../../../UI/DeleteConfirmModal/DeleteConfirmModal";
 import generateId from "../../../../../Helpers/generateId";
+import AddNewPattern from "../../../../UI/AddNewModal/AddNewPattern";
 let genderId = undefined;
 let genderName = undefined;
 let categoryId = undefined;
@@ -31,7 +32,8 @@ const Styles = (props) => {
   const [type, setType] = useState("mainProduct"); // mainProduct or addOns
   const [newData, setNewData] = useState({
     name: "",
-    img: null
+    img: null,
+    price: 0
   });
   const [styles, setStyles] = useState({
     styleId: "",
@@ -940,7 +942,7 @@ const Styles = (props) => {
       )} */}
       {/* new pattern */}
       {newModal && (
-        <AddNewStyle
+        <AddNewPattern
           title={newModal}
           newData={newData}
           closeModal={() => setNewModal(false)}

@@ -84,7 +84,7 @@ const OrderView = (props) => {
     orderView = [orderReceived];
   } else if (props.item.orderStatus === "Repick") {
     orderView = [orderRepick];
-  } else if (props.item.orderStatus === "Processing") {
+  } else if (props.item.orderStatus === "Progressing") {
     orderView = [orderReceived];
   } else if (props.item.orderStatus === "Finished") {
     orderView = [orderFinished];

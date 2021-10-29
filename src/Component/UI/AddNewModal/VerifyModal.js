@@ -21,7 +21,7 @@ const ModalOverlay = (props) => {
       <div className="addnew">
         <h2>Order Quotation</h2>
         <form method="post" name="form" className={classes.form}>
-          <label htmlFor="styleName">Order Price</label>
+          <label htmlFor="orderPrice">Order Price</label>
           <input
             type="number"
             id="orderPrice"
@@ -38,12 +38,12 @@ const ModalOverlay = (props) => {
             onChange={props.onChange}
           />
 
-          <label htmlFor="styleName">DueDate</label>
+          <label htmlFor="dueDate">DueDate</label>
           <input
             type="date"
             id="dueDate"
             name="dueDate"
-            value={props.newData.DueDate}
+            value={props.newData.dueDate}
             onChange={props.onChange}
           />
 
@@ -54,6 +54,17 @@ const ModalOverlay = (props) => {
           >
             Send
           </button>
+          {props.newData.orderStatus === "Requested" ? (
+            <>
+              <button
+                type="button"
+                class="draft"
+                onClick={() => props.directAssign(props.newData)}
+              >
+                Direct Assign
+              </button>
+            </>
+          ) : null}
         </form>
       </div>
     </Card>

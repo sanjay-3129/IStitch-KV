@@ -214,7 +214,7 @@ const Patterns = (props) => {
   }, []);
 
   const onChangeHandler = (event) => {
-    // console.log(event.target.name);
+    console.log(event.target.name);
     let value = null;
     if (event.target.name === "img") {
       value = event.target.files[0];
@@ -1218,6 +1218,17 @@ const Patterns = (props) => {
             name="name"
             value={newData.name}
             onChange={onChangeHandler}
+            required
+          />
+          <label htmlFor="patternName">Enter Pattern Price</label>
+          <br />
+          <input
+            type="text"
+            id="price"
+            name="price"
+            value={newData.price}
+            onChange={onChangeHandler}
+            required
           />
           <br />
           <br />
@@ -1297,7 +1308,17 @@ const Patterns = (props) => {
         <AddNewPattern
           title={newModal}
           newData={newData}
-          closeModal={() => setNewModal(false)}
+          closeModal={() => {
+            setNewModal(false);
+            setNewData({
+              name: "",
+              img: null,
+              price: 0
+            
+            })
+          }
+        }
+        
           onChange={onChangeHandler}
           saveAsDraft={draftPatternHandler}
         />

@@ -4,3 +4,58 @@ bcs when this collection is deleted directly in db,
 and we try to delete, it shows error, its bcs, we directly give
 update api code, so this searches for the doc, but it is 
 not there.
+
+
+//////////
+COMPLETED:
+
+orders -> progress -> view icon(no functionality)
+
+orders -> date decending, recent items show at the top
+
+order view -> measurement cloth if its not there dont show
+
+if measurement cloth is not there, measurement detail will be there and vice versa
+
+addOns if not provided should not be there
+
+tailors -> same tailor id & image
+
+tailor details when signup will give bank details, show them its missing
+alteration, delivered -> cancel/reject button not working
+orders completed -> delivered button in completed bcs delivery guy will phone and 
+inform and admin will change the status manually
+amound pending, amount paid: if 1000: 500 paid then 500paid & 500pending
+tailor pay -> pay button -> alert and will enter amount paid from admin and enter the amount in that alert prompt and click ok. if given ok, then amount should be reduced. else should not be reduced
+alteration -> end user when requesting, no list is shown and showing only 2 always
+  -> Requested status should be there to show that.
+
+
+PENDING:
+
+onchange handler ,tailor charge, price, date -> mandatory - pending
+
+orders -> suborders -> design with spacing bcs congested
+
+booked -> count is hiding the name & count should be changed.
+
+emmpty set 
+tailor table heading
+order tables heading
+ =Booked count
+
+ akil
+  finished image should show in card view
+  orderview design
+
+
+doubts:abull
+tailor bank details
+intail tailor reg -add amountPending,amountPaid
+
+
+
+
+settings &profile  no need hide that
+tailorProfile image
+osderstatus in orderdetails

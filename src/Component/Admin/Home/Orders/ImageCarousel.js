@@ -54,24 +54,25 @@ const ImageCarousel = (props) => {
   return (
     <>
       <div class="row">
-        {props.images.map((img) => {
-          return (
-            <div class="column" key={img.patternImg}>
-              <div className="thumb">
-                <img
-                  src={img.patternImg}
-                  style={{ width: "100%" }}
-                  // onclick={openModal()}
-                  class="hover-shadow cursor"
-                  alt={img.patternName}
-                />
-                <p className="name">
-                  {img.patternName}- {img.patternPrice}/-
-                </p>
+        {props.images !== null &&
+          props.images.map((img) => {
+            return (
+              <div class="column" key={img.patternImg}>
+                <div className="thumb">
+                  <img
+                    src={img.patternImg}
+                    style={{ width: "100%" }}
+                    // onclick={openModal()}
+                    class="hover-shadow cursor"
+                    alt={img.patternName}
+                  />
+                  <p className="name">
+                    {img.patternName}- {img.patternPrice}/-
+                  </p>
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
 
         {/* <div class="column">
           <div className="thumb">

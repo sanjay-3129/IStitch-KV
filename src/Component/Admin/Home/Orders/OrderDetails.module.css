@@ -90,7 +90,7 @@
   flex-direction: column;
   flex-wrap: wrap;
   width: 25%;
-  height: fit-content;
+  height: inherit;
   box-shadow: 1px 1px 5px 2px rgb(0 0 0 / 18%);
 }
 
@@ -105,7 +105,7 @@
 
 .descrb {
   width: 37%;
-  height: fit-content;
+  height: inherit;
   margin: 0 0 10px;
   box-shadow: 1px 1px 5px 2px rgb(0 0 0 / 18%);
 }
@@ -116,7 +116,7 @@
   flex-direction: column;
   flex-wrap: wrap;
   width: 30%;
-  height: fit-content;
+  height: inherit;
   box-shadow: 1px 1px 5px 2px rgb(0 0 0 / 18%);
 }
 

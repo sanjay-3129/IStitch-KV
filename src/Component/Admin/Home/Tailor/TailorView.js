@@ -9,7 +9,11 @@ const TailorView = (props) => {
 
   let tailorBooked = (
     <>
-      <Approval tailor={props.tailor} />
+      <Approval
+        tailor={props.tailor}
+        acceptTailor={(data) => props.acceptTailor(data)}
+        rejectTailor={(data) => props.rejectTailor(data)}
+      />
     </>
   );
   let tailorVerified = (
@@ -22,7 +26,11 @@ const TailorView = (props) => {
 
   let tailorRejected = (
     <>
-      <Rejected tailor={props.tailor} />
+      <Rejected
+        tailor={props.tailor}
+        acceptTailor={(data) => props.acceptTailor(data)}
+        deleteTailor={(data) => props.deleteTailor(data)}
+      />
     </>
   );
 
@@ -33,10 +41,7 @@ const TailorView = (props) => {
   } else if (props.tailor.tailorStatus === "Rejected") {
     tailorView = [tailorRejected];
   }
-
   return <> {tailorView}</>;
 };
 
 export default TailorView;
-
-// {props.item.orderNumber}

@@ -39,10 +39,18 @@ const Approval = (props) => {
             <p class="para add">{props.tailor.address}</p>
           </div>
           <div class="row">
-            <button type="submit" class="approval-btn">
+            <button
+              type="submit"
+              class="approval-btn"
+              onClick={() => props.acceptTailor(props.tailor)}
+            >
               Accept&ensp;<i class="fas fa-check"></i>
             </button>
-            <button type="submit" class="reject-btn">
+            <button
+              type="submit"
+              class="reject-btn"
+              onClick={() => props.rejectTailor(props.tailor)}
+            >
               Reject&ensp;<i class="fas fa-times"></i>
             </button>
           </div>

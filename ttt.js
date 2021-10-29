@@ -85,41 +85,6 @@ const Tailor = (props) => {
       });
   };
 
-  const acceptTailor = (tailor) => {
-    console.log("Accepted");
-    console.log(">>>>>>", tailor);
-
-    db.collection("TailorsDetails")
-      .doc(tailor.userId)
-      .update({
-        tailorStatus: "Verified"
-      })
-      .then(() => {
-        let data = [...tailorList];
-
-        let filterdata = data.filter((d) => d.tailorId !== tailor.tailorId);
-        setTailorList(filterdata);
-      });
-  };
-  const rejectTailor = (tailor) => {
-    console.log("Rejected");
-    db.collection("TailorsDetails")
-      .doc(tailor.userId)
-      .update({
-        tailorStatus: "Rejected"
-      })
-      .then(() => {
-        let data = [...tailorList];
-
-        let filterdata = data.filter((d) => d.tailorId !== tailor.tailorId);
-        setTailorList(filterdata);
-      });
-  };
-
-  const deleteTailor = (tailor) => {
-    db.collection("TailorsDetails").doc(tailor.userId).delete();
-  };
-
   let tailors = null;
   if (tailorList === null) {
     tailors = <Spinner />;
@@ -127,15 +92,7 @@ const Tailor = (props) => {
     tailors = <h1>No Processing Orders</h1>;
   } else {
     tailors = tailorList.map((tailor) => {
-      return (
-        <TailorView
-          tailor={tailor}
-          {...props}
-          acceptTailor={acceptTailor}
-          rejectTailor={rejectTailor}
-          deleteTailor={deleteTailor}
-        />
-      );
+      return <TailorView tailor={tailor} {...props} />;
     });
     // tailors = <TailorView {...props} />;
   }

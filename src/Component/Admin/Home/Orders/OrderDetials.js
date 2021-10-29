@@ -5,33 +5,13 @@ import ImageCarousel from "./ImageCarousel";
 import qs from "qs";
 import firebase from "../../../../Services/firebase/firebase";
 import OrdersContext from "../Contexts/OrderContext";
+import context from "react-bootstrap/esm/AccordionContext";
 
 const db = firebase.firestore();
 const OrderDetials = (props) => {
   const [orderDetials, setOrderDetials] = useState(null);
   const ctx = useContext(OrdersContext);
-  // console.log("....////", ctx.order.userDetails.userName);
-  // useEffect(() => {
-  //   let orderId = qs.parse(props.location.search, {
-  //     ignoreQueryPrefix: true
-  //   }).orderId;
-  //   console.log("useeffect");
-  //   let list = [];
-  //   if (orderId !== undefined) {
-  //     console.log("orderId", orderId);
-  //     db.collection("orders")
-  //       .doc(orderId)
-  //       .get()
-  //       .then((data) => {
-  //         data.forEach((doc) => {
-  //           list.push(doc.data());
-  //         });
-  //         setOrderDetials(list);
-  //         console.log("list", list);
-  //       });
-  //   } else {
-  //   }
-  // }, []);
+
   console.log(".......>>>>", ctx.order);
 
   const goBackHandler = () => {
@@ -46,7 +26,7 @@ const OrderDetials = (props) => {
         <p className={styles.para}>
           UserName:
           <span style={{ marginLeft: "5px" }}>
-            {ctx.order.userDetails.userName}
+            {ctx.order.userDetails !== null && ctx.order.userDetails.userName}
           </span>
         </p>
         <p className={styles.para}>
@@ -77,7 +57,7 @@ const OrderDetials = (props) => {
 
       <div className={styles.col6}>
         {/* Measurement Details */}
-        {ctx.order.measurementProvident === true ? (
+        {ctx.order.measurementProvided === true ? (
           <div className={styles.mesd}>
             <details>
               <summary className={styles.summary}>
@@ -168,7 +148,9 @@ const OrderDetials = (props) => {
               <summary className={styles.summary}>
                 <h4 className={styles.title1}>Main-Pattern Images</h4>
               </summary>
-              <ImageCarousel images={ctx.order.mainPatterns} />
+              {ctx.order.mainPatterns !== undefined && (
+                <ImageCarousel images={ctx.order.mainPatterns} />
+              )}
             </details>
           </div>
         ) : (
@@ -179,31 +161,42 @@ const OrderDetials = (props) => {
                   User Upload MainPattern Images
                 </h4>
               </summary>
-              <ImageCarousel images={ctx.order.uploadmainPatterns} />
+              {ctx.order.uploadmainPatterns !== undefined && (
+                <ImageCarousel images={ctx.order.uploadmainPatterns} />
+              )}
             </details>
           </div>
         )}
 
         {/* Addon Pattern Images */}
-        {ctx.order.addonPatternProvider === true ? (
-          <div className={styles.api}>
-            <details>
-              <summary className={styles.summary}>
-                <h4 className={styles.title1}>Add-On Images</h4>
-              </summary>
-              <ImageCarousel images={ctx.order.addonPatterns} />
-            </details>
-          </div>
-        ) : (
-          <div className={styles.uai}>
-            <details>
-              <summary className={styles.summary}>
-                <h4 className={styles.title1}>User Upload Add-On </h4>
-              </summary>
-              <ImageCarousel images={ctx.order.uploadaddonPatterns} />
-            </details>
-          </div>
-        )}
+        {ctx.order.addonPatterns !== undefined &&
+        ctx.order.uploadaddonPatterns !== undefined ? (
+          <>
+            {ctx.order.addonPatternProvider === true ? (
+              <div className={styles.api}>
+                <details>
+                  <summary className={styles.summary}>
+                    <h4 className={styles.title1}>Add-On Images</h4>
+                  </summary>
+                  {ctx.order.addonPatterns !== undefined && (
+                    <ImageCarousel images={ctx.order.addonPatterns} />
+                  )}
+                </details>
+              </div>
+            ) : (
+              <div className={styles.uai}>
+                <details>
+                  <summary className={styles.summary}>
+                    <h4 className={styles.title1}>User Upload Add-On </h4>
+                  </summary>
+                  {ctx.order.uploadaddonPatterns !== undefined && (
+                    <ImageCarousel images={ctx.order.uploadaddonPatterns} />
+                  )}
+                </details>
+              </div>
+            )}
+          </>
+        ) : null}
 
         {/* User Upload Main Pattern Images */}
       </div>
@@ -211,6 +204,7 @@ const OrderDetials = (props) => {
   );
   let orderVerified = (
     <>
+      {orderBooked}
       <div className={styles.priced}>
         {/* pri d */}
         <h4 className={styles.title}>Order Price</h4>
@@ -230,8 +224,15 @@ const OrderDetials = (props) => {
       </div>
     </>
   );
+  // let orderAccepted=(
+  //   <>
+  //   {orderBooked}
+  //     {orderVerified}
+  //   </>
+  // )
   let orderAssigned = (
     <>
+      {orderVerified}
       <div className={styles.tailord}>
         <h4 className={styles.title}>Tailor Details</h4>
         {/* pri d */}
@@ -255,24 +256,55 @@ const OrderDetials = (props) => {
         </p>
       </div>
       {/* delivery */}
-      <div className={styles.deld}>
-        <h4 className={styles.title}>Deliver Details</h4>
-        {/* pri d */}
-        <p className={styles.para}>
-          Delivery Person Name:
-          <span style={{ marginLeft: "5px" }}>Jonny</span>
-        </p>
-        <p className={styles.para}>
-          Delivery Person No:
-          <span style={{ marginLeft: "5px" }}>1234567890</span>
-        </p>
+    </>
+  );
+  let orderProcessing = <>{orderAssigned}</>;
+  let orderFinished = (
+    <>
+      {orderProcessing}
+      {/* finished image should show in card view */}
+      <div className={styles.uai}>
+        <details>
+          <summary className={styles.summary}>
+            <h4 className={styles.title1}>Finished Images </h4>
+          </summary>
+          {ctx.order.finishedImages !== undefined &&
+            ctx.order.finishedImages.map((images) => {
+              return (
+                <div class="column">
+                  <div className="thumb">
+                    <img
+                      src={images}
+                      style={{ width: "100%" }}
+                      // onclick={openModal()}
+                      class="hover-shadow cursor"
+                      alt="Images"
+                    />
+                  </div>
+                </div>
+              );
+            })}
+        </details>
       </div>
     </>
   );
-  let orderProcessing = <></>;
-  let orderFinished = <></>;
   let orderCompleted = <></>;
-  let orderDelivered;
+  // let orderDelivered = (
+  //   <>
+  //     <div className={styles.deld}>
+  //       <h4 className={styles.title}>Deliver Details</h4>
+  //       {/* pri d */}
+  //       <p className={styles.para}>
+  //         Delivery Person Name:
+  //         <span style={{ marginLeft: "5px" }}>Jonny</span>
+  //       </p>
+  //       <p className={styles.para}>
+  //         Delivery Person No:
+  //         <span style={{ marginLeft: "5px" }}>1234567890</span>
+  //       </p>
+  //     </div>
+  //   </>
+  // );
   let orderAlterartion = (
     <>
       {/* Alteration */}
@@ -290,14 +322,19 @@ const OrderDetials = (props) => {
       </div>
     </>
   );
+
   if (ctx.order.orderStatus === "Booked") {
     orderDetails = [orderBooked];
   } else if (ctx.order.orderStatus === "Verified") {
-    orderDetails = [orderBooked, orderVerified];
+    orderDetails = [orderVerified];
+  } else if (ctx.order.orderStatus === "Accepted") {
+    orderDetails = [orderVerified];
   } else if (ctx.order.orderStatus === "Assigned") {
-    orderDetails = [orderBooked, orderVerified, orderAssigned];
-  } else if (ctx.order.orderStatus === "Processing") {
-    orderDetails = [orderBooked, orderVerified, orderAssigned, orderProcessing];
+    orderDetails = [orderAssigned];
+  } else if (ctx.order.orderStatus === "Progressing") {
+    orderDetails = [orderVerified, orderAssigned, orderProcessing];
+  } else if (ctx.order.orderStatus === "Finished") {
+    orderDetails = [orderFinished];
   } else if (ctx.order.orderStatus === "Completed") {
     orderDetails = [
       orderBooked,
@@ -312,17 +349,69 @@ const OrderDetials = (props) => {
       orderVerified,
       orderAssigned,
       orderProcessing,
-      orderCompleted,
-      orderDelivered
+      orderCompleted
     ];
-  } else if (ctx.order.orderStatus === "Alterartion") {
+  } else if (ctx.order.orderStatus === "Requested") {
     orderDetails = [
       orderBooked,
       orderVerified,
       orderAssigned,
       orderProcessing,
       orderCompleted,
-      orderDelivered,
+      orderAlterartion
+    ];
+  } else if (ctx.order.orderStatus === "A-Verified") {
+    orderDetails = [
+      orderBooked,
+      orderVerified,
+      orderAssigned,
+      orderProcessing,
+      orderCompleted,
+      orderAlterartion
+    ];
+  } else if (ctx.order.orderStatus === "A-Accepted") {
+    orderDetails = [
+      orderBooked,
+      orderVerified,
+      orderAssigned,
+      orderProcessing,
+      orderCompleted,
+      orderAlterartion
+    ];
+  } else if (ctx.order.orderStatus === "A-Assigned") {
+    orderDetails = [
+      orderBooked,
+      orderVerified,
+      orderAssigned,
+      orderProcessing,
+      orderCompleted,
+      orderAlterartion
+    ];
+  } else if (ctx.order.orderStatus === "A-Progressing") {
+    orderDetails = [
+      orderBooked,
+      orderVerified,
+      orderAssigned,
+      orderProcessing,
+      orderCompleted,
+      orderAlterartion
+    ];
+  } else if (ctx.order.orderStatus === "A-Completed") {
+    orderDetails = [
+      orderBooked,
+      orderVerified,
+      orderAssigned,
+      orderProcessing,
+      orderCompleted,
+      orderAlterartion
+    ];
+  } else if (ctx.order.orderStatus === "A-Delivered") {
+    orderDetails = [
+      orderBooked,
+      orderVerified,
+      orderAssigned,
+      orderProcessing,
+      orderCompleted,
       orderAlterartion
     ];
   }
@@ -335,6 +424,7 @@ const OrderDetials = (props) => {
           <i class="fas fa-arrow-left" aria-hidden="true"></i>
         </button>
         <h3 className={styles.heading}>ORDER DETAILS</h3>
+        <h5>( {ctx.order.orderStatus})</h5>
         <div className={styles.status}>{/* <StatusBar /> */}</div>
         <div className={styles.row}>
           {/* <div className={styles.col61}> */}

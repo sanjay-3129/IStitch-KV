@@ -25,6 +25,10 @@ const MyProfile = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
+        // descending
+        list.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setCompletedorderList(list);
         console.log("list", list);
       });
@@ -41,6 +45,10 @@ const MyProfile = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
+        // descending
+        list.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setCompletedorderList(list);
         console.log("list", list);
       });
@@ -57,9 +65,37 @@ const MyProfile = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
+        // descending
+        list.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setCompletedorderList(list);
         console.log("list", list);
       });
+  };
+  const draftAcceptHandler = (newData) => {
+    console.log("====", newData);
+    let value = window.confirm("are you sure,order is Delivered");
+    if (value) {
+      db.collection("orders")
+        .doc(newData.orderId)
+        .update({
+          orderStatus: "Delivered"
+        })
+        .then(() => {
+          let data = [...completedorderList];
+
+          let filterdata = data.filter((d) => d.orderId !== newData.orderId);
+          // descending
+          filterdata.sort((a, b) =>
+            a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+          );
+          setCompletedorderList(filterdata);
+          // ref.current.complete();
+        });
+    } else {
+      console.log("not");
+    }
   };
 
   let completedorders = null;
@@ -76,6 +112,7 @@ const MyProfile = (props) => {
               <OrderView
                 item={completeorder}
                 {...props}
+                accepthandler={draftAcceptHandler}
                 // processorderList={processorderList}
               />
             );

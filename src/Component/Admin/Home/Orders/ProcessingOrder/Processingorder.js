@@ -26,6 +26,10 @@ const ProcessingOrder = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
+        // descending
+        list.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setProcessorderList(list);
         console.log("list", list);
       });
@@ -42,6 +46,10 @@ const ProcessingOrder = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
+        // descending
+        list.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setProcessorderList(list);
         console.log("list", list);
       });
@@ -58,6 +66,10 @@ const ProcessingOrder = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
+        // descending
+        list.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setProcessorderList(list);
         console.log("list", list);
       });
@@ -66,13 +78,17 @@ const ProcessingOrder = (props) => {
     console.log("Processing");
     let list = [];
     db.collection("orders")
-      .where("orderStatus", "==", "Processing")
+      .where("orderStatus", "==", "Progressing")
       .get()
       .then((data) => {
         console.log("data", data);
         data.forEach((doc) => {
           list.push(doc.data());
         });
+        // descending
+        list.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setProcessorderList(list);
         console.log("list", list);
       });
@@ -88,6 +104,10 @@ const ProcessingOrder = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
+        // descending
+        list.sort((a, b) =>
+          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+        );
         setProcessorderList(list);
         console.log("list", list);
       });
@@ -95,36 +115,60 @@ const ProcessingOrder = (props) => {
 
   const draftAcceptHandler = (newData) => {
     console.log("====", newData);
+    let value = window.confirm("Do you want move Completed");
+    if (value) {
+      db.collection("orders")
+        .doc(newData.orderId)
+        .update({
+          orderStatus: "Completed"
+        })
+        .then(() => {
+          db.collection("TailorsDetails")
+            .doc(newData.tailorDetails.tailorId)
+            .update({
+              amountPending: firebase.firestore.FieldValue.increment(
+                newData.tailorCharge
+              )
+            });
 
-    db.collection("orders")
-      .doc(newData.orderId)
-      .update({
-        orderStatus: "Completed"
-      })
-      .then(() => {
-        let data = [...processorderList];
+          let data = [...processorderList];
 
-        let filterdata = data.filter((d) => d.orderId !== newData.orderId);
-        setProcessorderList(filterdata);
-        // ref.current.complete();
-      });
+          let filterdata = data.filter((d) => d.orderId !== newData.orderId);
+          // descending
+          filterdata.sort((a, b) =>
+            a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+          );
+          setProcessorderList(filterdata);
+          // ref.current.complete();
+        });
+    } else {
+      console.log("nott");
+    }
   };
 
   const draftRejectHandler = (newData) => {
     console.log("====", newData);
+    let value = window.confirm("Do you want reject");
+    if (value) {
+      db.collection("orders")
+        .doc(newData.orderId)
+        .update({
+          orderStatus: "Processing"
+        })
+        .then(() => {
+          let data = [...processorderList];
 
-    db.collection("orders")
-      .doc(newData.orderId)
-      .update({
-        orderStatus: "Processing"
-      })
-      .then(() => {
-        let data = [...processorderList];
-
-        let filterdata = data.filter((d) => d.orderId !== newData.orderId);
-        setProcessorderList(filterdata);
-        // ref.current.complete();
-      });
+          let filterdata = data.filter((d) => d.orderId !== newData.orderId);
+          // descending
+          filterdata.sort((a, b) =>
+            a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+          );
+          setProcessorderList(filterdata);
+          // ref.current.complete();
+        });
+    } else {
+      console.log("Not rejected");
+    }
   };
 
   let processorders = null;

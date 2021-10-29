@@ -27,7 +27,10 @@ const OrderView = (props) => {
         <p className="accept" onClick={() => props.addQuote(props.item)}>
           <i class="fas fa-check"></i>
         </p>
-        <p className="reject">
+        <p
+          className="reject"
+          onClick={() => props.draftDeleteHandler(props.item)}
+        >
           <i class="fas fa-times"></i>
         </p>
         <div onClick={() => orderUpdate(props.item)} className="anchor">

@@ -1,10 +1,47 @@
-import { propTypes } from "react-bootstrap/esm/Image";
+import { useEffect, useState } from "react";
 
 const TailorList = (props) => {
+  const [amountToBePaid, setAmountToBePaid] = useState(0);
+  const [tailorAmount, setTailorAmount] = useState({
+    amountPaid: 0,
+    amountPending: 0
+  });
+
+  useEffect(() => {
+    let paid = props.tailor.amountPaid;
+    let pending = props.tailor.amountPending;
+    setTailorAmount({
+      amountPaid: paid,
+      amountPending: pending
+    });
+  }, [props.tailor.amountPaid, props.tailor.amountPending]);
+
+  const onChangeHandler = (e) => {
+    setAmountToBePaid(e.target.value);
+  };
+
+  const onPayHandler = () => {
+    let amount = parseFloat(amountToBePaid);
+    let value = window.confirm("Are you sure you want to pay: ₹" + amount);
+    if (value) {
+      console.log("yes");
+      setTailorAmount((prevState) => {
+        let paid = parseFloat(prevState.amountPaid);
+        let pending = parseFloat(prevState.amountPending);
+        return {
+          amountPaid: (paid + amount).toFixed(2),
+          amountPending: (pending - amount).toFixed(2)
+        };
+      });
+    } else {
+      console.log("no");
+    }
+  };
+
   return (
     <details class="tailor-details">
       <summary class="inner-box1">
-        <p class="tid">001</p>
+        <p class="tid">{props.tailor.tailorId}</p>
         <p class="tname">{props.tailor.name}</p>
         <p class="tno">{props.tailor.phone}</p>
         <p class="tspec">{props.tailor.specialization}</p>
@@ -21,10 +58,10 @@ const TailorList = (props) => {
                 Completed Orders:&ensp;<b>{props.tailor.completedCount}</b>
               </p>
               <p class="amount">
-                Amount Paid:&ensp;<b>{props.tailor.address}</b>
+                Amount Paid:&ensp;<b>{tailorAmount.amountPaid}</b>
               </p>
               <p class="pend">
-                Amount Pending:&ensp;<b>{props.tailor.address}</b>
+                Amount Pending:&ensp;<b>{tailorAmount.amountPending}</b>
               </p>
             </div>
             <div class="col-sm-8">
@@ -34,19 +71,19 @@ const TailorList = (props) => {
                 <br />
                 <div>
                   <p class="details">
-                    {/* Holder Name:{props.tailor.bankDetails.holderName} */}
+                    Holder Name:{props.tailor.bankDetails.holderName}
                   </p>
                   <p class="details">
-                    {/* Account Number:{props.tailor.bankDetails.accountNo} */}
+                    Account Number:{props.tailor.bankDetails.accountNo}
                   </p>
                   <p class="details">
-                    {/* Bank Name:{props.tailor.bankDetails.bankName} */}
+                    Bank Name:{props.tailor.bankDetails.bankName}
                   </p>
                   <p class="details">
-                    {/* IFSC Code:{props.tailor.bankDetails.IFSC} */}
+                    IFSC Code:{props.tailor.bankDetails.IFSC}
                   </p>
                   <p class="details">
-                    {/* Branch Name:{props.tailor.bankDetails.branch} */}
+                    Branch Name:{props.tailor.bankDetails.branch}
                   </p>
                 </div>
               </div>
@@ -54,9 +91,13 @@ const TailorList = (props) => {
                 <input
                   class="pay-field"
                   type="number"
+                  id="amountToBePaid"
+                  name="amountToBePaid"
                   placeholder="Enter the amount to be paid"
+                  onChange={onChangeHandler}
+                  value={amountToBePaid}
                 />
-                <button type="submit" class="pay-btn">
+                <button type="button" class="pay-btn" onClick={onPayHandler}>
                   <i class="fas fa-rupee-sign"></i>&ensp;Pay
                 </button>
               </div>
@@ -65,7 +106,11 @@ const TailorList = (props) => {
         </div>
         <div class="col-right">
           <div class="tailorimg">
-            <img class="img-fluid" src="/images/team5.jpg" alt="tailor pic" />
+            <img
+              class="img-fluid"
+              src={props.tailor.profileImage}
+              alt="tailor pic"
+            />
           </div>
         </div>
       </div>
