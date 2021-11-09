@@ -46,6 +46,8 @@
   border: 1px solid #005b7f;
   border-radius: 5px;
   padding: 10px 5px;
+  height: 580px;
+  overflow: auto;
 }
 .content .col-3 {
   padding: 5px;

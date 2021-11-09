@@ -47,7 +47,7 @@ const Rejected = (props) => {
             class="reject-btn"
             onClick={() => props.deleteTailor(props.tailor)}
           >
-            Reject&ensp;<i class="fas fa-times"></i>
+            Delete&ensp;<i class="fas fa-bin"></i>
           </button>
         </div>
       </div>

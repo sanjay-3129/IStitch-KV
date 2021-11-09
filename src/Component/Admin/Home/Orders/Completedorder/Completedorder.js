@@ -25,11 +25,15 @@ const MyProfile = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
-        // descending
-        list.sort((a, b) =>
-          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
-        );
-        setCompletedorderList(list);
+        if (list.length > 0) {
+          // descending
+          list.sort((a, b) =>
+            a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+          );
+          setCompletedorderList(list);
+        } else {
+          setCompletedorderList("empty");
+        }
         console.log("list", list);
       });
   }, []);
@@ -45,11 +49,15 @@ const MyProfile = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
-        // descending
-        list.sort((a, b) =>
-          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
-        );
-        setCompletedorderList(list);
+        if (list.length > 0) {
+          // descending
+          list.sort((a, b) =>
+            a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+          );
+          setCompletedorderList(list);
+        } else {
+          setCompletedorderList("empty");
+        }
         console.log("list", list);
       });
   };
@@ -65,11 +73,15 @@ const MyProfile = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
-        // descending
-        list.sort((a, b) =>
-          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
-        );
-        setCompletedorderList(list);
+        if (list.length > 0) {
+          // descending
+          list.sort((a, b) =>
+            a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+          );
+          setCompletedorderList(list);
+        } else {
+          setCompletedorderList("empty");
+        }
         console.log("list", list);
       });
   };
@@ -86,11 +98,15 @@ const MyProfile = (props) => {
           let data = [...completedorderList];
 
           let filterdata = data.filter((d) => d.orderId !== newData.orderId);
-          // descending
-          filterdata.sort((a, b) =>
-            a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
-          );
-          setCompletedorderList(filterdata);
+          if (filterdata.length > 0) {
+            // descending
+            filterdata.sort((a, b) =>
+              a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+            );
+            setCompletedorderList(filterdata);
+          } else {
+            setCompletedorderList("empty");
+          }
           // ref.current.complete();
         });
     } else {
@@ -107,16 +123,12 @@ const MyProfile = (props) => {
     completedorders = (
       <>
         <div id="content" className="content">
-          {completedorderList.map((completeorder) => {
-            return (
-              <OrderView
-                item={completeorder}
-                {...props}
-                accepthandler={draftAcceptHandler}
-                // processorderList={processorderList}
-              />
-            );
-          })}
+          <OrderView
+            items={completedorderList}
+            {...props}
+            accepthandler={draftAcceptHandler}
+            // processorderList={processorderList}
+          />
         </div>
       </>
     );

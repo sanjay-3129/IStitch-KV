@@ -157,10 +157,22 @@
 /* =================== */
 
 .tailor-details {
+  position: relative;
   margin: 0 0 10px;
 }
 
-.tailor .list .box {
+.tailor .list {
+  position: relative;
+}
+
+.tailor .list .abs-arrow {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+}
+
+.tailor .list .box,
+.tailor .content .box {
   display: flex;
   margin: 0 0 10px;
   flex-direction: row;
@@ -169,38 +181,41 @@
   border-top: none;
 }
 
-.tailor .list .head {
-  border: 1px solid #005b7f;
+.tailor .list .head,
+.tailor .content .head {
+  border: 2px solid #005b7f;
   margin: 0 0 10px;
+  border-radius: 6px;
 }
 
-.tailor .list .head p {
-  font-size: 16px;
+.tailor .content .head p {
+  font-size: 20px;
   font-weight: 600;
   padding: 7px;
   margin: 0;
   text-align: center;
-  border-right: 1px solid #005b7f;
+  border-right: 2px solid #005b7f;
 }
 
-.tailor .list .head p.id {
+.tailor .content .head p.id {
   width: 15%;
 }
 
-.tailor .list .head p.tname {
+.tailor .content .head p.tname {
   width: 25%;
 }
 
-.tailor .list .head p.no {
+.tailor .content .head p.no {
   width: 15%;
 }
 
-.tailor .list .head p.spec {
+.tailor .content .head p.spec {
   width: 20%;
 }
 
-.tailor .list .head p.add {
+.tailor .content .head p.add {
   width: 25%;
+  border-right: 0;
 }
 
 /* .tailor .list .box p.timg {
@@ -266,7 +281,7 @@
   width: 20%;
 }
 
-.tailor .list .inner-box1 p.add {
+.tailor .list .inner-box1 p.tadd {
   width: 25%;
   text-align: left;
 }
@@ -345,6 +360,9 @@
 
 .tailor .list .box .inner-box2 .pay-btn {
   font-size: 18px;
+  padding: 5px 10px;
+  width: 150px;
+  display: initial;
   font-weight: 600;
   color: #fff;
   background: #7e7e7e;

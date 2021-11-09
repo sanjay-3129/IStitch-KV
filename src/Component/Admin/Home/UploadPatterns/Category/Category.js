@@ -24,13 +24,14 @@ const Category = (props) => {
   // if category is clicked directly show all categories from all genders
   // if category is clicked from gender, show only categories based on that gender
   const [categoryList, setCategoryList] = useState(null); // category list from db
+  const [mcategoryList, setmCategoryList] = useState([]);
+  // const [mcategory, setmcategory] = useState([]);
   const [isChange, setIsChange] = useState(null); // for modal
   const [isDelete, setIsDelete] = useState(null);
   const [type, setType] = useState("mainProduct"); // mainProduct or addOns
   const [newData, setNewData] = useState({
     name: "",
-    img: null,
-    mainCategoryId: ""
+    img: null
   });
   // let list = [];
   const [genderList, setgenderList] = useState([]);
@@ -46,12 +47,13 @@ const Category = (props) => {
     noOfPatterns: 0,
     timestamp: ""
   });
+
   const [addNewItem, setAddNewItem] = useState("");
   const [newModal, setNewModal] = useState("");
   // const [newPatternModal, setNewPatternModal] = useState("");
   const [length, setLength] = useState(0);
   const [lastDoc, setLastDoc] = useState(null);
-
+  // const [mcategory, setmcategory] = useState([]);
   const closeModalHandler = () => {
     setAddNewItem(null);
     setNewData({
@@ -190,7 +192,7 @@ const Category = (props) => {
 
   // for newName updating, two-way binding
   const onChangeHandler = (event) => {
-    // console.log(event.target.name);
+    console.log(event.target.name);
     let value = null;
     if (event.target.name === "img") {
       value = event.target.files[0];
@@ -298,16 +300,19 @@ const Category = (props) => {
 
   // updating image or name
   const changeSubmitHandler = () => {
-    setIsChange(false);
     // console.log(newName, newImage);
     // update the changes in firebase
     // db.collection("gender").doc(category.genderName).collection("category");
-    if (newData.img !== null && newData.name === "") {
+    if (newData.img !== null) {
       // console.log(category.genderId, category.categoryId, newData.name, "name");
       changeImageHandler(category.categoryId, newData.img);
-    } else {
+      setIsChange(false);
+    } else if (newData.name !== "") {
       // console.log(category.genderId, category.categoryId, newData.img, "img");
       changeNameHandler(category.categoryId, newData.name);
+      setIsChange(false);
+    } else {
+      alert("Enter Valid Data!!!");
     }
     setNewData({
       name: "",
@@ -317,7 +322,16 @@ const Category = (props) => {
 
   const draftHandler = (newData) => {
     setAddNewItem(false);
+    console.log("qqqqqq", newData);
+    // let category = mcategoryList.find((cat) => {
+    //   console.log("cattt", cat);
+    //   console.log("mcategory.categoryName", category.categoryName);
+
+    //   return newData.mcategory === cat.categoryName;
+    // });
     // hide = true;
+    console.log("category", category);
+
     let type = document.getElementById("categorytype").value;
     // let subcategoryType = document.getElementById("subcategorytype").value;
     // console.log("types: ", categoryType, subcategoryType);
@@ -347,7 +361,8 @@ const Category = (props) => {
     let categoryTimestamp = null; // prevgender - category - subcategory;
     let subCategoryTimestamp = null;
     // prevgender - category - subcategory;
-    if (newData.categoryName === "" && newData.img === null) {
+    // console.log("newData-cateory", newData);
+    if (newData.categoryName === "" && newData.categoryImg === null) {
       alert("Enter Category name and select the Category image");
     } else {
       if (
@@ -371,8 +386,20 @@ const Category = (props) => {
         );
         categoryImgRef.put(newData.categoryImg).then((snapshot) => {
           categoryImgRef.getDownloadURL().then((categoryImg) => {
-            categoryRef
-              .set({
+            let data = {
+              genderId: genderId,
+              categoryId: categoryId, // genderate new category id
+              categoryName: newData.categoryName,
+              categoryImage: categoryImg,
+              noOfSubcategories: 0,
+              noOfStyles: 0,
+              noOfPatterns: 0,
+              delete: false,
+              hide: true,
+              timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            if (type === "addOns") {
+              data = {
                 genderId: genderId,
                 categoryId: categoryId, // genderate new category id
                 categoryName: newData.categoryName,
@@ -382,73 +409,71 @@ const Category = (props) => {
                 noOfPatterns: 0,
                 delete: false,
                 hide: true,
+                mainCategoryId: category.categoryId,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
-              })
-              .then(() => {
-                // gender - no_of_categories increment
-                genderRef.update({
-                  noOfCategories: firebase.firestore.FieldValue.increment(1)
-                });
-
-                // creating subcategory
-                subcategoryImgRef
-                  .put(newData.subcategoryImg)
-                  .then((snapshot) => {
-                    subcategoryImgRef
-                      .getDownloadURL()
-                      .then((subcategoryImg) => {
-                        subcategoryRef
-                          .set({
-                            genderId: genderId,
-                            categoryId: categoryId,
-                            subcategoryId: subcategoryId, // genderate new category id
-                            subcategoryName: newData.subcategoryName,
-                            subcategoryImage: subcategoryImg,
-                            noOfStyles: 0,
-                            noOfPatterns: 0,
-                            delete: false,
-                            hide: true,
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                          })
-                          .then(() => {
-                            // gender - no_of_subcategories - increment
-                            genderRef.update({
-                              noOfSubcategories: firebase.firestore.FieldValue.increment(
-                                1
-                              )
-                            });
-                            // category - no_of_subcategories - increment
-                            categoryRef.update({
-                              noOfSubcategories: firebase.firestore.FieldValue.increment(
-                                1
-                              )
-                            });
-
-                            genderRef
-                              .collection(type)
-                              .doc("categories")
-                              .collection("category")
-                              .where("delete", "==", false)
-                              .orderBy("timestamp", "desc")
-                              .limit(16)
-                              .get()
-                              .then((data) => {
-                                let list = [];
-                                setLength(data.size);
-                                data.forEach((doc) => {
-                                  list.push(doc.data());
-                                });
-                                ref.current.complete(); // linear loader to complete
-                                setCategoryList(list);
-                                setCategory(list[0]);
-                                setType(type);
-                                // setAddNewItem(null);
-                              });
-                          })
-                          .catch((e) => console.log(e));
-                      });
-                  });
+              };
+            }
+            categoryRef.set(data).then(() => {
+              // gender - no_of_categories increment
+              genderRef.update({
+                noOfCategories: firebase.firestore.FieldValue.increment(1)
               });
+
+              // creating subcategory
+              subcategoryImgRef.put(newData.subcategoryImg).then((snapshot) => {
+                subcategoryImgRef.getDownloadURL().then((subcategoryImg) => {
+                  subcategoryRef
+                    .set({
+                      genderId: genderId,
+                      categoryId: categoryId,
+                      subcategoryId: subcategoryId, // genderate new category id
+                      subcategoryName: newData.subcategoryName,
+                      subcategoryImage: subcategoryImg,
+                      noOfStyles: 0,
+                      noOfPatterns: 0,
+                      delete: false,
+                      hide: true,
+                      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    })
+                    .then(() => {
+                      // gender - no_of_subcategories - increment
+                      genderRef.update({
+                        noOfSubcategories: firebase.firestore.FieldValue.increment(
+                          1
+                        )
+                      });
+                      // category - no_of_subcategories - increment
+                      categoryRef.update({
+                        noOfSubcategories: firebase.firestore.FieldValue.increment(
+                          1
+                        )
+                      });
+
+                      genderRef
+                        .collection(type)
+                        .doc("categories")
+                        .collection("category")
+                        .where("delete", "==", false)
+                        .orderBy("timestamp", "desc")
+                        .limit(16)
+                        .get()
+                        .then((data) => {
+                          let list = [];
+                          setLength(data.size);
+                          data.forEach((doc) => {
+                            list.push(doc.data());
+                          });
+                          ref.current.complete(); // linear loader to complete
+                          setCategoryList(list);
+                          setCategory(list[0]);
+                          setType(type);
+                          // setAddNewItem(null);
+                        });
+                    })
+                    .catch((e) => console.log(e));
+                });
+              });
+            });
           });
         });
       } // if
@@ -470,8 +495,20 @@ const Category = (props) => {
         );
         categoryImgRef.put(newData.categoryImg).then((snapshot) => {
           categoryImgRef.getDownloadURL().then((categoryImg) => {
-            categoryRef
-              .set({
+            let data = {
+              genderId: genderId,
+              categoryId: categoryId, // genderate new category id
+              categoryName: newData.categoryName,
+              categoryImage: categoryImg,
+              noOfSubcategories: 0,
+              noOfStyles: 0,
+              noOfPatterns: 0,
+              delete: false,
+              hide: true,
+              timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            if (type === "addOns") {
+              data = {
                 genderId: genderId,
                 categoryId: categoryId, // genderate new category id
                 categoryName: newData.categoryName,
@@ -481,33 +518,35 @@ const Category = (props) => {
                 noOfPatterns: 0,
                 delete: false,
                 hide: true,
+                mainCategoryId: category.categoryId,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
-              })
-              .then(() => {
-                // gender - no_of_categories increment &&
-                genderRef.update({
-                  noOfCategories: firebase.firestore.FieldValue.increment(1)
-                });
-                // re-render
-                let list = [];
-                genderRef
-                  .collection(type)
-                  .doc("categories")
-                  .collection("category")
-                  .where("delete", "==", false)
-                  .orderBy("timestamp", "desc")
-                  .limit(16)
-                  .get()
-                  .then((data) => {
-                    data.forEach((doc) => {
-                      list.push(doc.data());
-                    });
-                    ref.current.complete(); // linear loader to complete
-                    setCategoryList(list);
-                    setCategory(list[0]);
-                    // setAddNewItem(null);
-                  });
+              };
+            }
+            categoryRef.set(data).then(() => {
+              // gender - no_of_categories increment &&
+              genderRef.update({
+                noOfCategories: firebase.firestore.FieldValue.increment(1)
               });
+              // re-render
+              let list = [];
+              genderRef
+                .collection(type)
+                .doc("categories")
+                .collection("category")
+                .where("delete", "==", false)
+                .orderBy("timestamp", "desc")
+                .limit(16)
+                .get()
+                .then((data) => {
+                  data.forEach((doc) => {
+                    list.push(doc.data());
+                  });
+                  ref.current.complete(); // linear loader to complete
+                  setCategoryList(list);
+                  setCategory(list[0]);
+                  // setAddNewItem(null);
+                });
+            });
           });
         });
       }
@@ -526,7 +565,7 @@ const Category = (props) => {
       category.categoryName,
       category.categoryImage
     );
-    ref.current.continuousStart();
+
     let subcategoryId = generateId("subcategory");
     let bucketName = "subcategory";
     let storageRef = firebase.storage().ref();
@@ -548,9 +587,10 @@ const Category = (props) => {
       .collection("subcategory")
       .doc(subcategoryId);
     if (newData.name === "" && newData.img === null) {
-      alert("Enter Category name and select the Category image");
+      alert("Enter SubCategory name and select the SubCategory image");
     } else {
       if (newData.name !== "" && newData.img !== null) {
+        ref.current.continuousStart();
         let subCategoryTimestamp =
           +new Date().getTime() + "-" + newData.img.name;
         let subcategoryImgRef = storageRef.child(
@@ -625,7 +665,42 @@ const Category = (props) => {
       })
       .catch((e) => console.log(e));
   };
+  const getMainCategoryList = () => {
+    console.log("///>>>");
 
+    db.collection("gender")
+      .doc(genderId)
+      .collection("mainProduct")
+      .doc("categories")
+      .collection("category")
+      .where("delete", "==", false)
+      .orderBy("timestamp", "desc")
+      .limit(8)
+      .get()
+      .then((sub) => {
+        console.log("......", sub);
+
+        if (sub.docs.length > 0) {
+          // subcollection exists
+          let list = [];
+          sub.forEach((subDoc) => {
+            list.push(subDoc.data());
+          });
+          // genderName = genderNam;
+          setmCategoryList(list);
+          console.log("mcatlist", list);
+        } else {
+          // subcollection not exists
+          setmCategoryList([
+            {
+              categoryId: 1,
+              categoryName: "Empty, pls select another gender"
+            }
+          ]);
+        }
+      })
+      .catch((e) => console.log(e));
+  };
   const deleteCategoryHandler = (categoryId) => {
     // include decrement in all other
     // console.log(categoryId, "deleteCategoryHandler");
@@ -995,14 +1070,26 @@ const Category = (props) => {
           genderImg={genderImg}
           closeModal={closeModalHandler}
           // publish={publishHandler}
+          onChange={onChangeHandler}
           draft={draftHandler}
+          newData={newData}
+          getCategoryList={getMainCategoryList}
+          mcategoryList={mcategoryList}
         />
       )}
       {newModal && (
         <AddNewStyle
           title={newModal}
           newData={newData}
-          closeModal={() => setNewModal(false)}
+          closeModal={() => {
+            setNewModal(null);
+            setNewData({
+              name: "",
+              img: null,
+              categorytype: null,
+              mainCategoryId: ""
+            });
+          }}
           onChange={onChangeHandler}
           saveAsDraft={draftSubcategoryHandler}
         />
@@ -1014,6 +1101,8 @@ const Category = (props) => {
           submit={changeSubmitHandler}
           onChange={onChangeHandler}
           newName={newData.name}
+          getCategoryList={getCategoryList}
+          mcategoryList={mcategoryList}
           closeModal={() => {
             setIsChange(null);
             setNewData({

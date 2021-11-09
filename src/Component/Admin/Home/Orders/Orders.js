@@ -12,9 +12,9 @@ import "./Orders.css";
 import OrderDetials from "./OrderDetials";
 
 const Orders = (props) => {
-  useEffect(() => {
-    props.history.push(`${props.match.url}/orders/preorders`);
-  }, []);
+  // useEffect(() => {
+  //   props.history.push(`${props.match.url}/orders/preorders`);
+  // }, []);
   return (
     <>
       {/* <OrderDetials /> */}

@@ -3,7 +3,9 @@ import TailorList from "./TailorList";
 
 const List = (props) => {
   return (
+    // <div class="list fas" style={{ display: "block", lineHeight: "initial" }}>
     <div class="list">
+      <i class="fas abs-arrow fa-sort-down"></i>
       {/* <div class="box head">
         <p class="id">Tailor Id</p>
         <p class="tname">Name</p>

@@ -40,7 +40,7 @@ button {
 }
 
 .summary p.ono {
-  width: 6%;
+  width: 8%;
   text-align: center;
 }
 
@@ -54,7 +54,7 @@ button {
   display: inline-block;
   padding: 0;
   margin: 0;
-  width: 5%;
+  width: 7%;
   text-align: center;
 }
 
@@ -63,4 +63,19 @@ button {
   color: #005b7f;
   padding: 8px;
   cursor: pointer;
+}
+
+.head {
+  border: 2px solid #005b7f;
+}
+
+.head p,
+.head .anchor {
+  font-size: 18px;
+  font-weight: 600;
+  border-right: 2px solid #005b7f;
+  text-transform: uppercase;
+  align-items: center;
+  display: flex;
+  justify-content: center;
 }

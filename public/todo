@@ -30,32 +30,53 @@ tailor pay -> pay button -> alert and will enter amount paid from admin and ente
 alteration -> end user when requesting, no list is shown and showing only 2 always
   -> Requested status should be there to show that.
 
+  
+onchange handler ,tailor charge, price, date -> mandatory
+
+emmpty set - completed
 
 PENDING:
-
-onchange handler ,tailor charge, price, date -> mandatory - pending
-
 orders -> suborders -> design with spacing bcs congested
 
 booked -> count is hiding the name & count should be changed.
+tailor count -> how to know whether its new tailor
 
-emmpty set 
+
 tailor table heading
 order tables heading
- =Booked count
+ alteration
 
- akil
+ akhil
   finished image should show in card view
   orderview design
-
 
 doubts:abull
 tailor bank details
 intail tailor reg -add amountPending,amountPaid
 
-
-
-
 settings &profile  no need hide that
 tailorProfile image
 osderstatus in orderdetails
+
+
+---------------------------------
+test 1:
+completed:
+Orders:
+ - pre-orders - booked, verified, accepted, assigned - wae
+ - processing orders -> received, rePick()
+
+
+pending:
+ - table heading (pending)
+ - order details, pattern images, name & price should be small
+
+
+-----------------------
+
+orderPrice > tailor charge - mandatory//completed
+order price + delivery charge(100rs) + GST(18%) => orderPrice
+
+orderStatus - undefined for manual tailor assign preorder - orderView.js - line12
+
+Alteration - due date - all places//completed

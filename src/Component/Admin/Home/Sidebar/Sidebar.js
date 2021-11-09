@@ -26,7 +26,7 @@ const SideBar = (props) => {
               <NavLink
                 activeClassName={style.activeLink}
                 className={style.list_link}
-                to={`${props.match.url}/orders`}
+                to={`${props.match.url}/orders/preorders`}
               >
                 <i className={`${style.fas} fas fa-warehouse`}></i>Orders
               </NavLink>

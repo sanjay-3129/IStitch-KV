@@ -1,6 +1,17 @@
 import "./Info.css";
 
 const Info = (props) => {
+  const onScrollHandler = (e) => {
+    const bottom =
+      e.target.scrollHeight - Math.ceil(e.target.scrollTop) ===
+      e.target.clientHeight;
+    // bottom && data empty dont call db again
+    // if there is no data from, then length will be 0, so no need to call db again
+    console.log("bottom", bottom);
+    if (bottom) {
+      props.onScroll();
+    }
+  };
   return (
     <div className="info">
       <div className="flex">
@@ -22,11 +33,11 @@ const Info = (props) => {
             Add-ons
           </button> */}
         </div>
-        <div className="right">
+        {/* <div className="right">
           <input type="search" placeholder="search using this" />
-        </div>
+        </div> */}
       </div>
-      <div className="content">
+      <div id="content" className="content" onScroll={onScrollHandler}>
         {props.subCategoryList.map((subcategory) => {
           return (
             <div class="col-3">

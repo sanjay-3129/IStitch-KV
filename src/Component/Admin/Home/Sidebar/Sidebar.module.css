@@ -1,5 +1,6 @@
 .sidebar {
   background-color: #a6c8cc;
+  min-height: 100vh;
   height: 100%;
   font-family: cursive;
 }

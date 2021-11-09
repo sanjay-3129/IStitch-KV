@@ -55,6 +55,7 @@ const ModalOverlay = (props) => {
             type="number"
             id="price"
             name="price"
+            min="0"
             value={props.newData.price}
             onChange={props.onChange}
           />

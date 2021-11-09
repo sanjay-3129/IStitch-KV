@@ -22,7 +22,7 @@ const ModalOverlay = (props) => {
           props.tailors.map((tailor) => {
             return (
               <div className={classes.box}>
-                <p className={classes.tid}>001</p>
+                <p className={classes.tid}>{tailor.tailorId}</p>
                 <p className={classes.tname}>{tailor.name}</p>
                 <p className={classes.tno}>{tailor.phone}</p>
                 <p className={classes.tadd}>{tailor.address}</p>

@@ -147,3 +147,15 @@
   background: #005b7f;
   color: #fff;
 }
+.choices {
+  padding: 5px 20px;
+}
+.choices input[type="radio"] {
+  width: initial;
+  margin: 0;
+  box-shadow: 0 0 0;
+}
+.choices label {
+  width: initial;
+  margin: 0;
+}

@@ -71,19 +71,28 @@ const TailorList = (props) => {
                 <br />
                 <div>
                   <p class="details">
-                    Holder Name:{props.tailor.bankDetails.holderName}
+                    <span style={{ fontWeight: "initial" }}>Holder Name:</span>
+                    <span style={{ textTransform: "uppercase" }}>
+                      &ensp;{props.tailor.bankDetails.holderName}
+                    </span>
                   </p>
                   <p class="details">
-                    Account Number:{props.tailor.bankDetails.accountNo}
+                    <span style={{ fontWeight: "initial" }}>
+                      Account Number:
+                    </span>
+                    &ensp;{props.tailor.bankDetails.accountNo}
                   </p>
                   <p class="details">
-                    Bank Name:{props.tailor.bankDetails.bankName}
+                    <span style={{ fontWeight: "initial" }}>Bank Name:</span>
+                    &ensp;{props.tailor.bankDetails.bankName}
                   </p>
                   <p class="details">
-                    IFSC Code:{props.tailor.bankDetails.IFSC}
+                    <span style={{ fontWeight: "initial" }}>IFSC Code:</span>
+                    &ensp;{props.tailor.bankDetails.IFSC}
                   </p>
                   <p class="details">
-                    Branch Name:{props.tailor.bankDetails.branch}
+                    <span style={{ fontWeight: "initial" }}>Branch Name:</span>
+                    &ensp;{props.tailor.bankDetails.branch}
                   </p>
                 </div>
               </div>

@@ -40,7 +40,7 @@ button {
 }
 
 .summary p.ono {
-  width: 6%;
+  width: 8%;
   text-align: center;
 }
 
@@ -54,7 +54,7 @@ button {
   display: inline-block;
   padding: 0;
   margin: 0;
-  width: 5%;
+  width: 7%;
   text-align: center;
 }
 
@@ -66,11 +66,11 @@ button {
 }
 
 .completed p.cat {
-  width: 15%;
+  width: 13%;
 }
 
 .completed p.cname {
-  width: 20%;
+  width: 18%;
 }
 
 .completed p.cno {
@@ -78,11 +78,46 @@ button {
 }
 
 .completed p.tname {
-  width: 20%;
+  width: 16%;
 }
 .completed p.accept {
-  width: 4%;
+  width: 8%;
 }
 .completed p.tno {
   width: 15%;
+}
+
+.delivered p.cat {
+  width: 15%;
+}
+
+.delivered p.cname {
+  width: 17%;
+}
+
+.delivered p.cno {
+  width: 15%;
+}
+
+.delivered p.tname {
+  width: 20%;
+}
+
+.delivered p.tno {
+  width: 18%;
+}
+
+.head {
+  border: 2px solid #005b7f;
+}
+
+.head p,
+.head .anchor {
+  font-size: 18px;
+  font-weight: 600;
+  border-right: 2px solid #005b7f;
+  text-transform: uppercase;
+  align-items: center;
+  display: flex;
+  justify-content: center;
 }

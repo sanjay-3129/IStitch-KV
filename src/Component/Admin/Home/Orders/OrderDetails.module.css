@@ -21,9 +21,10 @@
   position: absolute;
   right: 15px;
   top: 10px;
-  width: 40px;
-  height: 40px;
-  padding: 7px;
+  width: 45px;
+  height: 45px;
+  line-height: 33px;
+  padding: 5px;
   border-radius: 50%;
   text-align: center;
   box-shadow: 1px 1px 5px 2px rgb(0 0 0 / 18%);
@@ -64,6 +65,7 @@
   padding: 5px;
   display: flex;
   flex-wrap: wrap;
+  height: 100%;
   justify-content: space-between;
 }
 
@@ -89,8 +91,8 @@
   margin: 0 0 10px;
   flex-direction: column;
   flex-wrap: wrap;
-  width: 25%;
-  height: inherit;
+  width: 49%;
+  height: initial;
   box-shadow: 1px 1px 5px 2px rgb(0 0 0 / 18%);
 }
 
@@ -99,13 +101,13 @@
   margin: 0 0 10px;
   flex-direction: column;
   flex-wrap: wrap;
-  width: 25%;
+  width: 49%;
   box-shadow: 1px 1px 5px 2px rgb(0 0 0 / 18%);
 }
 
 .descrb {
-  width: 37%;
-  height: inherit;
+  width: 49%;
+  height: initial;
   margin: 0 0 10px;
   box-shadow: 1px 1px 5px 2px rgb(0 0 0 / 18%);
 }
@@ -115,8 +117,8 @@
   margin: 0 0 10px;
   flex-direction: column;
   flex-wrap: wrap;
-  width: 30%;
-  height: inherit;
+  width: 49%;
+  height: initial;
   box-shadow: 1px 1px 5px 2px rgb(0 0 0 / 18%);
 }
 
@@ -182,13 +184,87 @@
   box-shadow: 1px 1px 5px 2px rgb(0 0 0 / 18%);
 }
 
+.fi {
+  width: 100%;
+  margin: 0 0 10px;
+  box-shadow: 1px 1px 5px 2px rgb(0 0 0 / 18%);
+}
+
 .para {
   margin: 0;
   padding: 5px 15px;
+}
+
+.innerdiv {
+  margin: 0;
+  padding: 0 10px 5px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.innerdiv::-webkit-scrollbar {
+  width: 5px;
+}
+
+.innerdiv::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+}
+
+.innerdiv::-webkit-scrollbar-thumb {
+  background: #005b7f;
+}
+
+.columns {
+  width: 50% !important;
+  padding: 15px;
+  position: relative;
+}
+
+.mesp {
+  margin: 0 0 5px;
 }
 
 .span {
   width: 75%;
   display: inline-block;
   padding: 0 5px 5px;
+}
+
+.footer {
+  width: 100%;
+  padding: 10px 0 0;
+  text-align: right;
+}
+
+.acpt {
+  font-size: 16px;
+  color: green;
+  padding: 5px 10px;
+  margin-right: 8px;
+  width: 150px;
+  border: 1px solid green;
+  outline: none;
+  text-align: center;
+  transition: all ease 0.3s;
+}
+
+.acpt:hover {
+  color: #fff;
+  background: green;
+}
+
+.cncl {
+  font-size: 16px;
+  color: red;
+  padding: 5px 10px;
+  width: 150px;
+  border: 1px solid red;
+  outline: none;
+  text-align: center;
+  transition: all ease 0.3s;
+}
+
+.cncl:hover {
+  color: #fff;
+  background: red;
 }

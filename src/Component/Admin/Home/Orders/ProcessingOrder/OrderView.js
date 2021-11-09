@@ -1,10 +1,26 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import "./processingorder.css";
-import { Link, Switch, Route } from "react-router-dom";
+// import { Link, Switch, Route } from "react-router-dom";
 
 import OrdersContext from "../../Contexts/OrderContext";
 const OrderView = (props) => {
   const ctx = useContext(OrdersContext);
+  const [orderView, setOrderView] = useState(null);
+
+  useEffect(() => {
+    if (props.items !== null) {
+      let orderStatus = props.items[0].orderStatus;
+      if (orderStatus === "Received") {
+        setOrderView("Received");
+      } else if (orderStatus === "Repicked") {
+        setOrderView("Repicked");
+      } else if (orderStatus === "Progressing") {
+        setOrderView("Progressing");
+      } else if (orderStatus === "Finished") {
+        setOrderView("Finished");
+      }
+    }
+  }, [props.items]);
 
   const orderUpdate = (order) => {
     console.log("order", order);
@@ -13,84 +29,123 @@ const OrderView = (props) => {
       `${props.match.url}/orders/processingorders/${order.orderId}`
     );
   };
-  let orderView;
-  let orderReceived = (
-    <>
-      <div className="summary received">
-        {/* {props.item.orderNo} */}
-        <p className="ono">{props.item.orderNumber}</p>
-        <p className="cat">{props.item.categoryName}</p>
-        <p className="tname">{props.item.tailorDetails.tailorName}</p>
-        <p className="tno">{props.item.tailorDetails.tailorPhno}</p>
 
-        <p className="ddate">{props.item.dueDate}</p>
-
-        <div onClick={() => orderUpdate(props.item)} className="anchor">
-          <i class="far fa-list-alt"></i>
+  let ui = null;
+  if (orderView !== null) {
+    let orderReceived = (
+      <>
+        <div class="summary received head">
+          <p class="ono">Order Id</p>
+          <p class="cat">Category</p>
+          <p class="tname">Tailor Name</p>
+          <p class="tno">Tailor Phno</p>
+          <p class="ddate">Due Date</p>
+          <p class="anchor">View</p>
         </div>
-      </div>
-    </>
-  );
+        {props.items.map((item) => {
+          return (
+            <div className="summary received">
+              <p className="ono">{item.orderNumber}</p>
+              <p className="cat">{item.categoryName}</p>
+              <p className="tname">{item.tailorDetails.tailorName}</p>
+              <p className="tno">{item.tailorDetails.tailorPhno}</p>
+              <p className="ddate">{item.dueDate}</p>
+              <div onClick={() => orderUpdate(item)} className="anchor">
+                <i class="far fa-list-alt"></i>
+              </div>
+            </div>
+          );
+        })}
+      </>
+    );
 
-  let orderRepick = (
-    <>
-      <div className="summary repick">
-        {/* {props.item.orderNo} */}
-        <p className="ono">{props.item.orderNumber}</p>
-        <p className="cat">{props.item.categoryName}</p>
-        <p className="tname">{props.item.tailorDetails.tailorName}</p>
-        <p className="tno">{props.item.tailorDetails.tailorPhno}</p>
-        <p className="cname">{props.item.userDetails.userName}</p>
-        <p className="cno">{props.item.userDetails.userPhno}</p>
-        <select className="cars" id="cars">
-          <option value="volvo">Volvo</option>
-          <option value="saab">Saab</option>
-          <option value="mercedes">Mercedes</option>
-        </select>
-
-        <div onClick={() => orderUpdate(props.item)} className="anchor">
-          <i class="far fa-list-alt"></i>
+    let orderRepick = (
+      <>
+        <div class="summary repick head">
+          <p class="ono">Order Id</p>
+          <p class="cat">Category</p>
+          <p class="tname">Tailor Name</p>
+          <p class="tno">Tailor Phno</p>
+          <p class="cname">Customer Name</p>
+          <p class="cno">Customer Phno</p>
+          <p class="accept">Assign</p>
+          <p class="anchor">View</p>
         </div>
-      </div>
-    </>
-  );
-  let orderProcessing = <></>;
-  let orderFinished = (
-    <>
-      <div className="summary finished">
-        {/* {props.item.orderNo} */}
-        <p className="ono">{props.item.orderNumber}</p>
-        <p className="cat">{props.item.categoryName}</p>
-        <p className="tname">{props.item.tailorDetails.tailorName}</p>
-        <p className="tno">{props.item.tailorDetails.tailorPhno}</p>
-
-        <p className="ddate">{props.item.dueDate}</p>
-
-        <p className="accept" onClick={() => props.accepthandler(props.item)}>
-          <i class="fas fa-check"></i>
-        </p>
-        <p className="reject" onClick={() => props.rejecthandler(props.item)}>
-          <i class="fas fa-times"></i>
-        </p>
-
-        <div onClick={() => orderUpdate(props.item)} className="anchor">
-          <i class="far fa-list-alt"></i>
+        {props.items.map((item) => {
+          return (
+            <div className="summary repick">
+              {/* {props.item.orderNo} */}
+              <p className="ono">{item.orderNumber}</p>
+              <p className="cat">{item.categoryName}</p>
+              <p className="tname">{item.tailorDetails.tailorName}</p>
+              <p className="tno">{item.tailorDetails.tailorPhno}</p>
+              <p className="cname">{item.userDetails.userName}</p>
+              <p className="cno">{item.userDetails.userPhno}</p>
+              <p
+                className="accept"
+                onClick={() => props.acceptReassginhandler(item)}
+              >
+                <i class="fas fa-check"></i>
+              </p>
+              <div onClick={() => orderUpdate(item)} className="anchor">
+                <i class="far fa-list-alt"></i>
+              </div>
+            </div>
+          );
+        })}
+      </>
+    );
+    // let orderProcessing = <></>;
+    let orderFinished = (
+      <>
+        <div class="summary finished head">
+          <p class="ono">Order Id</p>
+          <p class="cat">Category</p>
+          <p class="tname">Tailor Name</p>
+          <p class="tno">Tailor Phno</p>
+          <p class="ddate">Due Date</p>
+          <p class="accept">Accept</p>
+          <p class="reject">Reject</p>
+          <p class="anchor">View</p>
         </div>
-      </div>
-    </>
-  );
+        {props.items.map((item) => {
+          return (
+            <div className="summary finished">
+              {/* {props.item.orderNo} */}
+              <p className="ono">{item.orderNumber}</p>
+              <p className="cat">{item.categoryName}</p>
+              <p className="tname">{item.tailorDetails.tailorName}</p>
+              <p className="tno">{item.tailorDetails.tailorPhno}</p>
 
-  if (props.item.orderStatus === "Received") {
-    orderView = [orderReceived];
-  } else if (props.item.orderStatus === "Repick") {
-    orderView = [orderRepick];
-  } else if (props.item.orderStatus === "Progressing") {
-    orderView = [orderReceived];
-  } else if (props.item.orderStatus === "Finished") {
-    orderView = [orderFinished];
+              <p className="ddate">{item.dueDate}</p>
+
+              <p className="accept" onClick={() => props.accepthandler(item)}>
+                <i class="fas fa-check"></i>
+              </p>
+              <p className="reject" onClick={() => props.rejecthandler(item)}>
+                <i class="fas fa-times"></i>
+              </p>
+
+              <div onClick={() => orderUpdate(item)} className="anchor">
+                <i class="far fa-list-alt"></i>
+              </div>
+            </div>
+          );
+        })}
+      </>
+    );
+    if (orderView === "Received") {
+      ui = orderReceived;
+    } else if (orderView === "Repicked") {
+      ui = orderRepick;
+    } else if (orderView === "Progressing") {
+      ui = orderReceived;
+    } else if (orderView === "Finished") {
+      ui = orderFinished;
+    }
   }
 
-  return <>{orderView}</>;
+  return <>{ui}</>;
 };
 
 export default OrderView;

@@ -98,6 +98,8 @@ const SubCategory = (props) => {
         .limit(16)
         .get()
         .then((sub) => {
+          let lastVisible = sub.docs[sub.docs.length - 1];
+          setLastDoc(lastVisible);
           console.log("insidethen-------- id", sub.docs.length);
           if (sub.docs.length > 0) {
             console.log("insidethen id", sub.docs.length);
@@ -108,6 +110,7 @@ const SubCategory = (props) => {
             });
             setSubCategoryList(list);
             setSubcategory(list[0]);
+            setLength(sub.size);
           } else {
             // subcollection not exists
             setSubCategoryList("subcollection_empty");
@@ -295,20 +298,18 @@ const SubCategory = (props) => {
 
   // updating image or name
   const changeSubmitHandler = () => {
-    setIsChange(false);
     // console.log(newName, newImage);
     // update the changes in firebase
     // db.collection("gender").doc(category.genderName).collection("category");
-    if (newData.img !== null && newData.name === "") {
-      // console.log(
-      //   subcategory.genderId,
-      //   subcategory.subcategoryName,
-      //   newData.img
-      // );
+    if (newData.img !== null) {
       changeImageHandler(subcategory.subcategoryId, newData.img);
-    } else {
+      setIsChange(false);
+    } else if (newData.name !== "") {
       // console.log(subcategory.genderId, subcategory.categoryId, newData.name);
       changeNameHandler(subcategory.subcategoryId, newData.name);
+      setIsChange(false);
+    } else {
+      alert("Enter valid data!!!");
     }
     setNewData({
       name: "",
@@ -353,72 +354,78 @@ const SubCategory = (props) => {
     console.log("draft handler in gender", newData);
     // let categoryTimestamp = null; // prevgender - category - subcategory;
     let subCategoryTimestamp = null;
-
-    //prevgender-prevcategory-subcategory
-    if (
-      newData.genderName !== "" &&
-      newData.genderImg !== null &&
-      newData.categoryName !== "" &&
-      newData.categoryImg !== null &&
-      newData.subcategoryName !== "" &&
-      newData.subcategoryImg !== null
-    ) {
-      ref.current.continuousStart();
-      // let genderImgRef = storageRef.child(
-      //   `${bucketName}/${newData.genderImg.name}`
-      // );
-      // let categoryImgRef = storageRef.child(
-      //   `${bucketName}/${newData.categoryImg.name}`
-      // );
-      subCategoryTimestamp =
-        +new Date().getTime() + "-" + newData.subcategoryImg.name;
-      let subcategoryImgRef = storageRef.child(
-        `${bucketName}/${subCategoryTimestamp}`
-      );
-      subcategoryImgRef.put(newData.subcategoryImg).then((snapshot) => {
-        subcategoryImgRef.getDownloadURL().then((subcategoryImg) => {
-          subcategoryRef
-            .set({
-              genderId: genderId,
-              categoryId: categoryId,
-              subcategoryId: subcategoryId, // genderate new category id
-              subcategoryName: newData.subcategoryName,
-              subcategoryImage: subcategoryImg,
-              noOfStyles: 0,
-              noOfPatterns: 0,
-              delete: false,
-              hide: true,
-              timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            })
-            .then(() => {
-              // gender - no_of_subcategories increment
-              genderRef.update({
-                noOfSubcategories: firebase.firestore.FieldValue.increment(1)
-              });
-              // category - no_of_subcategories - increment
-              categoryRef.update({
-                noOfSubcategories: firebase.firestore.FieldValue.increment(1)
-              });
-
-              list = [];
-              categoryRef
-                .collection("subcategory")
-                .where("delete", "==", false)
-                .orderBy("timestamp", "desc")
-                .get()
-                .then((data) => {
-                  data.forEach((doc) => {
-                    list.push(doc.data());
-                  });
-                  ref.current.complete(); // linear loader to complete
-                  closeModalHandler();
-                  setSubCategoryList(list);
-                  setSubcategory(list[0]);
-                  setType(type);
+    if (newData.name === "" && newData.img === null) {
+      alert("Enter SubCategory name and select the SubCategory image");
+    } else {
+      //prevgender-prevcategory-subcategory
+      if (
+        newData.genderName !== "" &&
+        newData.genderImg !== null &&
+        newData.categoryName !== "" &&
+        newData.categoryImg !== null &&
+        newData.subcategoryName !== "" &&
+        newData.subcategoryImg !== null
+      ) {
+        ref.current.continuousStart();
+        // let genderImgRef = storageRef.child(
+        //   `${bucketName}/${newData.genderImg.name}`
+        // );
+        // let categoryImgRef = storageRef.child(
+        //   `${bucketName}/${newData.categoryImg.name}`
+        // );
+        subCategoryTimestamp =
+          +new Date().getTime() + "-" + newData.subcategoryImg.name;
+        let subcategoryImgRef = storageRef.child(
+          `${bucketName}/${subCategoryTimestamp}`
+        );
+        subcategoryImgRef.put(newData.subcategoryImg).then((snapshot) => {
+          subcategoryImgRef.getDownloadURL().then((subcategoryImg) => {
+            subcategoryRef
+              .set({
+                genderId: genderId,
+                categoryId: categoryId,
+                subcategoryId: subcategoryId, // genderate new category id
+                subcategoryName: newData.subcategoryName,
+                subcategoryImage: subcategoryImg,
+                noOfStyles: 0,
+                noOfPatterns: 0,
+                delete: false,
+                hide: true,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+              })
+              .then(() => {
+                // gender - no_of_subcategories increment
+                genderRef.update({
+                  noOfSubcategories: firebase.firestore.FieldValue.increment(1)
                 });
-            });
+                // category - no_of_subcategories - increment
+                categoryRef.update({
+                  noOfSubcategories: firebase.firestore.FieldValue.increment(1)
+                });
+
+                list = [];
+                categoryRef
+                  .collection("subcategory")
+                  .where("delete", "==", false)
+                  .orderBy("timestamp", "desc")
+                  .get()
+                  .then((data) => {
+                    let lastVisible = data.docs[data.docs.length - 1];
+                    setLastDoc(lastVisible);
+                    data.forEach((doc) => {
+                      list.push(doc.data());
+                    });
+                    ref.current.complete(); // linear loader to complete
+                    closeModalHandler();
+                    setSubCategoryList(list);
+                    setSubcategory(list[0]);
+                    setLength(data.size);
+                    setType(type);
+                  });
+              });
+          });
         });
-      });
+      }
     }
   };
 
@@ -455,6 +462,7 @@ const SubCategory = (props) => {
           categoryImg = category.categoryImg;
           setSubCategoryList(list);
           setSubcategory(list[0]);
+          // setLength(sub.size);
         } else {
           // subcollection not exists
           setSubCategoryList("subcollection_empty");
@@ -587,7 +595,8 @@ const SubCategory = (props) => {
                 // decrement in gender
 
                 // category - no_of_subcategories - increment
-
+                let lastVisible = data.docs[data.docs.length - 1];
+                setLastDoc(lastVisible);
                 let list = [];
                 data.forEach((doc) => {
                   list.push(doc.data());
@@ -596,6 +605,7 @@ const SubCategory = (props) => {
                 if (list.length > 0) {
                   setSubCategoryList(list);
                   setSubcategory(list[0]);
+                  setLength(data.size);
                 } else {
                   setSubCategoryList("subcollection_empty");
                 }
@@ -642,43 +652,47 @@ const SubCategory = (props) => {
       .doc(subcategory.subcategoryId)
       .collection("styles")
       .doc(styleId);
-    let styleTimestamp = +new Date().getTime() + "-" + newData.img.name;
-    let styleImgRef = storageRef.child(`${bucketName}/${styleTimestamp}`);
-    styleImgRef.put(newData.img).then(() => {
-      styleImgRef.getDownloadURL().then((styleImg) => {
-        styleRef
-          .set({
-            genderId: genderId,
-            categoryId: categoryId,
-            subcategoryId: subcategory.subcategoryId,
-            styleId: styleId, // genderate new category id
-            styleName: newData.name,
-            styleImage: styleImg,
-            delete: false,
-            hide: true,
-            noOfPatterns: 0,
-            relations: [],
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-          })
-          .then(() => {
-            ref.current.complete();
-            // gender - no_of_categories increment
-            genderRef.update({
-              noOfStyles: firebase.firestore.FieldValue.increment(1)
+    if (newData.name === "" && newData.img === null) {
+      alert("Enter SubCategory name and select the SubCategory image");
+    } else {
+      let styleTimestamp = +new Date().getTime() + "-" + newData.img.name;
+      let styleImgRef = storageRef.child(`${bucketName}/${styleTimestamp}`);
+      styleImgRef.put(newData.img).then(() => {
+        styleImgRef.getDownloadURL().then((styleImg) => {
+          styleRef
+            .set({
+              genderId: genderId,
+              categoryId: categoryId,
+              subcategoryId: subcategory.subcategoryId,
+              styleId: styleId, // genderate new category id
+              styleName: newData.name,
+              styleImage: styleImg,
+              delete: false,
+              hide: true,
+              noOfPatterns: 0,
+              relations: [],
+              timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .then(() => {
+              ref.current.complete();
+              // gender - no_of_categories increment
+              genderRef.update({
+                noOfStyles: firebase.firestore.FieldValue.increment(1)
+              });
+              // category - no_of_subcategories - increment
+              categoryRef.update({
+                noOfStyles: firebase.firestore.FieldValue.increment(1)
+              });
+              subcategoryRef.update({
+                noOfStyles: firebase.firestore.FieldValue.increment(1)
+              });
+              props.history.push(
+                `${props.match.url}/createNewPattern/styles?genderId=${genderId}&genderName=${genderName}&categoryId=${categoryId}&categoryName=${categoryName}&subcategoryId=${subcategory.subcategoryId}&subcategoryName=${subcategory.subcategoryName}`
+              );
             });
-            // category - no_of_subcategories - increment
-            categoryRef.update({
-              noOfStyles: firebase.firestore.FieldValue.increment(1)
-            });
-            subcategoryRef.update({
-              noOfStyles: firebase.firestore.FieldValue.increment(1)
-            });
-            props.history.push(
-              `${props.match.url}/createNewPattern/styles?genderId=${genderId}&genderName=${genderName}&categoryId=${categoryId}&categoryName=${categoryName}&subcategoryId=${subcategory.subcategoryId}&subcategoryName=${subcategory.subcategoryName}`
-            );
-          });
+        });
       });
-    });
+    }
   };
 
   const hideHandler = (e) => {

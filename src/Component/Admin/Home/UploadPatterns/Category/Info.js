@@ -22,9 +22,9 @@ const Info = (props) => {
             Add-ons
           </button>
         </div>
-        <div className="right">
+        {/* <div className="right">
           <input type="search" placeholder="search using this" />
-        </div>
+        </div> */}
       </div>
       <div className="content">
         {props.categoryList.map((category) => {

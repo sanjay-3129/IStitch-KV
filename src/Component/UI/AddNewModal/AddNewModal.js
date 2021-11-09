@@ -23,9 +23,12 @@ const ModalOverlay = (props) => {
     categoryImg: null,
     subcategoryId: "",
     subcategoryName: "",
-    subcategoryImg: null
+    subcategoryImg: null,
+    categorytype: null,
+    mainCategoryId: "",
+    mcategory: ""
   });
-
+  const [mcategoryList, setmCategoryList] = useState([]);
   useEffect(() => {
     if (props.title === "category") {
       // console.log(props.genderId, "addnewmodal");
@@ -121,6 +124,8 @@ const ModalOverlay = (props) => {
   };
 
   const onChangeHandler = (event) => {
+    console.log(event.target.value);
+
     let value = null;
     if (
       event.target.name === "genderImg" ||
@@ -239,13 +244,59 @@ const ModalOverlay = (props) => {
                     </label>
                   </div>
                 </div>
-                <div class="col-6">
+                {/* <div class="col-6">
                   <label htmlfor="categorytype">Select Category Type</label>
                   <select name="type" id="categorytype">
                     <option value="mainProduct">Main</option>
                     <option value="addOns">Add-On</option>
                   </select>
-                </div>
+                </div> */}
+                {props.title === "category" && (
+                  <>
+                    <div class="col-6">
+                      <label htmlfor="categorytype">Select Category Type</label>
+                      <select
+                        name="categorytype"
+                        id="categorytype"
+                        value={props.newData.categorytype}
+                        onChange={onChangeHandler}
+                      >
+                        <option value="mainProduct">Main</option>
+                        <option value="addOns">Add-On</option>
+                      </select>
+                    </div>
+                    {newData.categorytype === "addOns" ? (
+                      <>
+                        <label for="exampleDataList1" class="form-label">
+                          Select Main category
+                        </label>
+                        <input
+                          name="mcategory"
+                          class="form-control"
+                          list="datalistOptions1"
+                          autocomplete="off"
+                          id="exampleDataList1"
+                          placeholder="Type to search..."
+                          // value={props.newData.mainCategoryId}
+                          onChange={props.onChange}
+                          // onChange={props.onmChange}
+                          onFocus={props.getCategoryList}
+                        />
+                        <datalist id="datalistOptions1">
+                          {console.log("ffffff", props.mcategoryList)}
+                          {props.mcategoryList.map((mcategory) => (
+                            <option
+                              key={mcategory.categoryId}
+                              value={mcategory.categoryName}
+                            />
+                          ))}
+                        </datalist>
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </>
+                )}
               </div>
             </div>
             <div class="tab-pane container" id="subcategory">
@@ -333,6 +384,9 @@ const AddNewModal = (props) => {
           categoryId={props.categoryId}
           categoryName={props.categoryName}
           categoryImg={props.categoryImg}
+          newData={props.newData}
+          mcategoryList={props.mcategoryList}
+          getCategoryList={props.getCategoryList}
         />,
         document.getElementById("overlay-root")
       )}

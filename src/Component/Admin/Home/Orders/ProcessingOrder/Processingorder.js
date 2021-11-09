@@ -7,16 +7,20 @@ import $ from "jquery";
 const db = firebase.firestore();
 let list = null;
 const ProcessingOrder = (props) => {
-  const ref = useRef(null);
+  // const ref = useRef(null);
 
   const [processorderList, setProcessorderList] = useState(null);
-  const [newModal, setNewModal] = useState(false);
+  const [finishedCount, setFinishedcount] = useState({
+    orderStatus: "",
+    count: 0
+  });
+  // const [newModal, setNewModal] = useState(false);
   $("button").on("click", function () {
     $("button").removeClass("selected");
     $(this).addClass("selected");
   });
   useEffect(() => {
-    console.log("useeffect");
+    // console.log("useeffect");
     list = [];
 
     db.collection("orders")
@@ -26,11 +30,15 @@ const ProcessingOrder = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
-        // descending
-        list.sort((a, b) =>
-          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
-        );
-        setProcessorderList(list);
+        if (list.length > 0) {
+          // descending
+          list.sort((a, b) =>
+            a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+          );
+          setProcessorderList(list);
+        } else {
+          setProcessorderList("empty");
+        }
         console.log("list", list);
       });
   }, []);
@@ -46,31 +54,39 @@ const ProcessingOrder = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
-        // descending
-        list.sort((a, b) =>
-          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
-        );
-        setProcessorderList(list);
+        if (list.length > 0) {
+          // descending
+          list.sort((a, b) =>
+            a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+          );
+          setProcessorderList(list);
+        } else {
+          setProcessorderList("empty");
+        }
         console.log("list", list);
       });
   };
 
   const RepickHandler = () => {
-    console.log("Repick");
+    console.log("Repicked");
     let list = [];
     db.collection("orders")
-      .where("orderStatus", "==", "Repick")
+      .where("orderStatus", "==", "Repicked")
       .get()
       .then((data) => {
         console.log("data", data);
         data.forEach((doc) => {
           list.push(doc.data());
         });
-        // descending
-        list.sort((a, b) =>
-          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
-        );
-        setProcessorderList(list);
+        if (list.length > 0) {
+          // descending
+          list.sort((a, b) =>
+            a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+          );
+          setProcessorderList(list);
+        } else {
+          setProcessorderList("empty");
+        }
         console.log("list", list);
       });
   };
@@ -85,11 +101,15 @@ const ProcessingOrder = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
-        // descending
-        list.sort((a, b) =>
-          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
-        );
-        setProcessorderList(list);
+        if (list.length > 0) {
+          // descending
+          list.sort((a, b) =>
+            a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+          );
+          setProcessorderList(list);
+        } else {
+          setProcessorderList("empty");
+        }
         console.log("list", list);
       });
   };
@@ -104,11 +124,15 @@ const ProcessingOrder = (props) => {
         data.forEach((doc) => {
           list.push(doc.data());
         });
-        // descending
-        list.sort((a, b) =>
-          a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
-        );
-        setProcessorderList(list);
+        if (list.length > 0) {
+          // descending
+          list.sort((a, b) =>
+            a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+          );
+          setProcessorderList(list);
+        } else {
+          setProcessorderList("empty");
+        }
         console.log("list", list);
       });
   };
@@ -134,11 +158,15 @@ const ProcessingOrder = (props) => {
           let data = [...processorderList];
 
           let filterdata = data.filter((d) => d.orderId !== newData.orderId);
-          // descending
-          filterdata.sort((a, b) =>
-            a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
-          );
-          setProcessorderList(filterdata);
+          if (filterdata.length > 0) {
+            // descending
+            filterdata.sort((a, b) =>
+              a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+            );
+            setProcessorderList(filterdata);
+          } else {
+            setProcessorderList("empty");
+          }
           // ref.current.complete();
         });
     } else {
@@ -159,15 +187,55 @@ const ProcessingOrder = (props) => {
           let data = [...processorderList];
 
           let filterdata = data.filter((d) => d.orderId !== newData.orderId);
-          // descending
-          filterdata.sort((a, b) =>
-            a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
-          );
-          setProcessorderList(filterdata);
+          if (filterdata.length > 0) {
+            // descending
+            filterdata.sort((a, b) =>
+              a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+            );
+            setProcessorderList(filterdata);
+          } else {
+            setProcessorderList("empty");
+          }
           // ref.current.complete();
         });
     } else {
       console.log("Not rejected");
+    }
+  };
+  const acceptReassginhandler = (newData) => {
+    console.log("====", newData);
+    let value = window.confirm("Do you want move Reassigned");
+    if (value) {
+      db.collection("orders")
+        .doc(newData.orderId)
+        .update({
+          orderStatus: "Assigned"
+        })
+        .then(() => {
+          db.collection("TailorsDetails")
+            .doc(newData.tailorDetails.tailorId)
+            .update({
+              amountPending: firebase.firestore.FieldValue.increment(
+                newData.tailorCharge
+              )
+            });
+
+          let data = [...processorderList];
+
+          let filterdata = data.filter((d) => d.orderId !== newData.orderId);
+          if (filterdata.length > 0) {
+            // descending
+            filterdata.sort((a, b) =>
+              a.timestamp < b.timestamp ? 1 : b.timestamp < a.timestamp ? -1 : 0
+            );
+            setProcessorderList(filterdata);
+          } else {
+            setProcessorderList("empty");
+          }
+          // ref.current.complete();
+        });
+    } else {
+      console.log("nott");
     }
   };
 
@@ -177,17 +245,16 @@ const ProcessingOrder = (props) => {
   } else if (processorderList === "empty") {
     processorders = <h1>No Processing Orders</h1>;
   } else {
-    processorders = processorderList.map((processorder) => {
-      return (
-        <OrderView
-          item={processorder}
-          {...props}
-          accepthandler={draftAcceptHandler}
-          rejecthandler={draftRejectHandler}
-          // processorderList={processorderList}
-        />
-      );
-    });
+    processorders = (
+      <OrderView
+        items={processorderList}
+        {...props}
+        accepthandler={draftAcceptHandler}
+        rejecthandler={draftRejectHandler}
+        acceptReassginhandler={acceptReassginhandler}
+        // processorderList={processorderList}
+      />
+    );
   }
 
   return (
@@ -206,7 +273,7 @@ const ProcessingOrder = (props) => {
         </button>
         {/* Re-Pick */}
         <button type="button" onClick={() => ProcessingHandler()}>
-          Processing
+          Progressing
         </button>
 
         <button type="button" onClick={() => FinishedHandler()}>

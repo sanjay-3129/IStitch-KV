@@ -107,9 +107,11 @@ const InfoBox = (props) => {
         <div className="view-all">
           <button onClick={props.goBack}>GO BACK</button>
         </div>
-        <div className="view-all">
-          <button onClick={props.addNewPatterns}>Add new pattern</button>
-        </div>
+        {props.showPattern === false ? (
+          <div className="view-all">
+            <button onClick={props.addNewPatterns}>Add new pattern</button>
+          </div>
+        ) : null}
       </article>
     </div>
   );

@@ -55,17 +55,18 @@ button {
 }
 
 .summary p {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: normal;
   display: inline-block;
   padding: 10px 5px;
   margin: 0;
   border-right: 1px solid #a6c8cc;
   overflow: hidden;
+  text-align: center;
 }
 
 .summary p.ono {
-  width: 6%;
+  width: 8%;
   text-align: center;
 }
 
@@ -75,11 +76,11 @@ button {
 }
 
 .summary .anchor {
-  font-size: 18px;
+  font-size: 16px;
   display: inline-block;
   padding: 0;
   margin: 0;
-  width: 5%;
+  width: 7%;
   text-align: center;
 }
 
@@ -92,28 +93,24 @@ button {
 
 /* booked */
 .booked p.cat {
-  width: 25%;
+  width: 17%;
 }
 
 .booked p.cname {
-  width: 25%;
-  text-align: left;
+  width: 23%;
 }
 
 .booked p.cno {
   width: 19%;
-  text-align: center;
 }
 
 .booked p.date {
   width: 10%;
-  text-align: center;
 }
 
 .booked p.accept,
 .booked p.reject {
-  width: 5%;
-  text-align: center;
+  width: 8%;
   cursor: pointer;
 }
 
@@ -134,48 +131,41 @@ button {
 /* verified */
 
 .verified p.cat {
-  width: 25%;
+  width: 23%;
 }
 
 .verified p.date {
-  width: 22%;
-  text-align: center;
+  width: 20%;
 }
 
 .verified p.ddate {
   width: 22%;
-  text-align: center;
 }
 
 .verified p.price {
   width: 20%;
-  text-align: center;
 }
 
 /* accepted */
 
 .accepted p.cat {
-  width: 24%;
+  width: 18%;
 }
 
 .accepted p.date {
-  width: 20%;
-  text-align: center;
+  width: 17%;
 }
 
 .accepted p.ddate {
   width: 20%;
-  text-align: center;
 }
 
 .accepted p.price {
   width: 20%;
-  text-align: center;
 }
 
 .accepted p.assign {
-  width: 5%;
-  text-align: center;
+  width: 10%;
   cursor: pointer;
   color: #005b7f;
 }
@@ -183,20 +173,32 @@ button {
 /* assigned */
 
 .assigned p.cat {
-  width: 25%;
+  width: 21%;
 }
 
 .assigned p.tname {
   width: 25%;
-  text-align: center;
 }
 
 .assigned p.tno {
   width: 19%;
-  text-align: center;
 }
 
 .assigned p.ddate {
   width: 20%;
-  text-align: center;
+}
+
+.head {
+  border: 2px solid #005b7f;
+}
+
+.head p,
+.head .anchor {
+  font-size: 18px;
+  font-weight: 600;
+  border-right: 2px solid #005b7f;
+  text-transform: uppercase;
+  align-items: center;
+  display: flex;
+  justify-content: center;
 }
