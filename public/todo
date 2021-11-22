@@ -80,3 +80,7 @@ order price + delivery charge(100rs) + GST(18%) => orderPrice
 orderStatus - undefined for manual tailor assign preorder - orderView.js - line12
 
 Alteration - due date - all places//completed
+
+
+notifications:
+https://levelup.gitconnected.com/show-push-notifications-in-react-449949e98e01

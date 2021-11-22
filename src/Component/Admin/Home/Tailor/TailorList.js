@@ -64,11 +64,15 @@ const TailorList = (props) => {
                 Amount Pending:&ensp;<b>{tailorAmount.amountPending}</b>
               </p>
             </div>
-            <div class="col-sm-8">
+             <div class="col-sm-8">
+            {props.tailor.bankDetails!==null?(
+              <>
+           
               <div class="flex">
                 <p class="bank-details">Account Details:</p>
                 <br />
                 <br />
+                
                 <div>
                   <p class="details">
                     <span style={{ fontWeight: "initial" }}>Holder Name:</span>
@@ -109,7 +113,18 @@ const TailorList = (props) => {
                 <button type="button" class="pay-btn" onClick={onPayHandler}>
                   <i class="fas fa-rupee-sign"></i>&ensp;Pay
                 </button>
-              </div>
+                 </div>
+              </>
+              ):(
+                <>
+                <p class="details">
+                    <span style={{ fontWeight: "initial" }}>No Bank details available</span>
+                  </p>
+                  </>
+                  )}
+            
+              
+             
             </div>
           </div>
         </div>

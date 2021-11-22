@@ -99,7 +99,7 @@ const OrderView = (props) => {
               <p className="cat">{item.categoryName}</p>
               <p className="date">{item.orderBookedDate}</p>
               <p className="ddate">{item.dueDate}</p>
-              <p className="price">Rs.{item.orderPrice}</p>
+              <p className="price">Rs.{item.totalPrice}</p>
               <div onClick={() => orderUpdate(item)} className="anchor">
                 <i class="far fa-list-alt"></i>
               </div>
@@ -128,7 +128,7 @@ const OrderView = (props) => {
               <p className="cat">{item.categoryName}</p>
               <p className="date">{item.orderBookedDate}</p>
               <p className="ddate">{item.dueDate}</p>
-              <p className="price">Rs.{item.orderPrice}</p>
+              <p className="price">Rs.{item.totalPrice}</p>
               {/* tailorassign */}
               <p className="assign" onClick={() => props.tailorAssign(item)}>
                 <i class="fas fa-user-plus"></i>

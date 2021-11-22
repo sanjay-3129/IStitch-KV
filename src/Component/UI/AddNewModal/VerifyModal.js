@@ -30,11 +30,21 @@ const ModalOverlay = (props) => {
             value={props.newData.orderPrice}
             onChange={props.onChange}
           />
+          <label htmlFor="deliveryCharge">Delivery Charge</label>
+          <input
+            type="number"
+            id="deliveryCharge"
+            name="deliveryCharge"
+            min="0"
+            value={props.newData.deliveryCharge}
+            onChange={props.onChange}
+          />
+
           <p>
-            Total Price ={props.totalPrice}(order price+ gst-18%+ delivery fee
-            Rs.100)
+            Total Price ={props.totalPrice}(order price+delivery fee+ gst-18%)
           </p>
-          <label htmlFor="styleName">Tailor Charge</label>
+
+          <label htmlFor="tailorCharge">Tailor Charge</label>
           <input
             type="number"
             id="tailorCharge"

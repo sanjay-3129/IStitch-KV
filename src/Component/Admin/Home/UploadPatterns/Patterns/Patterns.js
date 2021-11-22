@@ -12,7 +12,7 @@ import LoadingBar from "react-top-loading-bar";
 import generateId from "../../../../../Helpers/generateId";
 import firebase from "../../../../../Services/firebase/firebase";
 import qs from "qs";
-import Category from "../Category/Category";
+// import Category from "../Category/Category";
 
 let genderId = undefined;
 let genderName = undefined;
@@ -119,8 +119,8 @@ const Patterns = (props) => {
       ) {
         // get only categories specific to gender
         // console.log("inside if");
-        console.log("---patterns.js useEffect", types);
-        console.log(genderId, categoryId); // for mainProduct, categoryId is normal
+        // console.log("---patterns.js useEffect", types);
+        // console.log(genderId, categoryId); // for mainProduct, categoryId is normal
         db.collection("gender")
           .doc(genderId)
           .collection("mainProduct")
@@ -136,15 +136,24 @@ const Patterns = (props) => {
           .limit(16)
           .get()
           .then((sub) => {
-            let lastVisible = sub.docs[sub.docs.length - 1];
-            setLastDoc(lastVisible);
             if (sub.docs.length > 0) {
-              console.log("---------", sub.docs.length);
+              // console.log("---------", sub.docs.length);
               // subcollection exists
               let list = [];
               sub.forEach((subDoc) => {
                 list.push(subDoc.data());
               });
+              // console.log("list", list);
+              let lastVisible = sub.docs[sub.docs.length - 1];
+              setLastDoc(lastVisible);
+
+              list = list.sort(function (a, b) {
+                return a.patternName.localeCompare(b.patternName, undefined, {
+                  numeric: true,
+                  sensitivity: "base"
+                });
+              });
+
               setPatternsList(list);
               setPatterns(list[0]);
               setLength(sub.size);
@@ -185,6 +194,12 @@ const Patterns = (props) => {
               sub.forEach((subDoc) => {
                 list.push(subDoc.data());
               });
+              list = list.sort(function (a, b) {
+                return a.patternName.localeCompare(b.patternName, undefined, {
+                  numeric: true,
+                  sensitivity: "base"
+                });
+              });
               setPatternsList(list);
               setPatterns(list[0]);
               setLength(sub.size);
@@ -210,8 +225,14 @@ const Patterns = (props) => {
           let lastVisible = data.docs[data.docs.length - 1];
           setLastDoc(lastVisible);
           ref.current.complete(); // linear loader to complete
-          console.log("lengthhh", data.size);
+          // console.log("lengthhh", data.size);
           if (data.size > 0) {
+            list = list.sort(function (a, b) {
+              return a.patternName.localeCompare(b.patternName, undefined, {
+                numeric: true,
+                sensitivity: "base"
+              });
+            });
             setPatternsList(list);
             setPatterns(list[0]);
             setLength(data.size);
@@ -274,6 +295,12 @@ const Patterns = (props) => {
             let list = [...patternsList];
             let index = list.findIndex((l) => l.patternId === patternId);
             list[index] = doc;
+            list = list.sort(function (a, b) {
+              return a.patternName.localeCompare(b.patternName, undefined, {
+                numeric: true,
+                sensitivity: "base"
+              });
+            });
             setPatternsList(list);
             setPatterns(doc);
             ref.current.complete(); // linear loader to complete
@@ -308,6 +335,12 @@ const Patterns = (props) => {
               let list = [...patternsList];
               let index = list.findIndex((l) => l.patternId === patternId);
               list[index] = doc;
+              list = list.sort(function (a, b) {
+                return a.patternName.localeCompare(b.patternName, undefined, {
+                  numeric: true,
+                  sensitivity: "base"
+                });
+              });
               setPatternsList(list);
               setPatterns(doc);
               ref.current.complete(); // linear loader to complete
@@ -352,6 +385,12 @@ const Patterns = (props) => {
             let list = [...patternsList];
             let index = list.findIndex((l) => l.patternId === patternId);
             list[index] = doc;
+            list = list.sort(function (a, b) {
+              return a.patternName.localeCompare(b.patternName, undefined, {
+                numeric: true,
+                sensitivity: "base"
+              });
+            });
             setPatternsList(list);
             setPatterns(doc);
             ref.current.complete(); // linear loader to complete
@@ -386,6 +425,12 @@ const Patterns = (props) => {
               let list = [...patternsList];
               let index = list.findIndex((l) => l.patternId === patternId);
               list[index] = doc;
+              list = list.sort(function (a, b) {
+                return a.patternName.localeCompare(b.patternName, undefined, {
+                  numeric: true,
+                  sensitivity: "base"
+                });
+              });
               setPatternsList(list);
               setPatterns(doc);
               ref.current.complete(); // linear loader to complete
@@ -462,6 +507,16 @@ const Patterns = (props) => {
                       (l) => l.patternId === patternId
                     );
                     list[index] = doc;
+                    list = list.sort(function (a, b) {
+                      return a.patternName.localeCompare(
+                        b.patternName,
+                        undefined,
+                        {
+                          numeric: true,
+                          sensitivity: "base"
+                        }
+                      );
+                    });
                     setPatternsList(list);
                     setPatterns(doc);
                     ref.current.complete(); // linear loader to complete
@@ -522,6 +577,16 @@ const Patterns = (props) => {
                       (l) => l.patternId === patternId
                     );
                     list[index] = doc;
+                    list = list.sort(function (a, b) {
+                      return a.patternName.localeCompare(
+                        b.patternName,
+                        undefined,
+                        {
+                          numeric: true,
+                          sensitivity: "base"
+                        }
+                      );
+                    });
                     setPatternsList(list);
                     setPatterns(doc);
                     ref.current.complete(); // linear loader to complete
@@ -670,6 +735,16 @@ const Patterns = (props) => {
                   setLastDoc(lastVisible);
                   ref.current.complete(); // linear loader to complete
                   if (list.length > 0) {
+                    list = list.sort(function (a, b) {
+                      return a.patternName.localeCompare(
+                        b.patternName,
+                        undefined,
+                        {
+                          numeric: true,
+                          sensitivity: "base"
+                        }
+                      );
+                    });
                     setPatternsList(list);
                     setPatterns(list[0]);
                     setLength(data.size);
@@ -746,6 +821,16 @@ const Patterns = (props) => {
                   setLastDoc(lastVisible);
                   ref.current.complete(); // linear loader to complete
                   if (list.length > 0) {
+                    list = list.sort(function (a, b) {
+                      return a.patternName.localeCompare(
+                        b.patternName,
+                        undefined,
+                        {
+                          numeric: true,
+                          sensitivity: "base"
+                        }
+                      );
+                    });
                     setPatternsList(list);
                     setPatterns(list[0]);
                     setLength(data.size);
@@ -926,6 +1011,16 @@ const Patterns = (props) => {
                           name: "",
                           img: null
                         });
+                        list = list.sort(function (a, b) {
+                          return a.patternName.localeCompare(
+                            b.patternName,
+                            undefined,
+                            {
+                              numeric: true,
+                              sensitivity: "base"
+                            }
+                          );
+                        });
                         setPatternsList(list);
                         setPatterns(list[0]);
                         setLength(data.size);
@@ -1001,7 +1096,16 @@ const Patterns = (props) => {
                     let lastVisible = data.docs[data.docs.length - 1];
                     setLastDoc(lastVisible);
                     ref.current.complete(); // linear loader to complete
-
+                    list = list.sort(function (a, b) {
+                      return a.patternName.localeCompare(
+                        b.patternName,
+                        undefined,
+                        {
+                          numeric: true,
+                          sensitivity: "base"
+                        }
+                      );
+                    });
                     setPatternsList(list);
                     setPatterns(list[0]);
                     setLength(data.size);
@@ -1089,6 +1193,12 @@ const Patterns = (props) => {
                   (l) => l.patternId === patterns.patternId
                 );
                 list[index] = doc;
+                list = list.sort(function (a, b) {
+                  return a.patternName.localeCompare(b.patternName, undefined, {
+                    numeric: true,
+                    sensitivity: "base"
+                  });
+                });
                 setPatternsList(list);
                 setPatterns(doc);
                 ref.current.complete(); // linear loader to comple
@@ -1123,6 +1233,12 @@ const Patterns = (props) => {
                   (l) => l.patternId === patterns.patternId
                 );
                 list[index] = doc;
+                list = list.sort(function (a, b) {
+                  return a.patternName.localeCompare(b.patternName, undefined, {
+                    numeric: true,
+                    sensitivity: "base"
+                  });
+                });
                 setPatternsList(list);
                 setPatterns(doc);
                 ref.current.complete(); // linear loader to comple
@@ -1150,6 +1266,12 @@ const Patterns = (props) => {
                   (l) => l.patternId === patterns.patternId
                 );
                 list[index] = doc;
+                list = list.sort(function (a, b) {
+                  return a.patternName.localeCompare(b.patternName, undefined, {
+                    numeric: true,
+                    sensitivity: "base"
+                  });
+                });
                 setPatternsList(list);
                 setPatterns(doc);
                 ref.current.complete(); // linear loader to comple
@@ -1186,6 +1308,12 @@ const Patterns = (props) => {
         if (list.length === 0) {
           setPatternsList("subcollection_empty");
         } else {
+          list = list.sort(function (a, b) {
+            return a.patternName.localeCompare(b.patternName, undefined, {
+              numeric: true,
+              sensitivity: "base"
+            });
+          });
           setPatternsList(list);
           setPatterns(list[0]);
           setLength(data.size);
@@ -1193,7 +1321,7 @@ const Patterns = (props) => {
       });
   };
   const onScrollHandler = () => {
-    console.log("onScrollHandler", length);
+    console.log("onScrollHandler", length, lastDoc);
     if (length > 0) {
       ref.current.continuousStart();
       db.collection("gender")
@@ -1208,7 +1336,7 @@ const Patterns = (props) => {
         .doc(styleId)
         .collection("patterns")
         .where("delete", "==", false)
-        .orderBy("timestamp", "desc")
+        // .orderBy("timestamp", "desc")
         .startAfter(lastDoc) // cursor for pagination
         .limit(8)
         .get()
@@ -1219,16 +1347,24 @@ const Patterns = (props) => {
           let list = [...patternsList];
           sub.forEach((doc) => {
             list.push(doc.data());
+            // console.log("data", doc.data());
           });
           ref.current.complete(); // linear loader to complete
 
           // append data to bottom page
           // $("#content").append(`<p>hi</p>`);
           // $("#content").animate({ scrollTop: $("#content").height() }, 1000);
+          list = list.sort(function (a, b) {
+            return a.patternName.localeCompare(b.patternName, undefined, {
+              numeric: true,
+              sensitivity: "base"
+            });
+          });
           setPatternsList(list);
           setPatterns(list[0]);
           setLength(sub.size);
-        });
+        })
+        .catch((e) => console.log("error", e));
       // $("#content").append(`<p>hi</p>`);
       // $("#content").animate({ scrollTop: $("#content").height() }, 1000);
     } else {

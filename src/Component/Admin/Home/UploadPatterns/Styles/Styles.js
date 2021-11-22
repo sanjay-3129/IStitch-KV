@@ -91,17 +91,23 @@ const Styles = (props) => {
         .doc(subcategoryId)
         .collection("styles")
         .where("delete", "==", false)
-        .orderBy("timestamp", "desc")
+        // .orderBy("timestamp", "desc")
         .limit(16)
         .get()
         .then((sub) => {
-          let lastVisible = sub.docs[sub.docs.length - 1];
-          setLastDoc(lastVisible);
           if (sub.docs.length > 0) {
+            let lastVisible = sub.docs[sub.docs.length - 1];
+            setLastDoc(lastVisible);
             // subcollection exists
             let list = [];
             sub.forEach((subDoc) => {
               list.push(subDoc.data());
+            });
+            list = list.sort(function (a, b) {
+              return a.styleName.localeCompare(b.styleName, undefined, {
+                numeric: true,
+                sensitivity: "base"
+              });
             });
             setStylesList(list);
             setStyles(list[0]);
@@ -173,6 +179,12 @@ const Styles = (props) => {
           let list = [...stylesList];
           let index = list.findIndex((l) => l.styleId === styleId);
           list[index] = doc;
+          list = list.sort(function (a, b) {
+            return a.styleName.localeCompare(b.styleName, undefined, {
+              numeric: true,
+              sensitivity: "base"
+            });
+          });
           setStylesList(list);
           setStyles(doc);
           ref.current.complete(); // linear loader to complete
@@ -225,6 +237,12 @@ const Styles = (props) => {
                 let list = [...stylesList];
                 let index = list.findIndex((l) => l.styleId === styleId);
                 list[index] = doc;
+                list = list.sort(function (a, b) {
+                  return a.styleName.localeCompare(b.styleName, undefined, {
+                    numeric: true,
+                    sensitivity: "base"
+                  });
+                });
                 setStylesList(list);
                 setStyles(doc);
                 ref.current.complete(); // linear loader to complete
@@ -367,7 +385,7 @@ const Styles = (props) => {
               .doc(subcategoryId)
               .collection("styles")
               .where("delete", "==", false)
-              .orderBy("timestamp", "desc")
+              // .orderBy("timestamp", "desc")
               .get()
               .then((data) => {
                 let list = [];
@@ -378,6 +396,12 @@ const Styles = (props) => {
                 setLastDoc(lastVisible);
                 ref.current.complete(); // linear loader to complete
                 if (list.length > 0) {
+                  list = list.sort(function (a, b) {
+                    return a.styleName.localeCompare(b.styleName, undefined, {
+                      numeric: true,
+                      sensitivity: "base"
+                    });
+                  });
                   setStylesList(list);
                   setStyles(list[0]);
                   setLength(data.size);
@@ -569,7 +593,7 @@ const Styles = (props) => {
               subcategoryRef
                 .collection("styles")
                 .where("delete", "==", false)
-                .orderBy("timestamp", "desc")
+                // .orderBy("timestamp", "desc")
                 .get()
                 .then((data) => {
                   data.forEach((doc) => {
@@ -578,7 +602,12 @@ const Styles = (props) => {
                   let lastVisible = data.docs[data.docs.length - 1];
                   setLastDoc(lastVisible);
                   ref.current.complete(); // linear loader to complete
-
+                  list = list.sort(function (a, b) {
+                    return a.styleName.localeCompare(b.styleName, undefined, {
+                      numeric: true,
+                      sensitivity: "base"
+                    });
+                  });
                   setStylesList(list);
                   setStyles(list[0]);
                   setLength(data.size);
@@ -741,6 +770,12 @@ const Styles = (props) => {
               let list = [...stylesList];
               let index = list.findIndex((l) => l.styleId === styles.styleId);
               list[index] = doc;
+              list = list.sort(function (a, b) {
+                return a.styleName.localeCompare(b.styleName, undefined, {
+                  numeric: true,
+                  sensitivity: "base"
+                });
+              });
               setStylesList(list);
               setStyles(doc);
               ref.current.complete(); // linear loader to complete
@@ -760,13 +795,19 @@ const Styles = (props) => {
           list = [];
           styleRef
             .where("delete", "==", false)
-            .orderBy("timestamp", "desc")
+            // .orderBy("timestamp", "desc")
             .get()
             .then((data) => {
               data.forEach((doc) => {
                 list.push(doc.data());
               });
               ref.current.complete(); // linear loader to complete
+              list = list.sort(function (a, b) {
+                return a.styleName.localeCompare(b.styleName, undefined, {
+                  numeric: true,
+                  sensitivity: "base"
+                });
+              });
               setStylesList(list);
               setStyles(list[0]);
             });
@@ -788,7 +829,7 @@ const Styles = (props) => {
       .doc(subcategoryId)
       .collection("styles")
       .where("delete", "==", false)
-      .orderBy("timestamp", "desc")
+      // .orderBy("timestamp", "desc")
       .get()
       .then((data) => {
         data.forEach((doc) => {
@@ -799,6 +840,12 @@ const Styles = (props) => {
         if (list.length === 0) {
           setStylesList("subcollection_empty");
         } else {
+          list = list.sort(function (a, b) {
+            return a.styleName.localeCompare(b.styleName, undefined, {
+              numeric: true,
+              sensitivity: "base"
+            });
+          });
           setStylesList(list);
           setStyles(list[0]);
         }
@@ -819,7 +866,7 @@ const Styles = (props) => {
         .doc(subcategoryId)
         .collection("styles")
         .where("delete", "==", false)
-        .orderBy("timestamp", "desc")
+        // .orderBy("timestamp", "desc")
         .startAfter(lastDoc) // cursor for pagination
         .limit(8)
         .get()
@@ -836,6 +883,12 @@ const Styles = (props) => {
           // append data to bottom page
           // $("#content").append(`<p>hi</p>`);
           // $("#content").animate({ scrollTop: $("#content").height() }, 1000);
+          list = list.sort(function (a, b) {
+            return a.styleName.localeCompare(b.styleName, undefined, {
+              numeric: true,
+              sensitivity: "base"
+            });
+          });
           setStylesList(list);
           setStyles(list[0]);
           setLength(sub.size);

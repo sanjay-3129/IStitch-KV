@@ -1,4 +1,9 @@
-import firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/firestore";
+import "firebase/analytics";
+import "firebase/storage";
+import "firebase/messaging";
 
 const config = {
   apiKey: "AIzaSyAnLhD6nwpXJT_zrVpD0Dux5Zmac6DiTio",
@@ -10,5 +15,34 @@ const config = {
   measurementId: "G-3DCJCKR5VY"
 };
 
-firebase.initializeApp(config);
+const tailorApp = firebase.initializeApp(config);
+const messaging = tailorApp.messaging();
+const publicKey =
+  "BOsxw5cAkKUoUPC0JKAsoPSISGC3BjU3OhkJnuekkzTMAhXM_xayRKhvbfTdI8F76gwjrqkxxHGRwPjM__nLIpk";
+
+export const getToken = async (setTokenFound) => {
+  let currentToken = "";
+  try {
+    currentToken = await messaging.getToken({ vapidKey: publicKey });
+    console.log("Current Token", currentToken);
+    if (currentToken) {
+      setTokenFound(true);
+    } else {
+      setTokenFound(false);
+    }
+  } catch (error) {
+    console.log("An error occurred while retrieving token.", error);
+  }
+  return currentToken;
+};
+
+// getToken();
+
+export const onMessageListener = () =>
+  new Promise((resolve) => {
+    messaging.onMessage((payload) => {
+      resolve(payload);
+    });
+  });
+
 export default firebase;

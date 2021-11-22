@@ -1,13 +1,30 @@
+import { useEffect, useState } from "react";
 import { Route, Switch } from "react-router";
 import Home from "./Component/Admin/Home/Home";
 // import OrderDetials from "./Component/Admin/Home/Orders/OrderDetials";
 import Login from "./Component/Admin/Login/Login";
 import Signup from "./Component/Admin/Signup/Signup";
+import { getToken } from "./Services/firebase/firebase";
 // import Preloader from "./Component/UI/Preloader/Preloader";
 // import "./App.css";
 
 const App = (props) => {
-  console.log("navigator", navigator.onLine);
+  const [isTokenFound, setTokenFound] = useState(false);
+  console.log("Token found", isTokenFound);
+
+  // console.log("navigator", navigator.onLine);
+  useEffect(() => {
+    let data;
+    async function tokenFunc() {
+      data = await getToken(setTokenFound);
+      if (data) {
+        console.log("Token is", data);
+      }
+      return data;
+    }
+    tokenFunc();
+  }, [setTokenFound]);
+
   return (
     <div className="App">
       {/* <OrderDetials/> */}

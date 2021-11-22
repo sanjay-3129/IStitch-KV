@@ -94,7 +94,7 @@ const SubCategory = (props) => {
         .doc(categoryId)
         .collection("subcategory")
         .where("delete", "==", false)
-        .orderBy("timestamp", "desc")
+        // .orderBy("timestamp", "desc")
         .limit(16)
         .get()
         .then((sub) => {
@@ -107,6 +107,16 @@ const SubCategory = (props) => {
             let list = [];
             sub.forEach((subDoc) => {
               list.push(subDoc.data());
+            });
+            list = list.sort(function (a, b) {
+              return a.subcategoryName.localeCompare(
+                b.subcategoryName,
+                undefined,
+                {
+                  numeric: true,
+                  sensitivity: "base"
+                }
+              );
             });
             setSubCategoryList(list);
             setSubcategory(list[0]);
@@ -222,6 +232,16 @@ const SubCategory = (props) => {
           let list = [...subCategoryList];
           let index = list.findIndex((l) => l.subcategoryId === subcategoryId);
           list[index] = doc;
+          list = list.sort(function (a, b) {
+            return a.subcategoryName.localeCompare(
+              b.subcategoryName,
+              undefined,
+              {
+                numeric: true,
+                sensitivity: "base"
+              }
+            );
+          });
           setSubCategoryList(list);
           setSubcategory(doc);
           ref.current.complete(); // linear loader to complete
@@ -284,6 +304,16 @@ const SubCategory = (props) => {
                   (l) => l.subcategoryId === subcategoryId
                 );
                 list[index] = doc;
+                list = list.sort(function (a, b) {
+                  return a.subcategoryName.localeCompare(
+                    b.subcategoryName,
+                    undefined,
+                    {
+                      numeric: true,
+                      sensitivity: "base"
+                    }
+                  );
+                });
                 setSubCategoryList(list);
                 setSubcategory(doc);
                 ref.current.complete(); // linear loader to complete
@@ -407,7 +437,7 @@ const SubCategory = (props) => {
                 categoryRef
                   .collection("subcategory")
                   .where("delete", "==", false)
-                  .orderBy("timestamp", "desc")
+                  // .orderBy("timestamp", "desc")
                   .get()
                   .then((data) => {
                     let lastVisible = data.docs[data.docs.length - 1];
@@ -417,6 +447,16 @@ const SubCategory = (props) => {
                     });
                     ref.current.complete(); // linear loader to complete
                     closeModalHandler();
+                    list = list.sort(function (a, b) {
+                      return a.subcategoryName.localeCompare(
+                        b.subcategoryName,
+                        undefined,
+                        {
+                          numeric: true,
+                          sensitivity: "base"
+                        }
+                      );
+                    });
                     setSubCategoryList(list);
                     setSubcategory(list[0]);
                     setLength(data.size);
@@ -444,7 +484,7 @@ const SubCategory = (props) => {
       .doc(category.categoryId)
       .collection("subcategory")
       .where("delete", "==", false)
-      .orderBy("timestamp", "desc")
+      // .orderBy("timestamp", "desc")
       .get()
       .then((sub) => {
         if (sub.docs.length > 0) {
@@ -460,6 +500,16 @@ const SubCategory = (props) => {
           categoryId = category.categoryId;
           categoryName = category.categoryName;
           categoryImg = category.categoryImg;
+          list = list.sort(function (a, b) {
+            return a.subcategoryName.localeCompare(
+              b.subcategoryName,
+              undefined,
+              {
+                numeric: true,
+                sensitivity: "base"
+              }
+            );
+          });
           setSubCategoryList(list);
           setSubcategory(list[0]);
           // setLength(sub.size);
@@ -484,7 +534,7 @@ const SubCategory = (props) => {
         .doc("categories")
         .collection("category")
         .where("delete", "==", false)
-        .orderBy("timestamp", "desc")
+        // .orderBy("timestamp", "desc")
         .get()
         .then((sub) => {
           if (sub.docs.length > 0) {
@@ -494,6 +544,12 @@ const SubCategory = (props) => {
               list.push(subDoc.data());
             });
             // genderName = genderNam;
+            list = list.sort(function (a, b) {
+              return a.categoryName.localeCompare(b.categoryName, undefined, {
+                numeric: true,
+                sensitivity: "base"
+              });
+            });
             setCategoryList(list);
           } else {
             // subcollection not exists
@@ -589,7 +645,7 @@ const SubCategory = (props) => {
               .doc(categoryId)
               .collection("subcategory")
               .where("delete", "==", false)
-              .orderBy("timestamp", "desc")
+              // .orderBy("timestamp", "desc")
               .get()
               .then((data) => {
                 // decrement in gender
@@ -603,6 +659,16 @@ const SubCategory = (props) => {
                 });
                 ref.current.complete(); // linear loader to complete
                 if (list.length > 0) {
+                  list = list.sort(function (a, b) {
+                    return a.subcategoryName.localeCompare(
+                      b.subcategoryName,
+                      undefined,
+                      {
+                        numeric: true,
+                        sensitivity: "base"
+                      }
+                    );
+                  });
                   setSubCategoryList(list);
                   setSubcategory(list[0]);
                   setLength(data.size);
@@ -728,6 +794,16 @@ const SubCategory = (props) => {
                 (l) => l.subcategoryId === subcategory.subcategoryId
               );
               list[index] = doc;
+              list = list.sort(function (a, b) {
+                return a.subcategoryName.localeCompare(
+                  b.subcategoryName,
+                  undefined,
+                  {
+                    numeric: true,
+                    sensitivity: "base"
+                  }
+                );
+              });
               setSubCategoryList(list);
               setSubcategory(doc);
               ref.current.complete(); // linear loader to complete
@@ -755,6 +831,16 @@ const SubCategory = (props) => {
                 (l) => l.subcategoryId === subcategory.subcategoryId
               );
               list[index] = doc;
+              list = list.sort(function (a, b) {
+                return a.subcategoryName.localeCompare(
+                  b.subcategoryName,
+                  undefined,
+                  {
+                    numeric: true,
+                    sensitivity: "base"
+                  }
+                );
+              });
               setSubCategoryList(list);
               setSubcategory(doc);
               ref.current.complete(); // linear loader to complete
@@ -775,7 +861,7 @@ const SubCategory = (props) => {
       .doc(categoryId)
       .collection("subcategory")
       .where("delete", "==", false)
-      .orderBy("timestamp", "desc")
+      // .orderBy("timestamp", "desc")
       .get()
       .then((data) => {
         data.forEach((doc) => {
@@ -786,6 +872,16 @@ const SubCategory = (props) => {
         if (list.length === 0) {
           setSubCategoryList("subcollection_empty");
         } else {
+          list = list.sort(function (a, b) {
+            return a.subcategoryName.localeCompare(
+              b.subcategoryName,
+              undefined,
+              {
+                numeric: true,
+                sensitivity: "base"
+              }
+            );
+          });
           setSubCategoryList(list);
           setSubcategory(list[0]);
         }
@@ -804,7 +900,7 @@ const SubCategory = (props) => {
         .doc(categoryId)
         .collection("subcategory")
         .where("delete", "==", false)
-        .orderBy("timestamp", "desc")
+        // .orderBy("timestamp", "desc")
         .startAfter(lastDoc) // cursor for pagination
         .limit(8)
         .get()
@@ -821,6 +917,16 @@ const SubCategory = (props) => {
           // append data to bottom page
           // $("#content").append(`<p>hi</p>`);
           // $("#content").animate({ scrollTop: $("#content").height() }, 1000);
+          list = list.sort(function (a, b) {
+            return a.subcategoryName.localeCompare(
+              b.subcategoryName,
+              undefined,
+              {
+                numeric: true,
+                sensitivity: "base"
+              }
+            );
+          });
           setSubCategoryList(list);
           setSubcategory(list[0]);
           setLength(sub.size);

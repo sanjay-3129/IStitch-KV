@@ -104,8 +104,8 @@ const OrderDetials = (props) => {
               </div>
             </p>
             <p className={styles.para}>
-              Cloth Type: Cotton
-              <span style={{ float: "right" }}>Cloth Color: Blue</span>
+              Cloth Type: {ctx.order.clothType}
+              <span style={{ float: "right" }}>Cloth Color: {ctx.order.clothColor}</span>
             </p>
           </details>
         </div>
@@ -165,7 +165,7 @@ const OrderDetials = (props) => {
                 <details>
                   <summary className={styles.summary}>
                     <h4 className={styles.title1}>
-                      Add-On Images&nbsp;-&nbsp;{ctx.order.mainPatternCount}
+                      Add-On Images&nbsp;-&nbsp;{ctx.order.addOnPatternCount}
                     </h4>
                   </summary>
                   {ctx.order.addonPatterns !== undefined && (
@@ -257,8 +257,8 @@ const OrderDetials = (props) => {
               </div>
             </p>
             <p className={styles.para}>
-              Cloth Type: Cotton
-              <span style={{ float: "right" }}>Cloth Color: Blue</span>
+              Cloth Type: {ctx.order.clothType}
+              <span style={{ float: "right" }}>Cloth Color:{ctx.order.clothColor}</span>
             </p>
           </details>
         </div>
@@ -317,7 +317,9 @@ const OrderDetials = (props) => {
               <div className={styles.api}>
                 <details>
                   <summary className={styles.summary}>
-                    <h4 className={styles.title1}>Add-On Images</h4>
+                    <h4 className={styles.title1}>
+                      Add-On Images&nbsp;-&nbsp;{ctx.order.addOnPatternCount}
+                    </h4>
                   </summary>
                   {ctx.order.addonPatterns !== undefined && (
                     <ImageCarousel images={ctx.order.addonPatterns} />
@@ -339,6 +341,210 @@ const OrderDetials = (props) => {
           </>
         ) : null}
         {/* User Upload Main Pattern Images */}
+
+        {/* Finished Images */}
+        <div className={styles.fi}>
+          <details>
+            <summary className={styles.summary}>
+              <h4 className={styles.title1}>Finished Images </h4>
+            </summary>
+            <div className="row">
+              {ctx.order.finishedImages !== undefined &&
+                ctx.order.finishedImages.map((images) => {
+                  return (
+                    <div class={styles.columns}>
+                      <div className="thumb">
+                        <img
+                          src={images}
+                          style={{ width: "100%" }}
+                          // onclick={openModal()}
+                          class="hover-shadow cursor"
+                          alt="Images"
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          </details>
+        </div>
+      </div>
+    </>
+  );
+
+  let Alterationimage = (
+    <>
+      <div className={styles.col6}>
+        {/* Measurement Details */}
+        {ctx.order.measurementProvided === true ? (
+          <div className={styles.mesd}>
+            <details>
+              <summary className={styles.summary}>
+                <h4 className={styles.title1}>Measurement Details</h4>
+              </summary>
+              <div className={styles.innerdiv}>
+                {Object.entries(ctx.order.measurementDetails).map((meas) => {
+                  return (
+                    <p className={styles.mesp}>
+                      {meas[0]} - {meas[1]}
+                    </p>
+                  );
+                })}
+
+                {/* {ctx.order.measurementDetails} */}
+              </div>
+            </details>
+          </div>
+        ) : (
+          <div className={styles.mescloth}>
+            {/* pri d */}
+            <details>
+              <summary className={styles.summary}>
+                <h4 className={styles.title1}>Sample Measurement Cloth</h4>
+              </summary>
+              <p className={styles.para}>
+                <div className="thumb1">
+                  <img
+                    src={ctx.order.uploadMeasurementCloth}
+                    style={{ width: "100%" }}
+                    // class="hover-shadow cursor"
+                    alt="l"
+                  />
+                </div>
+              </p>
+            </details>
+          </div>
+        )}
+
+        {/* Sample Measurement Cloth */}
+
+        {/* Stitching Cloth */}
+        <div className={styles.scloth}>
+          {/* pri d */}
+          <details>
+            <summary className={styles.summary}>
+              <h4 className={styles.title1}>Stitching Cloth</h4>
+            </summary>
+            <p className={styles.para}>
+              <div className="thumb1">
+                <img
+                  src={ctx.order.uploadStitchCloth}
+                  style={{ width: "100%" }}
+                  // class="hover-shadow cursor"
+                  alt="l"
+                />
+              </div>
+            </p>
+            <p className={styles.para}>
+              Cloth Type: {ctx.order.clothType}
+              <span style={{ float: "right" }}>Cloth Color:{ctx.order.clothColor}</span>
+            </p>
+          </details>
+        </div>
+
+        <div className={styles.mesd}>
+          {/* pri d */}
+          <details>
+            <summary className={styles.summary}>
+              <h4 className={styles.title1}>Others</h4>
+            </summary>
+            <div className={styles.innerdiv}>
+              {/* console.log("=====",Object.entries(others)); */}
+              {Object.entries(ctx.order.others).map((other) => {
+                return (
+                  <p className={styles.mesp}>
+                    {other[0]} - {other[1]}
+                  </p>
+                );
+              })}
+            </div>
+          </details>
+        </div>
+        {/* Main Pattern Images */}
+        {ctx.order.mainPatternProvider === true ? (
+          <div className={styles.mpi}>
+            <details>
+              <summary className={styles.summary}>
+                <h4 className={styles.title1}>
+                  Main-Pattern Images&nbsp;-&nbsp;{ctx.order.mainPatternCount}
+                </h4>
+              </summary>
+              {ctx.order.mainPatterns !== undefined && (
+                <ImageCarousel images={ctx.order.mainPatterns} />
+              )}
+            </details>
+          </div>
+        ) : (
+          <div className={styles.umi}>
+            <details>
+              <summary className={styles.summary}>
+                <h4 className={styles.title1}>
+                  User Upload MainPattern Images
+                </h4>
+              </summary>
+              {ctx.order.uploadmainPatterns !== undefined && (
+                <ImageCarousel images={ctx.order.uploadmainPatterns} />
+              )}
+            </details>
+          </div>
+        )}
+
+        {/* Addon Pattern Images */}
+        {ctx.order.addonPatterns !== undefined &&
+        ctx.order.uploadaddonPatterns !== undefined ? (
+          <>
+            {ctx.order.addonPatternProvider === true ? (
+              <div className={styles.api}>
+                <details>
+                  <summary className={styles.summary}>
+                    <h4 className={styles.title1}>
+                      Add-On Images&nbsp;-&nbsp;{ctx.order.addOnPatternCount}
+                    </h4>
+                  </summary>
+                  {ctx.order.addonPatterns !== undefined && (
+                    <ImageCarousel images={ctx.order.addonPatterns} />
+                  )}
+                </details>
+              </div>
+            ) : (
+              <div className={styles.uai}>
+                <details>
+                  <summary className={styles.summary}>
+                    <h4 className={styles.title1}>User Upload Add-On </h4>
+                  </summary>
+                  {ctx.order.uploadaddonPatterns !== undefined && (
+                    <ImageCarousel images={ctx.order.uploadaddonPatterns} />
+                  )}
+                </details>
+              </div>
+            )}
+          </>
+        ) : null}
+        {/* User Upload Main Pattern Images */}
+
+        {/* Alteration Image */}
+        <div className={styles.scloth}>
+          {/* pri d */}
+          <details>
+            <summary className={styles.summary}>
+              <h4 className={styles.title1}>Alteration Image</h4>
+            </summary>
+            <p className={styles.para}>
+              <div className="thumb1">
+                <img
+                  src={
+                    ctx.order.alterationDetails !== undefined &&
+                    ctx.order.alterationDetails.defectivePartImage
+                  }
+                  style={{ width: "100%" }}
+                  // onclick={openModal()}
+                  class="hover-shadow cursor"
+                  alt="Images"
+                />
+              </div>
+            </p>
+          </details>
+        </div>
 
         {/* Finished Images */}
         <div className={styles.fi}>
@@ -473,6 +679,16 @@ const OrderDetials = (props) => {
             <span style={{ marginLeft: "5px" }}>{ctx.order.orderPrice}</span>
           </p>
           <p className={styles.para}>
+            Delivery fee:
+            <span style={{ marginLeft: "5px" }}>
+              {ctx.order.deliveryCharge}
+            </span>
+          </p>
+          <p className={styles.para}>
+            TotalAmount:
+            <span style={{ marginLeft: "5px" }}>{ctx.order.totalPrice}</span>
+          </p>
+          <p className={styles.para}>
             TailorPrice:
             <span style={{ marginLeft: "5px" }}>{ctx.order.tailorCharge}</span>
           </p>
@@ -536,6 +752,17 @@ const OrderDetials = (props) => {
             Price:
             <span style={{ marginLeft: "5px" }}>{ctx.order.orderPrice}</span>
           </p>
+          <p className={styles.para}>
+            Delivery fee:
+            <span style={{ marginLeft: "5px" }}>
+              {ctx.order.deliveryCharge}
+            </span>
+          </p>
+          <p className={styles.para}>
+            TotalAmount:
+            <span style={{ marginLeft: "5px" }}>{ctx.order.totalPrice}</span>
+          </p>
+
           <p className={styles.para}>
             TailorPrice:
             <span style={{ marginLeft: "5px" }}>{ctx.order.tailorCharge}</span>
@@ -633,6 +860,16 @@ const OrderDetials = (props) => {
           <p className={styles.para}>
             Price:
             <span style={{ marginLeft: "5px" }}>{ctx.order.orderPrice}</span>
+          </p>
+          <p className={styles.para}>
+            Delivery fee:
+            <span style={{ marginLeft: "5px" }}>
+              {ctx.order.deliveryCharge}
+            </span>
+          </p>
+          <p className={styles.para}>
+            TotalAmount:
+            <span style={{ marginLeft: "5px" }}>{ctx.order.totalPrice}</span>
           </p>
           <p className={styles.para}>
             TailorPrice:
@@ -736,6 +973,16 @@ const OrderDetials = (props) => {
             <span style={{ marginLeft: "5px" }}>{ctx.order.orderPrice}</span>
           </p>
           <p className={styles.para}>
+            Delivery fee:
+            <span style={{ marginLeft: "5px" }}>
+              {ctx.order.deliveryCharge}
+            </span>
+          </p>
+          <p className={styles.para}>
+            TotalAmount:
+            <span style={{ marginLeft: "5px" }}>{ctx.order.totalPrice}</span>
+          </p>
+          <p className={styles.para}>
             TailorPrice:
             <span style={{ marginLeft: "5px" }}>{ctx.order.tailorCharge}</span>
           </p>
@@ -775,21 +1022,9 @@ const OrderDetials = (props) => {
                 ctx.order.alterationDetails.reasonDescription}
             </span>
           </p>
-          <div className="thumb" style={{ padding: "10px" }}>
-            <img
-              src={
-                ctx.order.alterationDetails !== undefined &&
-                ctx.order.alterationDetails.defectivePartImage
-              }
-              style={{ width: "100%" }}
-              // onclick={openModal()}
-              class="hover-shadow cursor"
-              alt="Images"
-            />
-          </div>
         </div>
       </div>
-      {finishedimages}
+      {Alterationimage}
       {/* Alteration */}
     </>
   );
@@ -844,6 +1079,16 @@ const OrderDetials = (props) => {
             <span style={{ marginLeft: "5px" }}>{ctx.order.orderPrice}</span>
           </p>
           <p className={styles.para}>
+            Delivery fee:
+            <span style={{ marginLeft: "5px" }}>
+              {ctx.order.deliveryCharge}
+            </span>
+          </p>
+          <p className={styles.para}>
+            TotalAmount:
+            <span style={{ marginLeft: "5px" }}>{ctx.order.totalPrice}</span>
+          </p>
+          <p className={styles.para}>
             TailorPrice:
             <span style={{ marginLeft: "5px" }}>{ctx.order.tailorCharge}</span>
           </p>
@@ -883,7 +1128,7 @@ const OrderDetials = (props) => {
                 ctx.order.alterationDetails.reasonDescription}
             </span>
           </p>
-          <div className="thumb" style={{ padding: "10px" }}>
+          {/* <div className="thumb" style={{ padding: "10px" }}>
             <img
               src={
                 ctx.order.alterationDetails !== undefined &&
@@ -894,7 +1139,7 @@ const OrderDetials = (props) => {
               class="hover-shadow cursor"
               alt="Images"
             />
-          </div>
+          </div> */}
         </div>
 
         <div className={styles.priced}>
@@ -915,7 +1160,7 @@ const OrderDetials = (props) => {
           </p>
         </div>
       </div>
-      {finishedimages}
+      {Alterationimage}
     </>
   );
 

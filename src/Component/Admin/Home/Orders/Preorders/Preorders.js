@@ -23,6 +23,7 @@ const Preorders = (props) => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [newData, setNewData] = useState({
     orderPrice: 0,
+    deliveryCharge: 0,
     tailorCharge: 0,
     dueDate: ""
   });
@@ -215,21 +216,66 @@ const Preorders = (props) => {
     let name = event.target.name;
     console.log("valueeeeee", value);
     console.log("sdfgsdvsd", name);
-    if (name === "tailorCharge" || name === "orderPrice") {
+    if (
+      name === "tailorCharge" ||
+      name === "orderPrice" ||
+      name === "deliveryCharge"
+    ) {
       value = parseInt(value);
+
+      setNewData((prevState) => {
+        return {
+          ...prevState,
+          [name]: value
+        };
+      });
+
       if (name === "orderPrice") {
-        let gst = (value * 18) / 100;
-        let finalAmount = value + gst + 100;
+        let opd = value;
+        let dlv = newData.deliveryCharge;
+        let gst = (opd * 18) / 100;
+        // console.log("mmmmmm", opd, dlv, gst);
+
+        let finalAmount = opd + dlv + gst;
         setTotalPrice(finalAmount);
+        setNewData((prevState) => {
+          return {
+            ...prevState,
+            [name]: value
+          };
+        });
+        console.log("<<<<<", finalAmount);
+        // console.log(">>>>>", totalPrice);
+      }
+      if (name === "deliveryCharge") {
+        let opd = newData.orderPrice;
+        let dlv = value;
+        let gst = (opd * 18) / 100;
+        let finalAmount = opd + dlv + gst;
+        let roundAmount = Math.round(finalAmount);
+        setTotalPrice(roundAmount);
+        setNewData((prevState) => {
+          return {
+            ...prevState,
+            [name]: value
+          };
+        });
       }
     }
-
-    setNewData((prevState) => {
-      return {
-        ...prevState,
-        [name]: value
-      };
-    });
+    if (name === "dueDate") {
+      let userdate = new Date(event.target.value);
+      let today = new Date();
+      if (userdate < today) {
+        alert("choose proper date");
+      } else {
+        setNewData((prevState) => {
+          return {
+            ...prevState,
+            [name]: value
+          };
+        });
+      }
+    }
   };
   // const onChangeTailorHandler = (event) => {
   //   let value = null;
@@ -243,7 +289,7 @@ const Preorders = (props) => {
   //   });
   // };
 
-  const draftQuotationHandler = (newData, totalPrice) => {
+  const draftQuotationHandler = (newData) => {
     console.log("qqqqqqqqqq", newData);
     console.log("wwwwwwwwwww", totalPrice);
     if (
@@ -261,6 +307,7 @@ const Preorders = (props) => {
             orderPrice: newData.orderPrice,
             tailorCharge: newData.tailorCharge,
             dueDate: newData.dueDate,
+            deliveryCharge: newData.deliveryCharge,
             totalPrice: totalPrice,
             orderStatus: "Verified"
           })
@@ -487,6 +534,7 @@ const Preorders = (props) => {
           title={newModal}
           newData={newData}
           closeModal={() => {
+            setTotalPrice(0);
             setNewModal(false);
             setNewData({
               orderPrice: 0,

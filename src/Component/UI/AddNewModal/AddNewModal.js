@@ -283,7 +283,7 @@ const ModalOverlay = (props) => {
                           onFocus={props.getCategoryList}
                         />
                         <datalist id="datalistOptions1">
-                          {console.log("ffffff", props.mcategoryList)}
+                          {/* {console.log("ffffff", props.mcategoryList)} */}
                           {props.mcategoryList.map((mcategory) => (
                             <option
                               key={mcategory.categoryId}

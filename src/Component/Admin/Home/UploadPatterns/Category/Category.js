@@ -114,7 +114,7 @@ const Category = (props) => {
         .doc("categories")
         .collection("category")
         .where("delete", "==", false)
-        .orderBy("timestamp", "desc")
+        // .orderBy("timestamp", "desc")
         .limit(16)
         .get()
         .then((sub) => {
@@ -126,6 +126,12 @@ const Category = (props) => {
             let list = [];
             sub.forEach((subDoc) => {
               list.push(subDoc.data());
+            });
+            list = list.sort(function (a, b) {
+              return a.categoryName.localeCompare(b.categoryName, undefined, {
+                numeric: true,
+                sensitivity: "base"
+              });
             });
             setCategoryList(list);
             setCategory(list[0]);
@@ -236,6 +242,12 @@ const Category = (props) => {
           let list = [...categoryList];
           let index = list.findIndex((l) => l.categoryId === categoryId);
           list[index] = doc;
+          list = list.sort(function (a, b) {
+            return a.categoryName.localeCompare(b.categoryName, undefined, {
+              numeric: true,
+              sensitivity: "base"
+            });
+          });
           setCategoryList(list);
           setCategory(doc);
           ref.current.complete(); // linear loader to complete
@@ -286,6 +298,16 @@ const Category = (props) => {
                 let list = [...categoryList];
                 let index = list.findIndex((l) => l.categoryId === categoryId);
                 list[index] = doc;
+                list = list.sort(function (a, b) {
+                  return a.categoryName.localeCompare(
+                    b.categoryName,
+                    undefined,
+                    {
+                      numeric: true,
+                      sensitivity: "base"
+                    }
+                  );
+                });
                 setCategoryList(list);
                 setCategory(doc);
                 ref.current.complete(); // linear loader to complete
@@ -454,7 +476,7 @@ const Category = (props) => {
                         .doc("categories")
                         .collection("category")
                         .where("delete", "==", false)
-                        .orderBy("timestamp", "desc")
+                        // .orderBy("timestamp", "desc")
                         .limit(16)
                         .get()
                         .then((data) => {
@@ -463,10 +485,20 @@ const Category = (props) => {
                           data.forEach((doc) => {
                             list.push(doc.data());
                           });
-                          ref.current.complete(); // linear loader to complete
+                          list = list.sort(function (a, b) {
+                            return a.categoryName.localeCompare(
+                              b.categoryName,
+                              undefined,
+                              {
+                                numeric: true,
+                                sensitivity: "base"
+                              }
+                            );
+                          });
                           setCategoryList(list);
                           setCategory(list[0]);
                           setType(type);
+                          ref.current.complete(); // linear loader to complete
                           // setAddNewItem(null);
                         });
                     })
@@ -534,7 +566,7 @@ const Category = (props) => {
                 .doc("categories")
                 .collection("category")
                 .where("delete", "==", false)
-                .orderBy("timestamp", "desc")
+                // .orderBy("timestamp", "desc")
                 .limit(16)
                 .get()
                 .then((data) => {
@@ -542,6 +574,16 @@ const Category = (props) => {
                     list.push(doc.data());
                   });
                   ref.current.complete(); // linear loader to complete
+                  list = list.sort(function (a, b) {
+                    return a.categoryName.localeCompare(
+                      b.categoryName,
+                      undefined,
+                      {
+                        numeric: true,
+                        sensitivity: "base"
+                      }
+                    );
+                  });
                   setCategoryList(list);
                   setCategory(list[0]);
                   // setAddNewItem(null);
@@ -642,7 +684,7 @@ const Category = (props) => {
       .doc("categories")
       .collection("category")
       .where("delete", "==", false)
-      .orderBy("timestamp", "desc")
+      // .orderBy("timestamp", "desc")
       .limit(8)
       .get()
       .then((sub) => {
@@ -656,6 +698,12 @@ const Category = (props) => {
           genderName = gender.genderName;
           genderId = gender.genderId;
           genderImg = gender.genderImg;
+          list = list.sort(function (a, b) {
+            return a.categoryName.localeCompare(b.categoryName, undefined, {
+              numeric: true,
+              sensitivity: "base"
+            });
+          });
           setCategoryList(list);
           setCategory(list[0]);
         } else {
@@ -674,7 +722,7 @@ const Category = (props) => {
       .doc("categories")
       .collection("category")
       .where("delete", "==", false)
-      .orderBy("timestamp", "desc")
+      // .orderBy("timestamp", "desc")
       .limit(8)
       .get()
       .then((sub) => {
@@ -766,7 +814,7 @@ const Category = (props) => {
             // console.log(" successfully updated!!!");
             categoryRef
               .where("delete", "==", false)
-              .orderBy("timestamp", "desc")
+              // .orderBy("timestamp", "desc")
               .limit(16)
               .get()
               .then((data) => {
@@ -776,6 +824,16 @@ const Category = (props) => {
                 });
                 ref.current.complete(); // linear loader to complete
                 if (list.length > 0) {
+                  list = list.sort(function (a, b) {
+                    return a.categoryName.localeCompare(
+                      b.categoryName,
+                      undefined,
+                      {
+                        numeric: true,
+                        sensitivity: "base"
+                      }
+                    );
+                  });
                   setCategoryList(list);
                   setCategory(list[0]);
                 } else {
@@ -818,6 +876,12 @@ const Category = (props) => {
                 (l) => l.categoryId === category.categoryId
               );
               list[index] = doc;
+              list = list.sort(function (a, b) {
+                return a.categoryName.localeCompare(b.categoryName, undefined, {
+                  numeric: true,
+                  sensitivity: "base"
+                });
+              });
               setCategoryList(list);
               setCategory(doc);
               ref.current.complete(); // linear loader to complete
@@ -845,6 +909,12 @@ const Category = (props) => {
                 (l) => l.categoryId === category.categoryId
               );
               list[index] = doc;
+              list = list.sort(function (a, b) {
+                return a.categoryName.localeCompare(b.categoryName, undefined, {
+                  numeric: true,
+                  sensitivity: "base"
+                });
+              });
               setCategoryList(list);
               setCategory(doc);
               ref.current.complete(); // linear loader to complete
@@ -863,7 +933,7 @@ const Category = (props) => {
       .doc("categories")
       .collection("category")
       .where("delete", "==", false)
-      .orderBy("timestamp", "desc")
+      // .orderBy("timestamp", "desc")
       .limit(16)
       .get()
       .then((data) => {
@@ -875,6 +945,12 @@ const Category = (props) => {
         if (list.length === 0) {
           setCategoryList("subcollection_empty");
         } else {
+          list = list.sort(function (a, b) {
+            return a.categoryName.localeCompare(b.categoryName, undefined, {
+              numeric: true,
+              sensitivity: "base"
+            });
+          });
           setCategoryList(list);
           setCategory(list[0]);
         }
@@ -945,7 +1021,7 @@ const Category = (props) => {
         .doc("categories")
         .collection("category")
         .where("delete", "==", false)
-        .orderBy("timestamp", "desc")
+        // .orderBy("timestamp", "desc")
         .startAfter(lastDoc) // cursor for pagination
         .limit(8)
         .get()
@@ -962,6 +1038,12 @@ const Category = (props) => {
           // append data to bottom page
           // $("#content").append(`<p>hi</p>`);
           // $("#content").animate({ scrollTop: $("#content").height() }, 1000);
+          list = list.sort(function (a, b) {
+            return a.categoryName.localeCompare(b.categoryName, undefined, {
+              numeric: true,
+              sensitivity: "base"
+            });
+          });
           setCategoryList(list);
           setCategory(list[0]);
           setLength(sub.size);
