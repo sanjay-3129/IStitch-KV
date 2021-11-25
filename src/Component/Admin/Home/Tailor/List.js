@@ -14,7 +14,7 @@ const List = (props) => {
         <p class="add">Address</p>
         <p class="timg">Tailor Image</p>
       </div> */}
-      <TailorList tailor={props.tailor} />
+      <TailorList tailor={props.tailor} payHandler={props.payHandler} />
     </div>
   );
 };

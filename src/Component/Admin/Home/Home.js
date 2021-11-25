@@ -11,6 +11,7 @@ import MyBin from "./MyBin/MyBin";
 import Tailor from "./Tailor/Tailor";
 import UploadPatterns from "./UploadPatterns/UploadPatterns";
 import Settings from "./Settings/Settings";
+import BannerImage from "./BannerImage/BannerImage";
 import IdleTimeoutModal from "../../UI/IdleTimeoutModal/IdleTimeoutModal";
 import Lottie from "react-lottie";
 import * as sewing from "../../../../public/lotties/62905-sewing.json";
@@ -144,6 +145,9 @@ const Home = (props) => {
                   </Route>
                   <Route path={`${props.match.url}/orders`}>
                     <Orders {...props} />
+                  </Route>
+                  <Route path={`${props.match.url}/banner`}>
+                    <BannerImage />
                   </Route>
                   <Route path={`${props.match.url}/tailor`}>
                     <Tailor {...props} />

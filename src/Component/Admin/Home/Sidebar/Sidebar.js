@@ -35,6 +35,15 @@ const SideBar = (props) => {
               <NavLink
                 activeClassName={style.activeLink}
                 className={style.list_link}
+                to={`${props.match.url}/banner`}
+              >
+                <i className={`${style.fas} fas fa-warehouse`}></i>Banner Image
+              </NavLink>
+            </li>
+            <li className={style.list_item}>
+              <NavLink
+                activeClassName={style.activeLink}
+                className={style.list_link}
                 to={`${props.match.url}/tailor`}
               >
                 <i className={`${style.fas} fas fa-boxes`}></i>Tailor
@@ -57,6 +66,15 @@ const SideBar = (props) => {
                 to={`${props.match.url}/myBin`}
               >
                 <i className={`${style.fas} fas fa-trash`}></i>Bin
+              </NavLink>
+            </li>
+            <li className={`${style.list_item}`}>
+              <NavLink
+                activeClassName={style.activeLink}
+                className={style.list_link}
+                to={`${props.match.url}/user`}
+              >
+                <i className={`${style.fas} fas fa-users`}></i>Users
               </NavLink>
             </li>
           </ul>

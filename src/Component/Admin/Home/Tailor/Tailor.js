@@ -161,11 +161,23 @@ const Tailor = (props) => {
     }
   };
 
+  const payHandler = (tailor, amountPaid, amountPending) => {
+    console.log("tailor", tailor, amountPaid, amountPending);
+    db.collection("TailorsDetails")
+      .doc(tailor.userId)
+      .update({
+        amountPaid: amountPaid,
+        amountPending: amountPending
+      })
+      .then(() => console.log("Successfully Updated"))
+      .catch((e) => console.log(e));
+  };
+
   let tailors = null;
   if (tailorList === null) {
     tailors = <Spinner />;
   } else if (tailorList === "empty") {
-    tailors = <h1>No Processing Orders</h1>;
+    tailors = <h1>No Tailor to Show</h1>;
   } else {
     console.log("...>>>>>....", tailorList);
 
@@ -186,6 +198,7 @@ const Tailor = (props) => {
             <TailorView
               tailor={tailor}
               {...props}
+              payHandler={payHandler}
               acceptTailor={acceptTailor}
               rejectTailor={rejectTailor}
               deleteTailor={deleteTailor}

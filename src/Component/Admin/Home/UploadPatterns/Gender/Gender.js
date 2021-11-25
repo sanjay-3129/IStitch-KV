@@ -109,46 +109,46 @@ const Gender = (props) => {
   // update image in db
   const changeImageHandler = (genderId, newImage) => {
     console.log("img", newImage);
-    // ref.current.continuousStart();
-    // // girl image in storage replace this later, try to remove from storage and add the new image
-    // // https://firebasestorage.googleapis.com/v0/b/istitch-admin.appspot.com/o/gender%2Fgirl.png?alt=media&token=4bfdb3ef-7894-4df1-9272-34b73c9768db
-    // let bucketName = "Images";
-    // let img = newImage;
-    // let storageRef = firebase.storage().ref();
-    // let genderTimestamp = +new Date().getTime() + "-" + newData.img.name;
-    // let imgRef = storageRef.child(`${bucketName}/${genderTimestamp}`);
-    // imgRef
-    //   .put(img)
-    //   .then((snapshot) => {
-    //     // console.log(snapshot);
-    //     imgRef.getDownloadURL().then((imgUrl) => {
-    //       // now adding the data to firestore
-    //       db.collection("gender")
-    //         .doc(genderId)
-    //         .update({
-    //           genderImage: imgUrl // post this url first to storage
-    //         })
-    //         .then(() => {
-    //           console.log("Image Updated");
-    //           // then set the state again to reload and render it again
-    //           list = [];
-    //           db.collection("gender")
-    //             .where("delete", "==", false)
-    //             .orderBy("genderName", "asc")
-    //             .get()
-    //             .then((data) => {
-    //               data.forEach((doc) => {
-    //                 list.push(doc.data());
-    //               });
-    //               ref.current.complete(); // linear loader to complete
-    //               setGenderList(list);
-    //             });
-    //         });
-    //     });
-    //   })
-    //   .catch((e) => {
-    //     console.log(e);
-    //   });
+    ref.current.continuousStart();
+    // girl image in storage replace this later, try to remove from storage and add the new image
+    // https://firebasestorage.googleapis.com/v0/b/istitch-admin.appspot.com/o/gender%2Fgirl.png?alt=media&token=4bfdb3ef-7894-4df1-9272-34b73c9768db
+    let bucketName = "Images";
+    let img = newImage;
+    let storageRef = firebase.storage().ref();
+    let genderTimestamp = +new Date().getTime() + "-" + newData.img.name;
+    let imgRef = storageRef.child(`${bucketName}/${genderTimestamp}`);
+    imgRef
+      .put(img)
+      .then((snapshot) => {
+        // console.log(snapshot);
+        imgRef.getDownloadURL().then((imgUrl) => {
+          // now adding the data to firestore
+          db.collection("gender")
+            .doc(genderId)
+            .update({
+              genderImage: imgUrl // post this url first to storage
+            })
+            .then(() => {
+              console.log("Image Updated");
+              // then set the state again to reload and render it again
+              list = [];
+              db.collection("gender")
+                .where("delete", "==", false)
+                .orderBy("genderName", "asc")
+                .get()
+                .then((data) => {
+                  data.forEach((doc) => {
+                    list.push(doc.data());
+                  });
+                  ref.current.complete(); // linear loader to complete
+                  setGenderList(list);
+                });
+            });
+        });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   // updating image or name

@@ -32,10 +32,8 @@
 }
 
 .tailor .approval {
-  padding: 10px 0;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
+  display: inline-block;
+  width: 25%;
 }
 
 .tailor .approval .card {
@@ -46,7 +44,7 @@
   height: fit-content;
   flex-wrap: wrap;
   flex-direction: column;
-  width: 24%;
+  width: 100%;
   box-shadow: 0 3px 3px rgb(0 0 0 / 40%);
   border-bottom: 2px solid #a6c8cc;
   border-radius: 5px;

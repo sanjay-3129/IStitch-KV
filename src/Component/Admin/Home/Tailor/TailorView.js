@@ -19,7 +19,7 @@ const TailorView = (props) => {
   let tailorVerified = (
     <>
       <div class="tab-pane container nullify active" id="list">
-        <List tailor={props.tailor} />
+        <List tailor={props.tailor} payHandler={props.payHandler} />
       </div>
     </>
   );

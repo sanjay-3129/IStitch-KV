@@ -26,11 +26,17 @@ const TailorList = (props) => {
     if (value) {
       console.log("yes");
       setTailorAmount((prevState) => {
-        let paid = parseFloat(prevState.amountPaid);
-        let pending = parseFloat(prevState.amountPending);
+        let paid = parseInt(prevState.amountPaid);
+        let pending = parseInt(prevState.amountPending);
+        let paidAmount = paid + amount;
+        let pendingAmount = pending - amount;
+        // let paidAmount = (paid + amount).toFixed(2);
+        // let pendingAmount = (pending - amount).toFixed(2);
+        props.payHandler(props.tailor, paidAmount, pendingAmount);
+        setAmountToBePaid(0);
         return {
-          amountPaid: (paid + amount).toFixed(2),
-          amountPending: (pending - amount).toFixed(2)
+          amountPaid: paidAmount,
+          amountPending: pendingAmount
         };
       });
     } else {
@@ -64,67 +70,77 @@ const TailorList = (props) => {
                 Amount Pending:&ensp;<b>{tailorAmount.amountPending}</b>
               </p>
             </div>
-             <div class="col-sm-8">
-            {props.tailor.bankDetails!==null?(
-              <>
-           
-              <div class="flex">
-                <p class="bank-details">Account Details:</p>
-                <br />
-                <br />
-                
-                <div>
-                  <p class="details">
-                    <span style={{ fontWeight: "initial" }}>Holder Name:</span>
-                    <span style={{ textTransform: "uppercase" }}>
-                      &ensp;{props.tailor.bankDetails.holderName}
-                    </span>
-                  </p>
+            <div class="col-sm-8">
+              {props.tailor.bankDetails !== null ? (
+                <>
+                  <div class="flex">
+                    <p class="bank-details">Account Details:</p>
+                    <br />
+                    <br />
+
+                    <div>
+                      <p class="details">
+                        <span style={{ fontWeight: "initial" }}>
+                          Holder Name:
+                        </span>
+                        <span style={{ textTransform: "uppercase" }}>
+                          &ensp;{props.tailor.bankDetails.holderName}
+                        </span>
+                      </p>
+                      <p class="details">
+                        <span style={{ fontWeight: "initial" }}>
+                          Account Number:
+                        </span>
+                        &ensp;{props.tailor.bankDetails.accountNo}
+                      </p>
+                      <p class="details">
+                        <span style={{ fontWeight: "initial" }}>
+                          Bank Name:
+                        </span>
+                        &ensp;{props.tailor.bankDetails.bankName}
+                      </p>
+                      <p class="details">
+                        <span style={{ fontWeight: "initial" }}>
+                          IFSC Code:
+                        </span>
+                        &ensp;{props.tailor.bankDetails.IFSC}
+                      </p>
+                      <p class="details">
+                        <span style={{ fontWeight: "initial" }}>
+                          Branch Name:
+                        </span>
+                        &ensp;{props.tailor.bankDetails.branch}
+                      </p>
+                    </div>
+                  </div>
+                  <div class="flex">
+                    <input
+                      class="pay-field"
+                      type="number"
+                      id="amountToBePaid"
+                      name="amountToBePaid"
+                      placeholder="Enter the amount to be paid"
+                      onChange={onChangeHandler}
+                      value={amountToBePaid}
+                    />
+                    <button
+                      type="button"
+                      class="pay-btn"
+                      onClick={onPayHandler}
+                    >
+                      <i class="fas fa-rupee-sign"></i>&ensp;Pay
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
                   <p class="details">
                     <span style={{ fontWeight: "initial" }}>
-                      Account Number:
+                      No Bank details available
                     </span>
-                    &ensp;{props.tailor.bankDetails.accountNo}
                   </p>
-                  <p class="details">
-                    <span style={{ fontWeight: "initial" }}>Bank Name:</span>
-                    &ensp;{props.tailor.bankDetails.bankName}
-                  </p>
-                  <p class="details">
-                    <span style={{ fontWeight: "initial" }}>IFSC Code:</span>
-                    &ensp;{props.tailor.bankDetails.IFSC}
-                  </p>
-                  <p class="details">
-                    <span style={{ fontWeight: "initial" }}>Branch Name:</span>
-                    &ensp;{props.tailor.bankDetails.branch}
-                  </p>
-                </div>
-              </div>
-              <div class="flex">
-                <input
-                  class="pay-field"
-                  type="number"
-                  id="amountToBePaid"
-                  name="amountToBePaid"
-                  placeholder="Enter the amount to be paid"
-                  onChange={onChangeHandler}
-                  value={amountToBePaid}
-                />
-                <button type="button" class="pay-btn" onClick={onPayHandler}>
-                  <i class="fas fa-rupee-sign"></i>&ensp;Pay
-                </button>
-                 </div>
-              </>
-              ):(
-                <>
-                <p class="details">
-                    <span style={{ fontWeight: "initial" }}>No Bank details available</span>
-                  </p>
-                  </>
-                  )}
-            
-              
-             
+                </>
+              )}
             </div>
           </div>
         </div>

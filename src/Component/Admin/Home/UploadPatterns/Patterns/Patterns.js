@@ -1377,6 +1377,7 @@ const Patterns = (props) => {
     pattern = <Spinner />;
   } else if (patternsList === "form") {
     pattern = (
+      <div className="pattern">
       <div className="flex">
         <div className="img">
           <input
@@ -1441,6 +1442,7 @@ const Patterns = (props) => {
             <p className="name">{styleName}</p>
           </div>
         </div>
+      </div>
       </div>
     );
   } else if (patternsList === "subcollection_empty") {

@@ -10,28 +10,30 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
-  margin-right: 50px;
+  align-items: center;
 }
 .header .prfl_img .btn {
   border: none;
   outline: none;
   box-shadow: none;
   padding: 0;
-  margin-top: 2px;
+  padding-left: 15px;
+  margin: 0;
   position: relative;
+  text-align: left;
 }
 .header .prfl_img .overlay {
   position: absolute;
   background: #fff;
   top: 85px;
-  right: -32px;
+  right: 10px;
   z-index: 10;
 }
 .header .prfl_img .overlay::after {
   position: absolute;
   content: "";
   top: -10px;
-  right: 49px;
+  right: 85px;
   width: 10px;
   height: 10px;
   padding: 10px;
@@ -85,9 +87,8 @@
   border-radius: 50%;
 }
 .header .prfl_img .inner_div {
-  margin-top: 8px;
+  margin: 0;
   color: #fff;
-  margin-right: 20px;
 }
 .header .prfl_img .inner_div p {
   margin: 0;

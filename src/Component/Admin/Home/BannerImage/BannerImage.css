@@ -1,0 +1,31 @@
+/* .banner {
+  margin: 30px;
+} */
+
+.banner .slide {
+  padding: 15px;
+}
+.upload-banner {
+  padding: 20px 0;
+}
+
+.upload-banner .bt {
+  width: 40%;
+  border: none;
+  outline: 0;
+  position: absolute;
+  background: #a6c8cc;
+  border-radius: 20px;
+  top: 10px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.upload-banner .bt:hover {
+  color: #fff;
+  background: #7f7f7f;
+}
+
+.right-col {
+  flex-direction: column;
+}
